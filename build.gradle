@@ -20,6 +20,13 @@ dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "dev.tildejustin:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+    // from seedqueue's build.gradle
+	implementation(annotationProcessor "com.github.bawnorton.mixinsquared:mixinsquared-fabric:0.1.1")
+
+    // from seedqueue's build.gradle
+	// check for the latest versions at https://jitpack.io/#Minecraft-Java-Edition-Speedrunning/sodium
+	modImplementation "com.github.Minecraft-Java-Edition-Speedrunning:sodium:b8785cddfa"
 }
 
 processResources {

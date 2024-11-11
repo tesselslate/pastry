@@ -1,0 +1,26 @@
+{
+	"schemaVersion": 1,
+	"id": "pastry",
+	"version": "${version}",
+	"name": "Pastry",
+	"description": "Automated profiler data collection",
+	"authors": [
+		"tesselslate"
+	],
+	"contact": {
+		"homepage": "https://github.com/tesselslate/pastry/",
+		"sources": "https://github.com/tesselslate/pastry"
+	},
+	"license": "LGPL-3.0-only",
+	"environment": "*",
+	"entrypoints": {
+		"client": [
+			"com.tesselslate.pastry.Pastry"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.16.7",
+		"minecraft": "1.16.1",
+		"java": ">=8"
+	}
+}

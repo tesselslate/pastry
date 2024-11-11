@@ -1,0 +1,9 @@
+{
+    "package": "com.tesselslate.pastry.mixin",
+    "required": true,
+    "compatibilityLevel": "JAVA_8",
+    "injectors": {
+        "defaultRequire": 1
+    },
+    "client": []
+}

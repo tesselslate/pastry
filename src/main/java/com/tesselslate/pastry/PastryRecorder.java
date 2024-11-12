@@ -17,6 +17,7 @@ import java.util.zip.GZIPOutputStream;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.block.entity.MobSpawnerBlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.profiler.ProfileResult;
@@ -79,7 +80,7 @@ public class PastryRecorder {
 
     public void recordGlobalBlockEntities(Set<BlockEntity> blockEntities) {
         for (BlockEntity blockEntity : blockEntities) {
-            this.visibleBlockEntities.addTo(BlockEntityType.getId(blockEntity.getType()).getPath(), 1);
+            this.recordBlockEntity(blockEntity);
         }
 
         this.dirty = true;
@@ -87,7 +88,7 @@ public class PastryRecorder {
 
     public void recordVisibleBlockEntities(Collection<BlockEntity> blockEntities) {
         for (BlockEntity blockEntity : blockEntities) {
-            this.visibleBlockEntities.addTo(BlockEntityType.getId(blockEntity.getType()).getPath(), 1);
+            this.recordBlockEntity(blockEntity);
         }
 
         this.dirty = true;
@@ -101,6 +102,17 @@ public class PastryRecorder {
     public void startFrame() {
         this.reset();
         this.frame++;
+    }
+
+    private void recordBlockEntity(BlockEntity blockEntity) {
+        if (blockEntity instanceof MobSpawnerBlockEntity) {
+            MobSpawnerBlockEntity mobSpawner = (MobSpawnerBlockEntity) blockEntity;
+
+            String entityName = mobSpawner.getLogic().getRenderedEntity().getType().getTranslationKey();
+            this.visibleBlockEntities.addTo("mob_spawner(" + entityName + ")", 1);
+        } else {
+            this.visibleBlockEntities.addTo(BlockEntityType.getId(blockEntity.getType()).getPath(), 1);
+        }
     }
 
     private void recordGameRendererResult(ProfileResult result) {

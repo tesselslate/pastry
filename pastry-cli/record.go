@@ -18,6 +18,9 @@ const (
 // Record contains a list of frames present from a Pastry recording.
 type Record []Frame
 
+// Run contains a list of consecutive frames from a Record.
+type Run []Frame
+
 // Frame contains the data for a single frame of a Pastry recording.
 type Frame struct {
 	Num               int32      // Frame number
@@ -55,6 +58,33 @@ func NewRecord(r io.Reader) (Record, error) {
 	}
 
 	return frames, nil
+}
+
+// Runs returns a list of runs of consecutive frames.
+func (r Record) Runs() []Run {
+	var (
+		prevFrame *int32
+		runs      []Run
+		runStart  int
+	)
+
+	for i, f := range r {
+		if prevFrame == nil {
+			prevFrame = &f.Num
+			continue
+		}
+
+		if *prevFrame+1 != f.Num {
+			runs = append(runs, Run(r[runStart:i]))
+			runStart = i
+		}
+
+		prevFrame = &f.Num
+	}
+
+	runs = append(runs, Run(r[runStart:]))
+
+	return runs
 }
 
 // readFrame attempts to read a single frame of a Pastry recording from r.

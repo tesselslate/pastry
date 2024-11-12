@@ -23,6 +23,7 @@ func printHelp() {
 
     Subcommands:
         dump        Prints a formatted representation of the recording to stdout
+        runs        Prints a list of frame runs
 
     `)
 	os.Exit(1)
@@ -44,6 +45,8 @@ func run() error {
 	switch cmd {
 	case "dump":
 		Dump(record, os.Stdout)
+	case "runs":
+		Runs(record, os.Stdout)
 	}
 
 	return nil

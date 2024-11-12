@@ -25,19 +25,22 @@ import net.minecraft.util.profiler.ProfileResult;
 public class MinecraftClientMixin {
     @Inject(at = @At("HEAD"), method = "drawProfilerResults(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/util/profiler/ProfileResult;)V")
     private void drawProfilerResults_addFrameEvent(MatrixStack stack, ProfileResult profileResult, CallbackInfo info) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client.isPaused()) {
+            return;
+        }
+
         PastryCapture capture = Pastry.getActiveCapture();
         if (capture == null) {
             return;
         }
 
-        @SuppressWarnings("resource")
-        WorldRenderer worldRenderer = MinecraftClient.getInstance().worldRenderer;
+        WorldRenderer worldRenderer = client.worldRenderer;
         if (worldRenderer == null) {
             return;
         }
 
-        @SuppressWarnings("resource")
-        Camera camera = Objects.requireNonNull(MinecraftClient.getInstance().gameRenderer).getCamera();
+        Camera camera = Objects.requireNonNull(client.gameRenderer).getCamera();
 
         // Add all queued events (entities, blockentities) from this frame to the
         // capture.

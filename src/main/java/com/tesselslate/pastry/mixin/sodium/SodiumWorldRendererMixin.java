@@ -11,6 +11,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.tesselslate.pastry.Pastry;
+import com.tesselslate.pastry.capture.PastryCapture;
+import com.tesselslate.pastry.capture.events.PastryCaptureBlockEntityEvent;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import me.jellysquid.mods.sodium.client.render.SodiumWorldRenderer;
@@ -34,7 +36,16 @@ public class SodiumWorldRendererMixin {
     private void renderTileEntities_recordBlockEntities(MatrixStack matrices, BufferBuilderStorage bufferBuilders,
             Long2ObjectMap<SortedSet<BlockBreakingInfo>> blockBreakingProgressions, Camera camera, float tickDelta,
             CallbackInfo info) {
-        Pastry.getRecorder().recordVisibleBlockEntities(this.chunkRenderManager.getVisibleBlockEntities());
-        Pastry.getRecorder().recordGlobalBlockEntities(this.globalBlockEntities);
+        PastryCapture capture = Pastry.getActiveCapture();
+        if (capture == null) {
+            return;
+        }
+
+        for (BlockEntity blockEntity : this.chunkRenderManager.getVisibleBlockEntities()) {
+            capture.queue(new PastryCaptureBlockEntityEvent(blockEntity));
+        }
+        for (BlockEntity blockEntity : this.globalBlockEntities) {
+            capture.queue(new PastryCaptureBlockEntityEvent(blockEntity));
+        }
     }
 }

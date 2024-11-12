@@ -1,4 +1,4 @@
-package com.tesselslate.pastry.mixin.client;
+package com.tesselslate.pastry.mixin.capture;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

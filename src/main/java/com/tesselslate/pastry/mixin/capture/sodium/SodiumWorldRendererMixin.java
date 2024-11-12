@@ -1,4 +1,4 @@
-package com.tesselslate.pastry.mixin.sodium;
+package com.tesselslate.pastry.mixin.capture.sodium;
 
 import java.util.Set;
 import java.util.SortedSet;

@@ -7,9 +7,9 @@
     },
     "client": [
         "accessor.WorldRendererAccessor",
-        "client.GameRendererMixin",
-        "client.MinecraftClientMixin",
-        "client.WorldRendererMixin",
-        "sodium.SodiumWorldRendererMixin"
+        "capture.GameRendererMixin",
+        "capture.MinecraftClientMixin",
+        "capture.WorldRendererMixin",
+        "capture.sodium.SodiumWorldRendererMixin"
     ]
 }

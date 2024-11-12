@@ -1,4 +1,4 @@
-package com.tesselslate.pastry.mixin.client;
+package com.tesselslate.pastry.mixin.capture;
 
 import java.util.Objects;
 

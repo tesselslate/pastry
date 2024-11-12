@@ -10,6 +10,7 @@
         "capture.GameRendererMixin",
         "capture.MinecraftClientMixin",
         "capture.WorldRendererMixin",
-        "capture.sodium.SodiumWorldRendererMixin"
+        "capture.sodium.SodiumWorldRendererMixin",
+        "debug.DebugHudMixin"
     ]
 }

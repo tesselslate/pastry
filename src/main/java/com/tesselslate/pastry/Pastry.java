@@ -1,6 +1,8 @@
 package com.tesselslate.pastry;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.Version;
 import net.minecraft.client.MinecraftClient;
 
 import java.io.File;
@@ -9,7 +11,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,6 +23,9 @@ import com.tesselslate.pastry.capture.PastryCapture;
 
 public class Pastry implements ClientModInitializer {
     private static final DateFormat OUTPUT_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");
+
+    private static final Version VERSION = FabricLoader.getInstance().getModContainer("pastry")
+            .orElseThrow(IllegalStateException::new).getMetadata().getVersion();
 
     public static final String MOD_ID = "pastry";
 
@@ -48,6 +55,19 @@ public class Pastry implements ClientModInitializer {
 
     public static @Nullable PastryCapture getActiveCapture() {
         return ACTIVE_CAPTURE;
+    }
+
+    public static List<String> getDebugText() {
+        List<String> debugText = new ArrayList<>();
+
+        debugText.add("");
+        debugText.add("pastry " + VERSION.getFriendlyString());
+
+        if (ACTIVE_CAPTURE != null) {
+            debugText.add(ACTIVE_CAPTURE.size() + " events captured");
+        }
+
+        return debugText;
     }
 
     public static void startCapture() {

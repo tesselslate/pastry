@@ -30,7 +30,7 @@ public class SodiumWorldRendererMixin {
     @Final
     private Set<BlockEntity> globalBlockEntities;
 
-    @Inject(at = @At("HEAD"), method = "renderTileEntities(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/BufferBuilderStorage;Lit/unimi/dsi/fastutil/longs/Long2ObjectMap;Lnet/minecraft/client/render/Camera;F)V")
+    @Inject(at = @At("HEAD"), method = "renderTileEntities(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/BufferBuilderStorage;Lit/unimi/dsi/fastutil/longs/Long2ObjectMap;Lnet/minecraft/client/render/Camera;F)V", remap = true)
     private void renderTileEntities_recordBlockEntities(MatrixStack matrices, BufferBuilderStorage bufferBuilders,
             Long2ObjectMap<SortedSet<BlockBreakingInfo>> blockBreakingProgressions, Camera camera, float tickDelta,
             CallbackInfo info) {

@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.tesselslate.pastry.Pastry;
 import com.tesselslate.pastry.capture.PastryCapture;
 import com.tesselslate.pastry.capture.events.PastryCaptureFrameEvent;
+import com.tesselslate.pastry.capture.events.PastryCaptureWorldLoadEvent;
 import com.tesselslate.pastry.mixin.accessor.WorldRendererAccessor;
 
 import net.minecraft.client.MinecraftClient;
@@ -19,6 +20,7 @@ import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.util.profiler.ProfileResult;
 
 @Mixin(value = MinecraftClient.class)
@@ -54,6 +56,11 @@ public class MinecraftClientMixin {
     @Inject(at = @At("HEAD"), method = "joinWorld(Lnet/minecraft/client/world/ClientWorld;)V")
     private void joinWorld_startCapture(ClientWorld world, CallbackInfo info) {
         Pastry.startCapture();
+
+        IntegratedServer server = MinecraftClient.getInstance().getServer();
+        if (server != null) {
+            Pastry.getActiveCapture().add(new PastryCaptureWorldLoadEvent(server.getSaveProperties()));
+        }
     }
 
     @Inject(at = @At("HEAD"), method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V")

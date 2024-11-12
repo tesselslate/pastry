@@ -43,10 +43,9 @@ func run() error {
 
 	switch cmd {
 	case "dump":
-		Dump(record, os.Stdout)
+		return Dump(record)
 	default:
 		printHelp()
+		return nil
 	}
-
-	return nil
 }

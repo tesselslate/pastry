@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import com.tesselslate.pastry.capture.events.PastryCaptureBlockEntityEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureEntityEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureFrameEvent;
+import com.tesselslate.pastry.capture.events.PastryCaptureWorldLoadEvent;
 
 public class PastryCaptureInputStream extends DataInputStream {
     private PastryCaptureHeader header;
@@ -45,6 +46,9 @@ public class PastryCaptureInputStream extends DataInputStream {
                     break;
                 case BLOCKENTITY:
                     events[i] = new PastryCaptureBlockEntityEvent(this);
+                    break;
+                case WORLD_LOAD:
+                    events[i] = new PastryCaptureWorldLoadEvent(this);
                     break;
             }
         }

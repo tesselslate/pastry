@@ -19,6 +19,7 @@ const (
 	Frame       = 0
 	Entity      = 1
 	BlockEntity = 2
+	WorldLoad   = 3
 )
 
 const (
@@ -55,6 +56,13 @@ type FrameEvent struct {
 	Pos         [3]float64 // Camera position
 	Pitch, Yaw  float32    // Camera rotation
 	Percentages [3]float32 // Parent gameRenderer percentages
+}
+
+// WorldLoadEvent contains metadata about the world which this recording was
+// captured in.
+type WorldLoadEvent struct {
+	Name string
+	Seed int64
 }
 
 // NewRecord attempts to read a Pastry recording from r.
@@ -147,7 +155,7 @@ func readBlockEntityEvent(r io.Reader, dict map[int32]string) (Event, error) {
 		return nil, err
 	}
 
-	return BlockEntityEvent{
+	return &BlockEntityEvent{
 		Pos:  pos,
 		Name: name,
 		Data: data,
@@ -173,7 +181,7 @@ func readEntityEvent(r io.Reader, dict map[int32]string) (Event, error) {
 		return nil, err
 	}
 
-	return EntityEvent{
+	return &EntityEvent{
 		Pos:  pos,
 		Name: name,
 	}, nil
@@ -220,12 +228,30 @@ func readFrameEvent(r io.Reader) (Event, error) {
 		percent[i] = float32(upper) + float32(lower)/100.0
 	}
 
-	return FrameEvent{
+	return &FrameEvent{
 		Num:         frameNumber,
 		Pos:         cameraPos,
 		Pitch:       cameraRot[0],
 		Yaw:         cameraRot[1],
 		Percentages: percent,
+	}, nil
+}
+
+// readWorldLoadEvent reads a world load event from a Pastry recording.
+func readWorldLoadEvent(r io.Reader, dict map[int32]string) (Event, error) {
+	name, err := readStringRef(r, dict)
+	if err != nil {
+		return nil, err
+	}
+
+	seed, err := readInt64(r)
+	if err != nil {
+		return nil, err
+	}
+
+	return &WorldLoadEvent{
+		Name: name,
+		Seed: seed,
 	}, nil
 }
 
@@ -243,6 +269,8 @@ func readEvent(r io.Reader, dict map[int32]string) (Event, error) {
 		return readEntityEvent(r, dict)
 	case BlockEntity:
 		return readBlockEntityEvent(r, dict)
+	case WorldLoad:
+		return readWorldLoadEvent(r, dict)
 	default:
 		return nil, fmt.Errorf("unknown event type %d", eventType)
 	}
@@ -281,6 +309,17 @@ func readInt32(r io.Reader) (int32, error) {
 	}
 
 	return int32(binary.BigEndian.Uint32(buf[0:4])), nil
+}
+
+// readInt64 reads a single signed 64-bit integer from r.
+func readInt64(r io.Reader) (int64, error) {
+	var buf [8]byte
+
+	if _, err := r.Read(buf[0:8]); err != nil {
+		return 0, err
+	}
+
+	return int64(binary.BigEndian.Uint64(buf[0:8])), nil
 }
 
 // readString reads a single string from r, formatted as a signed 32-bit integer

@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class PastryCaptureHeader {
-    private static final int CURRENT_VERSION = 1;
+    private static final int CURRENT_VERSION = 2;
 
     public final int version;
     public final int numEvents;

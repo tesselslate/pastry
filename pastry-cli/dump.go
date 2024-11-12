@@ -1,37 +1,40 @@
 package main
 
-import (
-	"fmt"
-	"io"
-)
+import "fmt"
 
 // Dump formats and writes a human-readable representation of record to w.
-func Dump(record Record, w io.Writer) {
+func Dump(record Record) error {
 	for _, event := range record.Events {
 		switch event := event.(type) {
-		case BlockEntityEvent:
+		case *BlockEntityEvent:
 			dumpBlockEntityEvent(event)
-		case EntityEvent:
+		case *EntityEvent:
 			dumpEntityEvent(event)
-		case FrameEvent:
+		case *FrameEvent:
 			dumpFrameEvent(event)
+		case *WorldLoadEvent:
+			dumpWorldLoadEvent(event)
+		default:
+			return fmt.Errorf("unknown event type %T", event)
 		}
 	}
 
 	fmt.Printf("Record version: %d\n", record.Version)
 	fmt.Printf("Dictionary len: %d\n", len(record.Dict))
 	fmt.Printf("Event count:    %d\n", len(record.Events))
+
+	return nil
 }
 
-func dumpBlockEntityEvent(e BlockEntityEvent) {
+func dumpBlockEntityEvent(e *BlockEntityEvent) {
 	fmt.Printf("\t%53s (%5d %3d %5d) %s\n", e.Name, e.Pos[0], e.Pos[1], e.Pos[2], e.Data)
 }
 
-func dumpEntityEvent(e EntityEvent) {
+func dumpEntityEvent(e *EntityEvent) {
 	fmt.Printf("\t%53s (%8.2f %6.2f %8.2f)\n", e.Name, e.Pos[0], e.Pos[1], e.Pos[2])
 }
 
-func dumpFrameEvent(e FrameEvent) {
+func dumpFrameEvent(e *FrameEvent) {
 	sections := []struct {
 		name  string
 		index int
@@ -47,4 +50,9 @@ func dumpFrameEvent(e FrameEvent) {
 	fmt.Printf("\t%53s: %.2f %.2f %.2f (%.2f %.2f)\n", "Camera", e.Pos[0], e.Pos[1], e.Pos[2], e.Pitch, e.Yaw)
 
 	fmt.Printf("-------------------------------- end of frame %d\n", e.Num)
+}
+
+func dumpWorldLoadEvent(e *WorldLoadEvent) {
+	fmt.Printf("\t%53s: %s\n", "World Name", e.Name)
+	fmt.Printf("\t%53s: %d\n", "World Seed", e.Seed)
 }

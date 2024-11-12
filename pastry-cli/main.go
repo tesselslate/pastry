@@ -24,6 +24,8 @@ func printHelp() {
     Subcommands:
         dump        Prints a formatted representation of the recording to stdout
         runs        Prints a list of frame runs
+        stat-be     Prints statistics about preemptive spikes based on BE count
+        stat-e      Prints statistics about preemptive spikes based on E count
 
     `)
 	os.Exit(1)
@@ -47,6 +49,10 @@ func run() error {
 		Dump(record, os.Stdout)
 	case "runs":
 		Runs(record, os.Stdout)
+	case "stat-be":
+		StatByBlockEntities(record, os.Stdout)
+	case "stat-e":
+		StatByEntities(record, os.Stdout)
 	}
 
 	return nil

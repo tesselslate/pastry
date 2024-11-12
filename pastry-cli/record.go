@@ -15,6 +15,10 @@ const (
 	Unspecified   = 2
 )
 
+const (
+	SilverfishSpawner = "mob_spawner(entity.minecraft.silverfish)"
+)
+
 // Record contains a list of frames present from a Pastry recording.
 type Record []Frame
 
@@ -85,6 +89,17 @@ func (r Record) Runs() []Run {
 	runs = append(runs, Run(r[runStart:]))
 
 	return runs
+}
+
+// All returns whether or not fn returns true for all frames in r.
+func (r Run) All(fn func(Frame) bool) bool {
+	for _, f := range r {
+		if !fn(f) {
+			return false
+		}
+	}
+
+	return true
 }
 
 // readFrame attempts to read a single frame of a Pastry recording from r.

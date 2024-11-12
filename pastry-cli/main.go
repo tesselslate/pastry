@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	if len(os.Args) < 2 {
+	if len(os.Args) < 3 {
 		printHelp()
 	}
 
@@ -17,46 +17,33 @@ func main() {
 }
 
 func printHelp() {
-	fmt.Println("pastry-cli RECORDING")
+	fmt.Print(`
+    Usage:
+        pastry-cli SUBCOMMAND RECORDING
+
+    Subcommands:
+        dump        Prints a formatted representation of the recording to stdout
+
+    `)
 	os.Exit(1)
 }
 
-func printFrame(f Frame) {
-	sections := []struct {
-		name  string
-		index int
-	}{
-		{"BE", BlockEntities},
-		{"E", Entities},
-		{"U", Unspecified},
-	}
-
-	fmt.Printf("frame %d\n", f.Num)
-	for _, section := range sections {
-		fmt.Printf("\t%40s: %5.2f%% %5.2f%%\n", section.name, f.ParentPercentages[section.index], f.TotalPercentages[section.index])
-	}
-	for blockentity, count := range f.BlockEntities {
-		fmt.Printf("\t%40s: %d\n", blockentity, count)
-	}
-	for entity, count := range f.Entities {
-		fmt.Printf("\t%40s: %d\n", entity, count)
-	}
-}
-
 func run() error {
-	file, err := os.Open(os.Args[1])
+	cmd := os.Args[1]
+	filePath := os.Args[2]
+
+	file, err := os.Open(filePath)
 	if err != nil {
 		return fmt.Errorf("open recording: %w", err)
 	}
-	defer file.Close()
-
-	recording, err := NewRecording(file)
+	record, err := NewRecord(file)
 	if err != nil {
 		return fmt.Errorf("read recording: %w", err)
 	}
 
-	for _, frame := range recording {
-		printFrame(frame)
+	switch cmd {
+	case "dump":
+		Dump(record, os.Stdout)
 	}
 
 	return nil

@@ -15,8 +15,8 @@ const (
 	Unspecified   = 2
 )
 
-// Recording contains a list of frames present from a Pastry recording.
-type Recording []Frame
+// Record contains a list of frames present from a Pastry recording.
+type Record []Frame
 
 // Frame contains the data for a single frame of a Pastry recording.
 type Frame struct {
@@ -28,8 +28,8 @@ type Frame struct {
 	BlockEntities map[string]int32 // Counts of visible blockentities by type
 }
 
-// NewRecording attempts to read a Pastry recording from r.
-func NewRecording(r io.Reader) (Recording, error) {
+// NewRecord attempts to read a Pastry recording from r.
+func NewRecord(r io.Reader) (Record, error) {
 	gzipReader, err := gzip.NewReader(r)
 	if err != nil {
 		return nil, fmt.Errorf("new gzip reader: %w", err)
@@ -42,7 +42,7 @@ func NewRecording(r io.Reader) (Recording, error) {
 
 	byteReader := bytes.NewReader(raw)
 
-	var frames Recording
+	var frames Record
 	for {
 		frame, err := readFrame(byteReader)
 		if err == io.EOF {

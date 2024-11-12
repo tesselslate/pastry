@@ -16,129 +16,248 @@ const (
 )
 
 const (
+	Frame       = 0
+	Entity      = 1
+	BlockEntity = 2
+)
+
+const (
 	SilverfishSpawner = "mob_spawner(entity.minecraft.silverfish)"
 )
 
-// Record contains a list of frames present from a Pastry recording.
-type Record []Frame
+// Record contains the data from a parsed Pastry recording.
+type Record struct {
+	Version int32
+	Events  []Event
+	Dict    map[int32]string
+}
 
-// Run contains a list of consecutive frames from a Record.
-type Run []Frame
+// Event represents a single event from a Pastry recording.
+type Event interface{}
 
-// Frame contains the data for a single frame of a Pastry recording.
-type Frame struct {
-	Num               int32      // Frame number
-	TotalPercentages  [3]float64 // Total gameRenderer percentages
-	ParentPercentages [3]float64 // Parent gameRenderer percentages
+// BlockEntityEvent contains the data for a single block entity event from a
+// Pastry recording.
+type BlockEntityEvent struct {
+	Pos        [3]int32
+	Name, Data string
+}
 
-	Entities      map[string]int32 // Counts of visible entities by type
-	BlockEntities map[string]int32 // Counts of visible blockentities by type
+// EntityEvent contains the data for a single entity event from a Pastry
+// recording.
+type EntityEvent struct {
+	Pos  [3]float64
+	Name string
+}
+
+// FrameEvent contains the data for a single frame of a Pastry recording.
+type FrameEvent struct {
+	Num         int32      // Frame number
+	Pos         [3]float64 // Camera position
+	Pitch, Yaw  float32    // Camera rotation
+	Percentages [3]float32 // Parent gameRenderer percentages
 }
 
 // NewRecord attempts to read a Pastry recording from r.
 func NewRecord(r io.Reader) (Record, error) {
+	var (
+		record    Record
+		numEvents int32
+	)
+
 	gzipReader, err := gzip.NewReader(r)
 	if err != nil {
-		return nil, fmt.Errorf("new gzip reader: %w", err)
+		return Record{}, fmt.Errorf("new gzip reader: %w", err)
 	}
 
 	raw, err := io.ReadAll(gzipReader)
 	if err != nil {
-		return nil, fmt.Errorf("decompress: %w", err)
+		return Record{}, fmt.Errorf("decompress: %w", err)
 	}
 
 	byteReader := bytes.NewReader(raw)
 
-	var frames Record
-	for {
-		frame, err := readFrame(byteReader)
-		if err == io.EOF {
-			break
-		} else if err != nil {
-			return nil, fmt.Errorf("read frame %d: %w", len(frames), err)
-		}
-
-		frames = append(frames, frame)
+	record.Version, err = readInt32(byteReader)
+	if err != nil {
+		return Record{}, fmt.Errorf("read version: %w", err)
+	}
+	numEvents, err = readInt32(byteReader)
+	if err != nil {
+		return Record{}, fmt.Errorf("read num events: %w", err)
+	}
+	record.Dict, err = readDict(byteReader)
+	if err != nil {
+		return Record{}, fmt.Errorf("read dict: %w", err)
 	}
 
-	return frames, nil
+	for i := range numEvents {
+		event, err := readEvent(byteReader, record.Dict)
+		if err != nil {
+			return Record{}, fmt.Errorf("read event %d: %w", i, err)
+		}
+
+		record.Events = append(record.Events, event)
+	}
+
+	return record, nil
 }
 
-// Runs returns a list of runs of consecutive frames.
-func (r Record) Runs() []Run {
+// readDict reads the string dictionary present at the start of a Pastry
+// recording.
+func readDict(r io.Reader) (map[int32]string, error) {
+	numStrings, err := readInt32(r)
+	if err != nil {
+		return nil, err
+	}
+
+	m := make(map[int32]string, numStrings)
+	for i := range numStrings {
+		str, err := readString(r)
+		if err != nil {
+			return nil, err
+		}
+
+		m[i+1] = str
+	}
+
+	return m, nil
+}
+
+// readBlockEntityEvent reads a single block entity event from a Pastry
+// recording.
+func readBlockEntityEvent(r io.Reader, dict map[int32]string) (Event, error) {
 	var (
-		prevFrame *int32
-		runs      []Run
-		runStart  int
+		pos [3]int32
+		err error
 	)
 
-	for i, f := range r {
-		if prevFrame == nil {
-			prevFrame = &f.Num
-			continue
+	for i := range pos {
+		pos[i], err = readInt32(r)
+		if err != nil {
+			return nil, err
 		}
-
-		if *prevFrame+1 != f.Num {
-			runs = append(runs, Run(r[runStart:i]))
-			runStart = i
-		}
-
-		prevFrame = &f.Num
 	}
 
-	runs = append(runs, Run(r[runStart:]))
+	name, err := readStringRef(r, dict)
+	if err != nil {
+		return nil, err
+	}
 
-	return runs
+	data, err := readStringRef(r, dict)
+	if err != nil {
+		return nil, err
+	}
+
+	return BlockEntityEvent{
+		Pos:  pos,
+		Name: name,
+		Data: data,
+	}, nil
 }
 
-// All returns whether or not fn returns true for all frames in r.
-func (r Run) All(fn func(Frame) bool) bool {
-	for _, f := range r {
-		if !fn(f) {
-			return false
+// readEntityEvent reads a single entity event from a Pastry recording.
+func readEntityEvent(r io.Reader, dict map[int32]string) (Event, error) {
+	var (
+		pos [3]float64
+		err error
+	)
+
+	for i := range pos {
+		pos[i], err = readFloat64(r)
+		if err != nil {
+			return nil, err
 		}
 	}
 
-	return true
+	name, err := readStringRef(r, dict)
+	if err != nil {
+		return nil, err
+	}
+
+	return EntityEvent{
+		Pos:  pos,
+		Name: name,
+	}, nil
 }
 
-// readFrame attempts to read a single frame of a Pastry recording from r.
-func readFrame(r io.Reader) (Frame, error) {
-	var err error
-	f := Frame{}
+// readFrameEvent reads a single frame event from a Pastry recording.
+func readFrameEvent(r io.Reader) (Event, error) {
+	var (
+		cameraPos [3]float64
+		cameraRot [2]float32
+		percent   [3]float32
+	)
 
-	f.Num, err = readInt32(r)
-	if err == io.EOF {
-		return Frame{}, io.EOF
-	} else if err != nil {
-		return Frame{}, fmt.Errorf("read frame number: %w", err)
+	frameNumber, err := readInt32(r)
+	if err != nil {
+		return nil, err
 	}
 
-	for i := range 3 {
-		f.TotalPercentages[i], err = readFloat64(r)
+	for i := range cameraPos {
+		cameraPos[i], err = readFloat64(r)
 		if err != nil {
-			return Frame{}, fmt.Errorf("read total percentage %d: %w", i, err)
+			return nil, err
 		}
 	}
 
-	for i := range 3 {
-		f.ParentPercentages[i], err = readFloat64(r)
+	for i := range cameraRot {
+		cameraRot[i], err = readFloat32(r)
 		if err != nil {
-			return Frame{}, fmt.Errorf("read parent percentage %d: %w", i, err)
+			return nil, err
 		}
 	}
 
-	f.Entities, err = readMap(r)
-	if err != nil {
-		return Frame{}, fmt.Errorf("read entities map: %w", err)
+	for i := range percent {
+		upper, err := readUint8(r)
+		if err != nil {
+			return nil, err
+		}
+
+		lower, err := readUint8(r)
+		if err != nil {
+			return nil, err
+		}
+
+		percent[i] = float32(upper) + float32(lower)/100.0
 	}
 
-	f.BlockEntities, err = readMap(r)
+	return FrameEvent{
+		Num:         frameNumber,
+		Pos:         cameraPos,
+		Pitch:       cameraRot[0],
+		Yaw:         cameraRot[1],
+		Percentages: percent,
+	}, nil
+}
+
+// readEvent reads a single event from a Pastry recording.
+func readEvent(r io.Reader, dict map[int32]string) (Event, error) {
+	eventType, err := readInt32(r)
 	if err != nil {
-		return Frame{}, fmt.Errorf("read block entities map: %w", err)
+		return nil, err
 	}
 
-	return f, nil
+	switch eventType {
+	case Frame:
+		return readFrameEvent(r)
+	case Entity:
+		return readEntityEvent(r, dict)
+	case BlockEntity:
+		return readBlockEntityEvent(r, dict)
+	default:
+		return nil, fmt.Errorf("unknown event type %d", eventType)
+	}
+}
+
+// readFloat32 reads a single 32-bit floating point number from r.
+func readFloat32(r io.Reader) (float32, error) {
+	var buf [4]byte
+
+	if _, err := r.Read(buf[0:4]); err != nil {
+		return 0, err
+	}
+
+	u32 := binary.BigEndian.Uint32(buf[0:4])
+	return math.Float32frombits(u32), nil
 }
 
 // readFloat64 reads a single 64-bit floating point number from r.
@@ -164,37 +283,6 @@ func readInt32(r io.Reader) (int32, error) {
 	return int32(binary.BigEndian.Uint32(buf[0:4])), nil
 }
 
-// readMap reads a string-to-int32 map from r, formatted as a signed 32-bit
-// integer containing the number of entries followed by the list of entries.
-//
-// Each entry is formatted as a string (int32, content) followed by an int32
-// to hold the value.
-func readMap(r io.Reader) (map[string]int32, error) {
-	numEntries, err := readInt32(r)
-	if err != nil {
-		return nil, err
-	}
-	if numEntries == 0 {
-		return nil, nil
-	}
-
-	m := make(map[string]int32, numEntries)
-	for range numEntries {
-		key, err := readString(r)
-		if err != nil {
-			return nil, err
-		}
-
-		val, err := readInt32(r)
-		if err != nil {
-			return nil, err
-		}
-
-		m[key] = val
-	}
-	return m, nil
-}
-
 // readString reads a single string from r, formatted as a signed 32-bit integer
 // containing the string length followed by the contents of the string.
 func readString(r io.Reader) (string, error) {
@@ -209,4 +297,33 @@ func readString(r io.Reader) (string, error) {
 	}
 
 	return string(buf), nil
+}
+
+// readStringRef reads a single string reference from r, which consists of a
+// 32-bit signed integer index into the recording string dictionary.
+func readStringRef(r io.Reader, dict map[int32]string) (string, error) {
+	id, err := readInt32(r)
+	if err != nil {
+		return "", err
+	}
+
+	if id == 0 {
+		return "", nil
+	}
+
+	if id < 0 || int(id) > len(dict) {
+		return "", fmt.Errorf("invalid string ref %d", id)
+	}
+	return dict[id], nil
+}
+
+// readUint8 reads a single unsigned 8-bit integer from r.
+func readUint8(r io.Reader) (uint8, error) {
+	var buf [1]byte
+
+	if _, err := r.Read(buf[0:1]); err != nil {
+		return 0, err
+	}
+
+	return uint8(buf[0]), nil
 }

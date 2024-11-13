@@ -16,12 +16,28 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
+/**
+ * Contains information about a single visible block entity.
+ *
+ * @since format V1
+ */
 public class PastryCaptureBlockEntityEvent implements PastryCaptureEvent {
     private static final PastryCaptureEventType EVENT_TYPE = PastryCaptureEventType.BLOCKENTITY;
 
+    /**
+     * The world coordinates of the block entity.
+     */
     public Vec3i pos;
+
+    /**
+     * The ID of the block entity (namespace not included.)
+     */
     public String name;
 
+    /**
+     * Auxiliary data related to the block entity, such as the name of the mob
+     * being spawned by a mob spawner.
+     */
     @Nullable
     public String data;
 

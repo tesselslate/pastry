@@ -13,10 +13,20 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.profiler.ProfileResult;
 import net.minecraft.util.profiler.ProfilerTiming;
 
+/**
+ * Contains information about a single rendered frame during which the pie chart
+ * was visible and the game was unpaused.
+ *
+ * @since format V1
+ */
 public class PastryCaptureFrameEvent implements PastryCaptureEvent {
     private static final PastryCaptureEventType EVENT_TYPE = PastryCaptureEventType.FRAME;
     private static final String GAMERENDERER_DIRECTORY = "root.gameRenderer.level.entities".replace('.', '\u001e');
 
+    /**
+     * A unique number which identifies this frame. The frame counter is
+     * monotonically increasing and increments every time a frame is drawn.
+     */
     public int frameNumber;
     public Vec3d cameraPos;
     public float pitch, yaw;

@@ -9,6 +9,12 @@ import java.util.zip.GZIPOutputStream;
 
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Provides an abstraction over the string lookup table and allows for writing
+ * a series of capture events to an {@link OutputStream}.
+ *
+ * @see PastryCaptureDictionary
+ */
 public class PastryCaptureOutputStream extends DataOutputStream {
     private PastryCaptureHeader header;
 
@@ -40,6 +46,12 @@ public class PastryCaptureOutputStream extends DataOutputStream {
         super.close();
     }
 
+    /**
+     * Looks up or allocates a spot for {@code string} in the string lookup
+     * table and writes the ID to the output stream.
+     *
+     * @param string The string to reference
+     */
     public void writeString(@Nullable String string) throws IOException {
         super.writeInt(string != null ? this.header.dictionary.get(string) : 0);
     }

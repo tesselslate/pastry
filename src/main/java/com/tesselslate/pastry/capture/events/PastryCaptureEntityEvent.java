@@ -14,11 +14,22 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.math.Vec3d;
 
+/**
+ * Contains information about a single visible entity.
+ *
+ * @since format V1
+ */
 public class PastryCaptureEntityEvent implements PastryCaptureEvent {
     private static final PastryCaptureEventType EVENT_TYPE = PastryCaptureEventType.ENTITY;
 
+    /**
+     * The world coordinates of the entity.
+     */
     public Vec3d pos;
 
+    /**
+     * The ID of the entity (namespace not included.)
+     */
     @NotNull
     public String name;
 

@@ -38,9 +38,35 @@ public class Pastry implements ClientModInitializer {
     @Nullable
     public static CullingState CURRENT_CULLING_STATE;
 
+    @Nullable
+    public static CullingState CAPTURED_CULLING_STATE;
+
+    public static boolean DISPLAY_CULLING_STATE = false;
+
     @Override
     public void onInitializeClient() {
         // Do nothing.
+    }
+
+    public static void captureCullingState() {
+        CAPTURED_CULLING_STATE = CURRENT_CULLING_STATE;
+    }
+
+    public static void toggleCullingVisualizer() {
+        DISPLAY_CULLING_STATE = !DISPLAY_CULLING_STATE;
+    }
+
+    public static List<String> getDebugText() {
+        List<String> debugText = new ArrayList<>();
+
+        debugText.add("");
+        debugText.add("pastry " + VERSION.getFriendlyString());
+
+        if (ACTIVE_CAPTURE != null) {
+            debugText.add(ACTIVE_CAPTURE.size() + " events captured");
+        }
+
+        return debugText;
     }
 
     public static void endCapture() {
@@ -59,19 +85,6 @@ public class Pastry implements ClientModInitializer {
 
     public static @Nullable PastryCapture getActiveCapture() {
         return ACTIVE_CAPTURE;
-    }
-
-    public static List<String> getDebugText() {
-        List<String> debugText = new ArrayList<>();
-
-        debugText.add("");
-        debugText.add("pastry " + VERSION.getFriendlyString());
-
-        if (ACTIVE_CAPTURE != null) {
-            debugText.add(ACTIVE_CAPTURE.size() + " events captured");
-        }
-
-        return debugText;
     }
 
     public static void startCapture() {

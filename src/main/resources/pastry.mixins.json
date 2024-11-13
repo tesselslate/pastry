@@ -12,6 +12,8 @@
         "capture.MinecraftClientMixin",
         "capture.WorldRendererMixin",
         "capture.sodium.SodiumWorldRendererMixin",
+        "cullvis.DebugRendererMixin",
+        "cullvis.KeyboardMixin",
         "cullvis.sodium.ChunkGraphCullerMixin",
         "debug.DebugHudMixin"
     ]

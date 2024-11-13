@@ -38,6 +38,13 @@ public class KeyboardMixin {
 
                 info.setReturnValue(true);
                 return;
+            case GLFW.GLFW_KEY_R:
+                boolean captured = Pastry.toggleFrustumCapture();
+
+                sendChat(new LiteralText((captured ? "Captured" : "Cleared") + " camera frustum"));
+
+                info.setReturnValue(true);
+                return;
         }
     }
 
@@ -52,6 +59,7 @@ public class KeyboardMixin {
 
         chatHud.addMessage(new LiteralText("F3 + W = Capture visible chunks"));
         chatHud.addMessage(new LiteralText("F3 + E = Toggle subchunk info"));
+        chatHud.addMessage(new LiteralText("F3 + R = Toggle frustum capture"));
         return;
     }
 

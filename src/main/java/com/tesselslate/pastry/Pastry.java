@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.tesselslate.pastry.capture.PastryCapture;
 import com.tesselslate.pastry.cullvis.CullingState;
+import com.tesselslate.pastry.mixin.accessor.WorldRendererAccessor;
 
 public class Pastry implements ClientModInitializer {
     private static final DateFormat OUTPUT_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");
@@ -54,6 +55,19 @@ public class Pastry implements ClientModInitializer {
 
     public static void toggleCullingVisualizer() {
         DISPLAY_CULLING_STATE = !DISPLAY_CULLING_STATE;
+    }
+
+    public static boolean toggleFrustumCapture() {
+        @SuppressWarnings("resource")
+        WorldRendererAccessor renderer = (WorldRendererAccessor) MinecraftClient.getInstance().worldRenderer;
+
+        if (renderer.getCapturedFrustum() == null) {
+            renderer.setShouldCaptureFrustum(true);
+            return true;
+        } else {
+            renderer.setCapturedFrustum(null);
+            return false;
+        }
     }
 
     public static List<String> getDebugText() {

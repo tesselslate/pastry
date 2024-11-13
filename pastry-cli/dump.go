@@ -14,6 +14,8 @@ func Dump(record Record) error {
 			dumpFrameEvent(event)
 		case *WorldLoadEvent:
 			dumpWorldLoadEvent(event)
+		case *BlockOutlineEvent:
+			dumpBlockOutlineEvent(event)
 		default:
 			return fmt.Errorf("unknown event type %T", event)
 		}
@@ -28,6 +30,10 @@ func Dump(record Record) error {
 
 func dumpBlockEntityEvent(e *BlockEntityEvent) {
 	fmt.Printf("\t%53s (%5d %3d %5d) %s\n", e.Name, e.Pos[0], e.Pos[1], e.Pos[2], e.Data)
+}
+
+func dumpBlockOutlineEvent(e *BlockOutlineEvent) {
+	fmt.Printf("\t%53s (%d %d %d)\n", "Targeted Block", e.Pos[0], e.Pos[1], e.Pos[2])
 }
 
 func dumpEntityEvent(e *EntityEvent) {

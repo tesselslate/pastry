@@ -16,10 +16,11 @@ const (
 )
 
 const (
-	Frame       = 0
-	Entity      = 1
-	BlockEntity = 2
-	WorldLoad   = 3
+	Frame        = 0
+	Entity       = 1
+	BlockEntity  = 2
+	WorldLoad    = 3
+	BlockOutline = 4
 )
 
 const (
@@ -41,6 +42,12 @@ type Event interface{}
 type BlockEntityEvent struct {
 	Pos        [3]int32
 	Name, Data string
+}
+
+// BlockOutlineEvent contains the data for a single block outline event from a
+// Pastry recording.
+type BlockOutlineEvent struct {
+	Pos [3]int32
 }
 
 // EntityEvent contains the data for a single entity event from a Pastry
@@ -162,6 +169,25 @@ func readBlockEntityEvent(r io.Reader, dict map[int32]string) (Event, error) {
 	}, nil
 }
 
+// readBlockOutlineEvent reads a single block outline event from a Pastry
+// recording.
+func readBlockOutlineEvent(r io.Reader) (Event, error) {
+	packedPos, err := readInt64(r)
+	if err != nil {
+		return nil, err
+	}
+
+	// https://wiki.vg/Data_types#Position
+	var pos [3]int32
+	pos[0] = int32(packedPos >> 38)
+	pos[1] = int32(packedPos << 52 >> 52)
+	pos[2] = int32(packedPos << 26 >> 38)
+
+	return &BlockOutlineEvent{
+		Pos: pos,
+	}, nil
+}
+
 // readEntityEvent reads a single entity event from a Pastry recording.
 func readEntityEvent(r io.Reader, dict map[int32]string) (Event, error) {
 	var (
@@ -271,6 +297,8 @@ func readEvent(r io.Reader, dict map[int32]string) (Event, error) {
 		return readBlockEntityEvent(r, dict)
 	case WorldLoad:
 		return readWorldLoadEvent(r, dict)
+	case BlockOutline:
+		return readBlockOutlineEvent(r)
 	default:
 		return nil, fmt.Errorf("unknown event type %d", eventType)
 	}

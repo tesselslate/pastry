@@ -9,6 +9,7 @@ import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
 import com.tesselslate.pastry.capture.events.PastryCaptureBlockEntityEvent;
+import com.tesselslate.pastry.capture.events.PastryCaptureBlockOutlineEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureEntityEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureFrameEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureWorldLoadEvent;
@@ -67,6 +68,9 @@ public class PastryCaptureInputStream extends DataInputStream {
                     break;
                 case WORLD_LOAD:
                     events[i] = new PastryCaptureWorldLoadEvent(this);
+                    break;
+                case BLOCK_OUTLINE:
+                    events[i] = new PastryCaptureBlockOutlineEvent(this);
                     break;
             }
         }

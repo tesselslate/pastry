@@ -4,7 +4,8 @@ public enum PastryCaptureEventType {
     FRAME,
     ENTITY,
     BLOCKENTITY,
-    WORLD_LOAD;
+    WORLD_LOAD,
+    BLOCK_OUTLINE;
 
     private static PastryCaptureEventType[] cachedValues = PastryCaptureEventType.values();
 

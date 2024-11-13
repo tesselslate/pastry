@@ -7,10 +7,12 @@
     },
     "client": [
         "accessor.WorldRendererAccessor",
+        "accessor.sodium.ChunkGraphNodeAccessor",
         "capture.GameRendererMixin",
         "capture.MinecraftClientMixin",
         "capture.WorldRendererMixin",
         "capture.sodium.SodiumWorldRendererMixin",
+        "cullvis.sodium.ChunkGraphCullerMixin",
         "debug.DebugHudMixin"
     ]
 }

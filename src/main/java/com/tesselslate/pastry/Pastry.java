@@ -20,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 import com.tesselslate.pastry.capture.PastryCapture;
+import com.tesselslate.pastry.cullvis.CullingState;
 
 public class Pastry implements ClientModInitializer {
     private static final DateFormat OUTPUT_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");
@@ -33,6 +34,9 @@ public class Pastry implements ClientModInitializer {
 
     @Nullable
     private static PastryCapture ACTIVE_CAPTURE;
+
+    @Nullable
+    public static CullingState CURRENT_CULLING_STATE;
 
     @Override
     public void onInitializeClient() {

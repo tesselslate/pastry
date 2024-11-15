@@ -11,7 +11,7 @@ import com.tesselslate.pastry.capture.PastryCapture;
 import net.minecraft.client.render.GameRenderer;
 
 @Mixin(value = GameRenderer.class)
-public class GameRendererMixin {
+public abstract class GameRendererMixin {
     @Inject(at = @At("HEAD"), method = "render(FJZ)V")
     private void render_clearQueuedEventsAtFrameStart(float tickDelta, long startTime, boolean tick,
             CallbackInfo info) {

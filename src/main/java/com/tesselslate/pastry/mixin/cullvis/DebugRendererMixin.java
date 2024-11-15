@@ -14,7 +14,7 @@ import net.minecraft.client.render.debug.DebugRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 
 @Mixin(value = DebugRenderer.class)
-public class DebugRendererMixin {
+public abstract class DebugRendererMixin {
     @Inject(method = "render", at = @At("HEAD"))
     private void render_displayCullingVisualization(MatrixStack matrices,
             VertexConsumerProvider.Immediate vertexConsumers, double cameraX, double cameraY, double cameraZ,

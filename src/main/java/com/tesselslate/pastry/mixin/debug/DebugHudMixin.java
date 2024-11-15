@@ -11,7 +11,7 @@ import com.tesselslate.pastry.Pastry;
 import net.minecraft.client.gui.hud.DebugHud;
 
 @Mixin(value = DebugHud.class)
-public class DebugHudMixin {
+public abstract class DebugHudMixin {
     @ModifyReturnValue(method = "getRightText()Ljava/util/List;", at = @At("RETURN"))
     private List<String> getRightText_addPastryVersion(List<String> orig) {
         orig.addAll(Pastry.getDebugText());

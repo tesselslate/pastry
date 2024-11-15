@@ -17,7 +17,7 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 
 @Mixin(value = Keyboard.class)
-public class KeyboardMixin {
+public abstract class KeyboardMixin {
     @Inject(method = "processF3", cancellable = true, at = @At("HEAD"))
     private void processF3_addCullvisKeys(int key, CallbackInfoReturnable<Boolean> info) {
         switch (key) {

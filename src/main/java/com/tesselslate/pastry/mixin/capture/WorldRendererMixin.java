@@ -20,7 +20,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 
 @Mixin(value = WorldRenderer.class)
-public class WorldRendererMixin {
+public abstract class WorldRendererMixin {
     @Inject(at = @At("HEAD"), method = "renderEntity(Lnet/minecraft/entity/Entity;DDDFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;)V")
     private void renderEntity_recordEntity(Entity entity, double cameraX, double cameraY, double cameraZ,
             float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, CallbackInfo info) {

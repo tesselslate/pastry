@@ -22,7 +22,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3i;
 
 @Mixin(value = ChunkGraphCuller.class, remap = false)
-public class ChunkGraphCullerMixin {
+public abstract class ChunkGraphCullerMixin {
     @Inject(at = @At("HEAD"), method = "computeVisible(Lnet/minecraft/client/render/Camera;Lme/jellysquid/mods/sodium/client/util/math/FrustumExtended;IZ)Lit/unimi/dsi/fastutil/ints/IntArrayList;", remap = true)
     private void computeVisible_resetCullingState(Camera camera, FrustumExtended frustum, int frame,
             boolean spectator, CallbackInfoReturnable<IntArrayList> info) {

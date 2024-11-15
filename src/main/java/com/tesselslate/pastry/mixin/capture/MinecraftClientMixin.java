@@ -24,7 +24,7 @@ import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.util.profiler.ProfileResult;
 
 @Mixin(value = MinecraftClient.class)
-public class MinecraftClientMixin {
+public abstract class MinecraftClientMixin {
     @Inject(at = @At("HEAD"), method = "drawProfilerResults(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/util/profiler/ProfileResult;)V")
     private void drawProfilerResults_addFrameEvent(MatrixStack stack, ProfileResult profileResult, CallbackInfo info) {
         MinecraftClient client = MinecraftClient.getInstance();

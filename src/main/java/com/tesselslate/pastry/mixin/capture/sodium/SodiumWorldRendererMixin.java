@@ -24,7 +24,7 @@ import net.minecraft.client.render.Camera;
 import net.minecraft.client.util.math.MatrixStack;
 
 @Mixin(value = SodiumWorldRenderer.class, remap = false)
-public class SodiumWorldRendererMixin {
+public abstract class SodiumWorldRendererMixin {
     @Shadow
     private ChunkRenderManager<?> chunkRenderManager;
 

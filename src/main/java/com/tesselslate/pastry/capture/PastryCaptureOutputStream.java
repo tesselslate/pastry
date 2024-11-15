@@ -9,6 +9,8 @@ import java.util.zip.GZIPOutputStream;
 
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.util.math.BlockBox;
+
 /**
  * Provides an abstraction over the string lookup table and allows for writing
  * a series of capture events to an {@link OutputStream}.
@@ -44,6 +46,20 @@ public class PastryCaptureOutputStream extends DataOutputStream {
 
         parentDataOutput.close();
         super.close();
+    }
+
+    /**
+     * Writes the values of the {@code blockBox} to the output stream.
+     *
+     * @param blockBox The block box to write
+     */
+    public void writeBlockBox(BlockBox blockBox) throws IOException {
+        super.writeInt(blockBox.minX);
+        super.writeInt(blockBox.minY);
+        super.writeInt(blockBox.minZ);
+        super.writeInt(blockBox.maxX);
+        super.writeInt(blockBox.maxY);
+        super.writeInt(blockBox.maxZ);
     }
 
     /**

@@ -40,7 +40,7 @@ public class PastryCaptureDictionary {
      * Attempts to lookup a string with the given ID. If the ID is 0,
      * {@code null} will be returned.
      *
-     * @param id The ID to l
+     * @param id The ID to lookup
      * @return The string associated with {@code id}, or {@code null} if {@code id}
      *         is 0
      * @throws IndexOutOfBoundsException If {@code id} is invalid

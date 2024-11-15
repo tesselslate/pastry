@@ -21,11 +21,25 @@ func Dump(record Record) error {
 		}
 	}
 
+	for _, structure := range record.Structures {
+		dumpStructure(structure)
+	}
+
 	fmt.Printf("Record version: %d\n", record.Version)
 	fmt.Printf("Dictionary len: %d\n", len(record.Dict))
 	fmt.Printf("Event count:    %d\n", len(record.Events))
 
 	return nil
+}
+
+func dumpStructure(s Structure) {
+	fmt.Printf(
+		"Structure %s: (%d, %d, %d)-(%d, %d, %d)\n\t%d pieces\n",
+		s.Name,
+		s.Box.Min[0], s.Box.Min[1], s.Box.Min[2],
+		s.Box.Max[0], s.Box.Max[1], s.Box.Max[2],
+		len(s.Pieces),
+	)
 }
 
 func dumpBlockEntityEvent(e *BlockEntityEvent) {

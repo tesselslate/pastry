@@ -30,8 +30,31 @@ const (
 // Record contains the data from a parsed Pastry recording.
 type Record struct {
 	Version int32
-	Events  []Event
 	Dict    map[int32]string
+
+	Structures []Structure
+	Events     []Event
+}
+
+// Structure contains information about a single in-world structure and its
+// constituent pieces.
+type Structure struct {
+	Box    Box
+	Name   string
+	Pieces []StructurePiece
+}
+
+// StructurePiece contains information about a single in-world structure piece.
+type StructurePiece struct {
+	Box      Box
+	Type     string
+	Rotation int32
+}
+
+// Box contains a bounding box whose vertices are all block-aligned.
+type Box struct {
+	Min [3]int32
+	Max [3]int32
 }
 
 // Event represents a single event from a Pastry recording.
@@ -104,6 +127,12 @@ func NewRecord(r io.Reader) (Record, error) {
 		return Record{}, fmt.Errorf("read dict: %w", err)
 	}
 
+	structures, err := readStructures(byteReader, record.Dict)
+	if err != nil {
+		return Record{}, fmt.Errorf("read structures: %w", err)
+	}
+	record.Structures = structures
+
 	for i := range numEvents {
 		event, err := readEvent(byteReader, record.Dict)
 		if err != nil {
@@ -114,6 +143,26 @@ func NewRecord(r io.Reader) (Record, error) {
 	}
 
 	return record, nil
+}
+
+// readBox reads a bounding box from a Pastry recording.
+func readBox(r io.Reader) (Box, error) {
+	var (
+		coords [6]int32
+		err    error
+	)
+
+	for i := range coords {
+		coords[i], err = readInt32(r)
+		if err != nil {
+			return Box{}, err
+		}
+	}
+
+	return Box{
+		Min: *(*[3]int32)(coords[0:3]),
+		Max: *(*[3]int32)(coords[3:6]),
+	}, nil
 }
 
 // readDict reads the string dictionary present at the start of a Pastry
@@ -135,6 +184,87 @@ func readDict(r io.Reader) (map[int32]string, error) {
 	}
 
 	return m, nil
+}
+
+// readStructure reads a single structure present at the start of a Pastry
+// recording.
+func readStructure(r io.Reader, dict map[int32]string) (Structure, error) {
+	box, err := readBox(r)
+	if err != nil {
+		return Structure{}, err
+	}
+
+	name, err := readStringRef(r, dict)
+	if err != nil {
+		return Structure{}, err
+	}
+
+	numPieces, err := readInt32(r)
+	if err != nil {
+		return Structure{}, err
+	}
+
+	pieces := make([]StructurePiece, 0, numPieces)
+	for range numPieces {
+		piece, err := readStructurePiece(r, dict)
+		if err != nil {
+			return Structure{}, err
+		}
+
+		pieces = append(pieces, piece)
+	}
+
+	return Structure{
+		Box:    box,
+		Name:   name,
+		Pieces: pieces,
+	}, nil
+}
+
+// readStructurePiece reads a single structure piece present at the start of a
+// Pastry recording.
+func readStructurePiece(r io.Reader, dict map[int32]string) (StructurePiece, error) {
+	typ, err := readStringRef(r, dict)
+	if err != nil {
+		return StructurePiece{}, err
+	}
+
+	box, err := readBox(r)
+	if err != nil {
+		return StructurePiece{}, err
+	}
+
+	rotation, err := readInt32(r)
+	if err != nil {
+		return StructurePiece{}, err
+	}
+
+	return StructurePiece{
+		Box:      box,
+		Type:     typ,
+		Rotation: rotation,
+	}, nil
+}
+
+// readStructures reads the structure list present at the start of a Pastry
+// recording.
+func readStructures(r io.Reader, dict map[int32]string) ([]Structure, error) {
+	numStructures, err := readInt32(r)
+	if err != nil {
+		return nil, err
+	}
+
+	structures := make([]Structure, 0, numStructures)
+	for range numStructures {
+		structure, err := readStructure(r, dict)
+		if err != nil {
+			return nil, err
+		}
+
+		structures = append(structures, structure)
+	}
+
+	return structures, nil
 }
 
 // readBlockEntityEvent reads a single block entity event from a Pastry

@@ -10,7 +10,7 @@ import java.util.List;
  * recording.
  */
 public class PastryCaptureHeader {
-    private static final int CURRENT_VERSION = 3;
+    private static final int CURRENT_VERSION = 4;
 
     public final int version;
     public final int numEvents;

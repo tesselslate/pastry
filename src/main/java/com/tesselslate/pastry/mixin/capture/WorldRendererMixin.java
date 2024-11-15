@@ -6,8 +6,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
-import com.tesselslate.pastry.Pastry;
-import com.tesselslate.pastry.capture.PastryCapture;
+import com.tesselslate.pastry.capture.PastryCaptureManager;
 import com.tesselslate.pastry.capture.events.PastryCaptureBlockOutlineEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureEntityEvent;
 
@@ -24,10 +23,7 @@ public abstract class WorldRendererMixin {
     @Inject(at = @At("HEAD"), method = "renderEntity(Lnet/minecraft/entity/Entity;DDDFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;)V")
     private void renderEntity_recordEntity(Entity entity, double cameraX, double cameraY, double cameraZ,
             float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, CallbackInfo info) {
-        PastryCapture capture = Pastry.getActiveCapture();
-        if (capture != null) {
-            capture.queue(new PastryCaptureEntityEvent(entity));
-        }
+        PastryCaptureManager.update(capture -> capture.queue(new PastryCaptureEntityEvent(entity)));
     }
 
     @WrapMethod(method = "drawBlockOutline(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;Lnet/minecraft/entity/Entity;DDDLnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)V")
@@ -37,9 +33,6 @@ public abstract class WorldRendererMixin {
             com.llamalad7.mixinextras.injector.wrapoperation.Operation<Void> orig) {
         orig.call(matrixStack, vertexConsumer, entity, x, y, z, blockPos, blockState);
 
-        PastryCapture capture = Pastry.getActiveCapture();
-        if (capture != null) {
-            capture.queue(new PastryCaptureBlockOutlineEvent(blockPos));
-        }
+        PastryCaptureManager.update(capture -> capture.queue(new PastryCaptureBlockOutlineEvent(blockPos)));
     }
 }

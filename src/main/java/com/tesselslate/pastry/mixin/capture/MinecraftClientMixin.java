@@ -7,8 +7,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.tesselslate.pastry.Pastry;
-import com.tesselslate.pastry.capture.PastryCapture;
+import com.tesselslate.pastry.capture.PastryCaptureManager;
 import com.tesselslate.pastry.capture.events.PastryCaptureFrameEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureWorldLoadEvent;
 import com.tesselslate.pastry.mixin.accessor.WorldRendererAccessor;
@@ -32,11 +31,6 @@ public abstract class MinecraftClientMixin {
             return;
         }
 
-        PastryCapture capture = Pastry.getActiveCapture();
-        if (capture == null) {
-            return;
-        }
-
         WorldRenderer worldRenderer = client.worldRenderer;
         if (worldRenderer == null) {
             return;
@@ -44,29 +38,33 @@ public abstract class MinecraftClientMixin {
 
         Camera camera = Objects.requireNonNull(client.gameRenderer).getCamera();
 
-        // Add all queued events (entities, blockentities) from this frame to the
-        // capture.
-        capture.addQueued();
+        PastryCaptureManager.update(capture -> {
+            // Add all queued events (entities, blockentities) from this frame to the
+            // capture.
+            capture.addQueued();
 
-        PastryCaptureFrameEvent event = new PastryCaptureFrameEvent(((WorldRendererAccessor) worldRenderer).getFrame(),
-                camera.getPos(), camera.getPitch(), camera.getYaw(), profileResult);
-        capture.add(event);
+            PastryCaptureFrameEvent event = new PastryCaptureFrameEvent(
+                    ((WorldRendererAccessor) worldRenderer).getFrame(), camera.getPos(), camera.getPitch(),
+                    camera.getYaw(), profileResult);
+            capture.add(event);
+        });
     }
 
     @Inject(at = @At("HEAD"), method = "joinWorld(Lnet/minecraft/client/world/ClientWorld;)V")
     private void joinWorld_startCapture(ClientWorld world, CallbackInfo info) {
-        Pastry.startCapture();
+        PastryCaptureManager.startCapture();
 
         IntegratedServer server = MinecraftClient.getInstance().getServer();
         if (server != null) {
-            Pastry.getActiveCapture().add(new PastryCaptureWorldLoadEvent(server.getSaveProperties()));
+            PastryCaptureManager
+                    .update(capture -> capture.add(new PastryCaptureWorldLoadEvent(server.getSaveProperties())));
         }
     }
 
     @Inject(at = @At("HEAD"), method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V")
     private void disconnect_stopCapture(Screen screen, CallbackInfo info) {
         if (!(screen instanceof ProgressScreen)) {
-            Pastry.endCapture();
+            PastryCaptureManager.stopCapture();
         }
     }
 }

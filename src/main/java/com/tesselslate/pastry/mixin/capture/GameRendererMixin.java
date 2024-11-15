@@ -5,8 +5,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.tesselslate.pastry.Pastry;
-import com.tesselslate.pastry.capture.PastryCapture;
+import com.tesselslate.pastry.capture.PastryCaptureManager;
 
 import net.minecraft.client.render.GameRenderer;
 
@@ -15,10 +14,6 @@ public abstract class GameRendererMixin {
     @Inject(at = @At("HEAD"), method = "render(FJZ)V")
     private void render_clearQueuedEventsAtFrameStart(float tickDelta, long startTime, boolean tick,
             CallbackInfo info) {
-        PastryCapture capture = Pastry.getActiveCapture();
-
-        if (capture != null) {
-            capture.clearQueue();
-        }
+        PastryCaptureManager.update(capture -> capture.clearQueue());
     }
 }

@@ -4,8 +4,7 @@ import org.spongepowered.asm.mixin.Mixin;
 
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.tesselslate.pastry.Pastry;
-import com.tesselslate.pastry.capture.PastryCapture;
+import com.tesselslate.pastry.capture.PastryCaptureManager;
 import com.tesselslate.pastry.capture.structure.PastryCaptureStructure;
 import com.tesselslate.pastry.capture.structure.PastryStructureCache;
 import com.tesselslate.pastry.interfaces.PastryServerWorld;
@@ -33,16 +32,12 @@ public abstract class ServerPlayNetworkHandlerMixin {
             return;
         }
 
-        PastryCapture capture = Pastry.getActiveCapture();
-        if (capture == null) {
+        PastryStructureCache structureCache = ((PastryServerWorld) world).pastry$getStructureCache();
+        PastryCaptureStructure stronghold = structureCache.findStronghold(player);
+        if (stronghold == null) {
             return;
         }
 
-        PastryStructureCache structureCache = ((PastryServerWorld) world).pastry$getStructureCache();
-
-        PastryCaptureStructure stronghold = structureCache.findStronghold(player);
-        if (stronghold != null) {
-            capture.addStructure(stronghold);
-        }
+        PastryCaptureManager.update(capture -> capture.addStructure(stronghold));
     }
 }

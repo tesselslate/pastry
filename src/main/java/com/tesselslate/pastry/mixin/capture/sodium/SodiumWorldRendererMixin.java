@@ -10,8 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.tesselslate.pastry.Pastry;
-import com.tesselslate.pastry.capture.PastryCapture;
+import com.tesselslate.pastry.capture.PastryCaptureManager;
 import com.tesselslate.pastry.capture.events.PastryCaptureBlockEntityEvent;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
@@ -36,16 +35,13 @@ public abstract class SodiumWorldRendererMixin {
     private void renderTileEntities_recordBlockEntities(MatrixStack matrices, BufferBuilderStorage bufferBuilders,
             Long2ObjectMap<SortedSet<BlockBreakingInfo>> blockBreakingProgressions, Camera camera, float tickDelta,
             CallbackInfo info) {
-        PastryCapture capture = Pastry.getActiveCapture();
-        if (capture == null) {
-            return;
-        }
-
-        for (BlockEntity blockEntity : this.chunkRenderManager.getVisibleBlockEntities()) {
-            capture.queue(new PastryCaptureBlockEntityEvent(blockEntity));
-        }
-        for (BlockEntity blockEntity : this.globalBlockEntities) {
-            capture.queue(new PastryCaptureBlockEntityEvent(blockEntity));
-        }
+        PastryCaptureManager.update(capture -> {
+            for (BlockEntity blockEntity : this.chunkRenderManager.getVisibleBlockEntities()) {
+                capture.queue(new PastryCaptureBlockEntityEvent(blockEntity));
+            }
+            for (BlockEntity blockEntity : this.globalBlockEntities) {
+                capture.queue(new PastryCaptureBlockEntityEvent(blockEntity));
+            }
+        });
     }
 }

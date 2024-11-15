@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.tesselslate.pastry.Pastry;
-import com.tesselslate.pastry.cullvis.CullingState;
+import com.tesselslate.pastry.cullvis.CullState;
 import com.tesselslate.pastry.mixin.accessor.sodium.ChunkGraphNodeAccessor;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
@@ -26,7 +26,7 @@ public abstract class ChunkGraphCullerMixin {
     @Inject(at = @At("HEAD"), method = "computeVisible(Lnet/minecraft/client/render/Camera;Lme/jellysquid/mods/sodium/client/util/math/FrustumExtended;IZ)Lit/unimi/dsi/fastutil/ints/IntArrayList;", remap = true)
     private void computeVisible_resetCullingState(Camera camera, FrustumExtended frustum, int frame,
             boolean spectator, CallbackInfoReturnable<IntArrayList> info) {
-        Pastry.CURRENT_CULLING_STATE = new CullingState();
+        Pastry.CURRENT_CULLING_STATE = new CullState();
     }
 
     @WrapOperation(at = @At(value = "INVOKE", target = "Lme/jellysquid/mods/sodium/client/render/chunk/cull/graph/ChunkGraphIterationQueue;getNode(I)Lme/jellysquid/mods/sodium/client/render/chunk/cull/graph/ChunkGraphNode;", remap = false), method = "computeVisible(Lnet/minecraft/client/render/Camera;Lme/jellysquid/mods/sodium/client/util/math/FrustumExtended;IZ)Lit/unimi/dsi/fastutil/ints/IntArrayList;", remap = true)
@@ -34,7 +34,7 @@ public abstract class ChunkGraphCullerMixin {
             Operation<ChunkGraphNode> orig) {
         ChunkGraphNode node = orig.call(queue, index);
 
-        CullingState.Subchunk subchunk = Pastry.CURRENT_CULLING_STATE
+        CullState.Subchunk subchunk = Pastry.CURRENT_CULLING_STATE
                 .get(new Vec3i(node.getChunkX(), node.getChunkY(), node.getChunkZ()));
 
         subchunk.cullingState = node.getCullingState();
@@ -62,7 +62,7 @@ public abstract class ChunkGraphCullerMixin {
 
     @Inject(at = @At("TAIL"), method = "bfsEnqueue(Lme/jellysquid/mods/sodium/client/render/chunk/cull/graph/ChunkGraphNode;Lme/jellysquid/mods/sodium/client/render/chunk/cull/graph/ChunkGraphNode;Lnet/minecraft/util/math/Direction;)V", remap = true)
     private void bfsEnqueue_markFlow(ChunkGraphNode parent, ChunkGraphNode node, Direction flow, CallbackInfo info) {
-        CullingState.Subchunk subchunk = Pastry.CURRENT_CULLING_STATE
+        CullState.Subchunk subchunk = Pastry.CURRENT_CULLING_STATE
                 .get(new Vec3i(node.getChunkX(), node.getChunkY(), node.getChunkZ()));
 
         subchunk.flowDirections[flow.getId()] = true;

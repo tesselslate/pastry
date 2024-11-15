@@ -15,7 +15,7 @@ import net.minecraft.util.math.Vec3i;
  *
  * @see ChunkGraphCuller
  */
-public class CullingState {
+public class CullState {
     /**
      * Contains information about the culling state of a single subchunk.
      *
@@ -49,7 +49,7 @@ public class CullingState {
      */
     public Set<Vec3i> visible;
 
-    public CullingState() {
+    public CullState() {
         this.data = new HashMap<>();
         this.visible = new HashSet<>();
     }

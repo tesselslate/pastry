@@ -22,7 +22,7 @@ public class CullStateDebugRenderer implements DebugRenderer.Renderer {
 
     private BufferBuilder bufferBuilder;
 
-    private CullingState state;
+    private CullState state;
 
     private Vec3d cameraPos;
 
@@ -38,7 +38,7 @@ public class CullStateDebugRenderer implements DebugRenderer.Renderer {
         this.drawText();
     }
 
-    public void setState(CullingState state) {
+    public void setState(CullState state) {
         this.state = state;
     }
 

@@ -20,7 +20,7 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 import com.tesselslate.pastry.capture.PastryCapture;
-import com.tesselslate.pastry.cullvis.CullingState;
+import com.tesselslate.pastry.cullvis.CullState;
 import com.tesselslate.pastry.mixin.accessor.WorldRendererAccessor;
 
 public class Pastry implements ClientModInitializer {
@@ -37,10 +37,10 @@ public class Pastry implements ClientModInitializer {
     private static PastryCapture ACTIVE_CAPTURE;
 
     @Nullable
-    public static CullingState CURRENT_CULLING_STATE;
+    public static CullState CURRENT_CULLING_STATE;
 
     @Nullable
-    public static CullingState CAPTURED_CULLING_STATE;
+    public static CullState CAPTURED_CULLING_STATE;
 
     public static boolean DISPLAY_CULLING_STATE = false;
 

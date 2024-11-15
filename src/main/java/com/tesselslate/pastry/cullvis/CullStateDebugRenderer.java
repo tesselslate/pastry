@@ -119,6 +119,7 @@ public class CullStateDebugRenderer implements DebugRenderer.Renderer {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private void drawLines() {
         RenderSystem.enableDepthTest();
         RenderSystem.shadeModel(GL11.GL_SMOOTH);

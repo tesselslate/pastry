@@ -10,6 +10,7 @@
         "accessor.sodium.ChunkGraphNodeAccessor",
         "capture.GameRendererMixin",
         "capture.MinecraftClientMixin",
+        "capture.ServerPlayNetworkHandlerMixin",
         "capture.ServerWorldMixin",
         "capture.WorldRendererMixin",
         "capture.sodium.SodiumWorldRendererMixin",

@@ -7,8 +7,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.tesselslate.pastry.capture.PastryCaptureEvent;
 import com.tesselslate.pastry.capture.PastryCaptureManager;
 import com.tesselslate.pastry.capture.events.PastryCaptureFrameEvent;
+import com.tesselslate.pastry.capture.events.PastryCaptureOptionsEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureWorldLoadEvent;
 import com.tesselslate.pastry.mixin.accessor.WorldRendererAccessor;
 
@@ -43,9 +45,12 @@ public abstract class MinecraftClientMixin {
             // capture.
             capture.addQueued();
 
-            PastryCaptureFrameEvent event = new PastryCaptureFrameEvent(
+            PastryCaptureEvent event = new PastryCaptureFrameEvent(
                     ((WorldRendererAccessor) worldRenderer).getFrame(), camera.getPos(), camera.getPitch(),
                     camera.getYaw(), profileResult);
+            capture.add(event);
+
+            event = new PastryCaptureOptionsEvent(client);
             capture.add(event);
         });
     }

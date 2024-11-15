@@ -14,6 +14,7 @@ import com.tesselslate.pastry.capture.events.PastryCaptureBlockEntityEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureBlockOutlineEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureEntityEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureFrameEvent;
+import com.tesselslate.pastry.capture.events.PastryCaptureOptionsEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureWorldLoadEvent;
 import com.tesselslate.pastry.capture.structure.PastryCaptureStructure;
 
@@ -92,6 +93,9 @@ public class PastryCaptureInputStream extends DataInputStream {
                     break;
                 case BLOCK_OUTLINE:
                     events[i] = new PastryCaptureBlockOutlineEvent(this);
+                    break;
+                case OPTIONS:
+                    events[i] = new PastryCaptureOptionsEvent(this);
                     break;
             }
         }

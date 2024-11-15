@@ -16,6 +16,8 @@ func Dump(record Record) error {
 			dumpWorldLoadEvent(event)
 		case *BlockOutlineEvent:
 			dumpBlockOutlineEvent(event)
+		case *OptionsEvent:
+			dumpOptionsEvent(event)
 		default:
 			return fmt.Errorf("unknown event type %T", event)
 		}
@@ -70,6 +72,16 @@ func dumpFrameEvent(e *FrameEvent) {
 	fmt.Printf("\t%53s: %.2f %.2f %.2f (%.2f %.2f)\n", "Camera", e.Pos[0], e.Pos[1], e.Pos[2], e.Pitch, e.Yaw)
 
 	fmt.Printf("-------------------------------- end of frame %d\n", e.Num)
+}
+
+func dumpOptionsEvent(e *OptionsEvent) {
+	fmt.Printf("\t%53s: %d chunks\n", "Render Distance", e.RenderDistance)
+	fmt.Printf("\t%53s: %d%%\n", "Entity Distance", e.EntityDistance)
+	fmt.Printf("\t%53s: %d\n", "FOV", e.Fov)
+	fmt.Printf("\t%53s: %d x %d\n", "Window Size", e.Width, e.Height)
+	fmt.Printf("\t%53s: %t\n", "Hitboxes", e.Hitboxes)
+	fmt.Printf("\t%53s: %t\n", "Chunk Borders", e.ChunkBorders)
+	fmt.Printf("\t%53s: %t\n", "Cull State Renderer", e.CullState)
 }
 
 func dumpWorldLoadEvent(e *WorldLoadEvent) {

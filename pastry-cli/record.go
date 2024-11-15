@@ -21,6 +21,7 @@ const (
 	BlockEntity  = 2
 	WorldLoad    = 3
 	BlockOutline = 4
+	Options      = 5
 )
 
 const (
@@ -86,6 +87,20 @@ type FrameEvent struct {
 	Pos         [3]float64 // Camera position
 	Pitch, Yaw  float32    // Camera rotation
 	Percentages [3]float32 // Parent gameRenderer percentages
+}
+
+// OptionsEvent contains various rendering settings for a single frame of a
+// Pastry recording.
+type OptionsEvent struct {
+	RenderDistance int
+	EntityDistance int
+	Fov            int
+
+	Width, Height int32
+
+	Hitboxes     bool
+	ChunkBorders bool
+	CullState    bool
 }
 
 // WorldLoadEvent contains metadata about the world which this recording was
@@ -393,6 +408,49 @@ func readFrameEvent(r io.Reader) (Event, error) {
 	}, nil
 }
 
+// readOptionsEvent reads an options event from a Pastry recording.
+func readOptionsEvent(r io.Reader) (Event, error) {
+	const (
+		maskHitboxes     = 0x01000000
+		maskChunkBorders = 0x02000000
+		maskCullState    = 0x04000000
+	)
+
+	packed, err := readInt32(r)
+	if err != nil {
+		return nil, err
+	}
+
+	renderDistance := int(packed & 0xFF)
+	entityDistance := int((packed&0xFF00)>>8) * 10
+	fov := int((packed & 0xFF0000) >> 16)
+
+	hitboxes := (packed & maskHitboxes) != 0
+	chunkBorders := (packed & maskChunkBorders) != 0
+	cullState := (packed & maskCullState) != 0
+
+	width, err := readInt32(r)
+	if err != nil {
+		return nil, err
+	}
+
+	height, err := readInt32(r)
+	if err != nil {
+		return nil, err
+	}
+
+	return &OptionsEvent{
+		RenderDistance: renderDistance,
+		EntityDistance: entityDistance,
+		Fov:            fov,
+		Width:          width,
+		Height:         height,
+		Hitboxes:       hitboxes,
+		ChunkBorders:   chunkBorders,
+		CullState:      cullState,
+	}, nil
+}
+
 // readWorldLoadEvent reads a world load event from a Pastry recording.
 func readWorldLoadEvent(r io.Reader, dict map[int32]string) (Event, error) {
 	name, err := readStringRef(r, dict)
@@ -429,6 +487,8 @@ func readEvent(r io.Reader, dict map[int32]string) (Event, error) {
 		return readWorldLoadEvent(r, dict)
 	case BlockOutline:
 		return readBlockOutlineEvent(r)
+	case Options:
+		return readOptionsEvent(r)
 	default:
 		return nil, fmt.Errorf("unknown event type %d", eventType)
 	}

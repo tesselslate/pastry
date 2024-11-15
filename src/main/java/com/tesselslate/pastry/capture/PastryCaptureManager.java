@@ -21,7 +21,7 @@ import net.minecraft.client.MinecraftClient;
 public class PastryCaptureManager {
     private static final DateFormat OUTPUT_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");
 
-    private static Object LOCK = new Object();
+    private static final Object LOCK = new Object();
 
     private static @Nullable PastryCapture ACTIVE_CAPTURE;
 

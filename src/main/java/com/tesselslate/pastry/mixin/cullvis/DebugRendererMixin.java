@@ -5,8 +5,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.tesselslate.pastry.Pastry;
-import com.tesselslate.pastry.cullvis.CullingVisualizer;
+import com.tesselslate.pastry.cullvis.CullStateDebugRenderer;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -15,18 +17,22 @@ import net.minecraft.client.util.math.MatrixStack;
 
 @Mixin(value = DebugRenderer.class)
 public abstract class DebugRendererMixin {
-    @Inject(method = "render", at = @At("HEAD"))
-    private void render_displayCullingVisualization(MatrixStack matrices,
+    private CullStateDebugRenderer cullStateDebugRenderer;
+
+    @Inject(at = @At("TAIL"), method = "<init>(Lnet/minecraft/client/MinecraftClient;)V")
+    private void init_createCullStateDebugRenderer(MinecraftClient client, CallbackInfo info) {
+        this.cullStateDebugRenderer = new CullStateDebugRenderer();
+    }
+
+    @WrapMethod(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider$Immediate;DDD)V")
+    private void render_showCullStateDebugRenderer(MatrixStack matrices,
             VertexConsumerProvider.Immediate vertexConsumers, double cameraX, double cameraY, double cameraZ,
-            CallbackInfo info) {
-        if (!Pastry.DISPLAY_CULLING_STATE || Pastry.CAPTURED_CULLING_STATE == null) {
-            return;
+            Operation<Void> orig) {
+        orig.call(matrices, vertexConsumers, cameraX, cameraY, cameraZ);
+
+        if (Pastry.DISPLAY_CULLING_STATE && Pastry.CAPTURED_CULLING_STATE != null) {
+            this.cullStateDebugRenderer.setState(Pastry.CAPTURED_CULLING_STATE);
+            this.cullStateDebugRenderer.render(matrices, vertexConsumers, cameraX, cameraY, cameraZ);
         }
-
-        @SuppressWarnings("resource")
-        CullingVisualizer visualizer = new CullingVisualizer(Pastry.CAPTURED_CULLING_STATE,
-                MinecraftClient.getInstance().gameRenderer.getCamera());
-
-        visualizer.render();
     }
 }

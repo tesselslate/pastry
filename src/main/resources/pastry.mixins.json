@@ -19,6 +19,7 @@
         "cullvis.KeyboardMixin",
         "cullvis.WorldRendererMixin",
         "cullvis.sodium.ChunkGraphCullerMixin",
-        "debug.DebugHudMixin"
+        "debug.DebugHudMixin",
+        "gui.TitleScreenMixin"
     ]
 }

@@ -4,8 +4,7 @@ pastry is a Minecraft mod for gathering data on and analyzing "preemptive
 spikes" to make more informed decisions on how to perform [Preemptive Navigation][preemptive-nav].
 
 > [!CAUTION]
-> pastry **is not** and **will not** be verifiable for the [speedrun leaderboard][srcom]
-> and will additionally not be allowed for use in [MCSR Ranked][mcsr-ranked].
+> pastry **is not** and **will not** be verifiable for the [speedrun leaderboard][srcom].
 
 > [!IMPORTANT]
 > pastry is still in development and lacks important features like capture
@@ -27,7 +26,6 @@ later version.
 
 [preemptive-nav]: https://www.youtube.com/watch?v=2dWq2wXy43M
 [srcom]: https://www.speedrun.com/mc
-[mcsr-ranked]: https://mcsrranked.com
 
 [mod-mcsr-sodium]: https://github.com/minecraft-java-edition-speedrunning/sodium/tree/1.16.1
 [mod-seedqueue]: https://github.com/kingcontaria/seedqueue

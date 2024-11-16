@@ -17,6 +17,7 @@
         "capture.sodium.SodiumWorldRendererMixin",
         "cullvis.DebugRendererMixin",
         "cullvis.KeyboardMixin",
+        "cullvis.WorldRendererMixin",
         "cullvis.sodium.ChunkGraphCullerMixin",
         "debug.DebugHudMixin"
     ]

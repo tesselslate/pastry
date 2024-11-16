@@ -27,7 +27,8 @@ public class PastryCapture {
         this.queuedEvents = new ArrayList<>();
     }
 
-    public PastryCapture(GZIPInputStream input) throws IndexOutOfBoundsException, IOException {
+    public PastryCapture(GZIPInputStream input)
+            throws IndexOutOfBoundsException, IOException, PastryCaptureVersionException {
         PastryCaptureInputStream pastryInput = new PastryCaptureInputStream(input);
 
         this.structures = pastryInput.readAllStructures();

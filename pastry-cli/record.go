@@ -27,6 +27,8 @@ const (
 	Sysinfo      = 7
 )
 
+const currentVersion = 8
+
 // Record contains the data from a parsed Pastry recording.
 type Record struct {
 	Version     int32
@@ -153,6 +155,9 @@ func NewRecord(r io.Reader) (Record, error) {
 	record.Version, err = readInt32(byteReader)
 	if err != nil {
 		return Record{}, fmt.Errorf("read version: %w", err)
+	}
+	if record.Version != currentVersion {
+		return Record{}, fmt.Errorf("cannot process version %d", record.Version)
 	}
 	numEvents, err = readInt32(byteReader)
 	if err != nil {

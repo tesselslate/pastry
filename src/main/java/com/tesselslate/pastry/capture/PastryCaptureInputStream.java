@@ -31,7 +31,7 @@ import net.minecraft.util.math.BlockBox;
 public class PastryCaptureInputStream extends DataInputStream {
     private PastryCaptureHeader header;
 
-    public PastryCaptureInputStream(InputStream input) throws IOException {
+    public PastryCaptureInputStream(InputStream input) throws IOException, PastryCaptureVersionException {
         super(input);
 
         this.header = new PastryCaptureHeader(new DataInputStream(input));

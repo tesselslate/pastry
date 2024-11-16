@@ -25,14 +25,17 @@ public class PastryCaptureHeader {
 
     public PastryCaptureHeader(List<PastryCaptureEvent> events) {
         this.version = CURRENT_VERSION;
+
         this.numEvents = events.size();
         this.recordedAt = new Date();
 
         this.dictionary = new PastryCaptureDictionary();
     }
 
-    public PastryCaptureHeader(DataInputStream input) throws IOException {
+    public PastryCaptureHeader(DataInputStream input) throws IOException, PastryCaptureVersionException {
         this.version = input.readInt();
+        checkCaptureVersion(this.version);
+
         this.numEvents = input.readInt();
         this.recordedAt = new Date(input.readLong());
 
@@ -50,5 +53,22 @@ public class PastryCaptureHeader {
         output.writeLong(this.recordedAt.getTime());
 
         this.dictionary.write(output);
+    }
+
+    /**
+     * Checks if {@code version} is a capture version which can be correctly read
+     * and parsed.
+     *
+     * @throws PastryCaptureVersionException If {@code version} cannot be handled
+     */
+    private static void checkCaptureVersion(int version) throws PastryCaptureVersionException {
+        if (version < 8) {
+            // Version 8 added a new field (recordedAt) to the capture header.
+            throw new PastryCaptureVersionException(version, "Cannot process captures below version 8");
+        }
+        if (version > CURRENT_VERSION) {
+            throw new PastryCaptureVersionException(version,
+                    "Cannot process captures newer than version " + CURRENT_VERSION);
+        }
     }
 };

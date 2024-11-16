@@ -26,10 +26,6 @@ const (
 	Sysinfo      = 7
 )
 
-const (
-	SilverfishSpawner = "mob_spawner(entity.minecraft.silverfish)"
-)
-
 // Record contains the data from a parsed Pastry recording.
 type Record struct {
 	Version int32
@@ -170,14 +166,11 @@ func NewRecord(r io.Reader) (Record, error) {
 	}
 	record.Structures = structures
 
-	for i := range numEvents {
-		event, err := readEvent(byteReader, record.Dict)
-		if err != nil {
-			return Record{}, fmt.Errorf("read event %d: %w", i, err)
-		}
-
-		record.Events = append(record.Events, event)
+	events, err := readEvents(numEvents, byteReader, record.Dict)
+	if err != nil {
+		return Record{}, fmt.Errorf("read events: %w", err)
 	}
+	record.Events = events
 
 	return record, nil
 }
@@ -565,6 +558,22 @@ func readEvent(r io.Reader, dict map[int32]string) (Event, error) {
 	default:
 		return nil, fmt.Errorf("unknown event type %d", eventType)
 	}
+}
+
+// readEvents reads a list of events from a Pastry capture.
+func readEvents(numEvents int32, r io.Reader, dict map[int32]string) ([]Event, error) {
+	var events []Event
+
+	for i := range numEvents {
+		event, err := readEvent(r, dict)
+		if err != nil {
+			return nil, fmt.Errorf("read event %d: %w", i, err)
+		}
+
+		events = append(events, event)
+	}
+
+	return events, nil
 }
 
 // readFloat32 reads a single 32-bit floating point number from r.

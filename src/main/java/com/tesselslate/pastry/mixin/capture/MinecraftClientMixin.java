@@ -60,6 +60,17 @@ public abstract class MinecraftClientMixin {
         return orig.call(client);
     }
 
+    @Inject(at = @At("HEAD"), method = "joinWorld(Lnet/minecraft/client/world/ClientWorld;)V")
+    private void joinWorld_resetCullState(ClientWorld world, CallbackInfo info) {
+        // Reset the captured culling state and disable the debug renderer.
+        Pastry.CAPTURED_CULLING_STATE = null;
+        Pastry.DISPLAY_CULLING_STATE = false;
+
+        // Reset the captured frustum (if any.)
+        WorldRenderer worldRenderer = ((MinecraftClient) (Object) this).worldRenderer;
+        ((WorldRendererAccessor) worldRenderer).setCapturedFrustum(null);
+    }
+
     @Inject(at = @At("HEAD"), method = "drawProfilerResults(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/util/profiler/ProfileResult;)V")
     private void drawProfilerResults_addFrameEvent(MatrixStack stack, ProfileResult profileResult, CallbackInfo info) {
         MinecraftClient client = MinecraftClient.getInstance();

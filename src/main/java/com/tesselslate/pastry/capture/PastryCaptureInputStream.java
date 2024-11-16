@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.tesselslate.pastry.capture.events.PastryCaptureBlockEntityEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureBlockOutlineEvent;
+import com.tesselslate.pastry.capture.events.PastryCaptureDimensionEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureEntityEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureFrameEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureOptionsEvent;
@@ -96,6 +97,9 @@ public class PastryCaptureInputStream extends DataInputStream {
                     break;
                 case OPTIONS:
                     events[i] = new PastryCaptureOptionsEvent(this);
+                    break;
+                case DIMENSION:
+                    events[i] = new PastryCaptureDimensionEvent(this);
                     break;
             }
         }

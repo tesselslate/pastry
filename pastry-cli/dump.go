@@ -18,6 +18,8 @@ func Dump(record Record) error {
 			dumpBlockOutlineEvent(event)
 		case *OptionsEvent:
 			dumpOptionsEvent(event)
+		case *DimensionEvent:
+			dumpDimensionEvent(event)
 		default:
 			return fmt.Errorf("unknown event type %T", event)
 		}
@@ -50,6 +52,10 @@ func dumpBlockEntityEvent(e *BlockEntityEvent) {
 
 func dumpBlockOutlineEvent(e *BlockOutlineEvent) {
 	fmt.Printf("\t%53s (%d %d %d)\n", "Targeted Block", e.Pos[0], e.Pos[1], e.Pos[2])
+}
+
+func dumpDimensionEvent(e *DimensionEvent) {
+	fmt.Printf("\t%53s: %s\n", "Dimension", e.Name)
 }
 
 func dumpEntityEvent(e *EntityEvent) {

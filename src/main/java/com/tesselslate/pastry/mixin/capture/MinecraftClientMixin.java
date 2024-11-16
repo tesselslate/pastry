@@ -13,6 +13,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.tesselslate.pastry.Pastry;
 import com.tesselslate.pastry.capture.PastryCaptureEvent;
 import com.tesselslate.pastry.capture.PastryCaptureManager;
+import com.tesselslate.pastry.capture.events.PastryCaptureDimensionEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureFrameEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureOptionsEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureWorldLoadEvent;
@@ -30,17 +31,20 @@ import net.minecraft.util.profiler.ProfileResult;
 public abstract class MinecraftClientMixin {
     @Inject(at = @At("HEAD"), method = "joinWorld(Lnet/minecraft/client/world/ClientWorld;)V")
     private void joinWorld_startCapture(ClientWorld world, CallbackInfo info) {
-        if (PastryCaptureManager.isCapturing()) {
-            return;
+        boolean capturing = PastryCaptureManager.isCapturing();
+
+        if (!capturing) {
+            PastryCaptureManager.startCapture();
         }
 
-        PastryCaptureManager.startCapture();
+        PastryCaptureManager.update(capture -> {
+            IntegratedServer server = MinecraftClient.getInstance().getServer();
+            if (!capturing && server != null) {
+                capture.add(new PastryCaptureWorldLoadEvent(server.getSaveProperties()));
+            }
 
-        IntegratedServer server = MinecraftClient.getInstance().getServer();
-        if (server != null) {
-            PastryCaptureManager
-                    .update(capture -> capture.add(new PastryCaptureWorldLoadEvent(server.getSaveProperties())));
-        }
+            capture.add(new PastryCaptureDimensionEvent(world));
+        });
     }
 
     @WrapOperation(at = @At(value = "FIELD", target = "Lnet/minecraft/client/MinecraftClient;server:Lnet/minecraft/server/integrated/IntegratedServer;", opcode = Opcodes.GETFIELD), method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V")

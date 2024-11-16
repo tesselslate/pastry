@@ -22,6 +22,7 @@ const (
 	WorldLoad    = 3
 	BlockOutline = 4
 	Options      = 5
+	Dimension    = 6
 )
 
 const (
@@ -72,6 +73,11 @@ type BlockEntityEvent struct {
 // Pastry recording.
 type BlockOutlineEvent struct {
 	Pos [3]int32
+}
+
+// DimensionEvent contains information about the dimension the player is in.
+type DimensionEvent struct {
+	Name string
 }
 
 // EntityEvent contains the data for a single entity event from a Pastry
@@ -333,6 +339,15 @@ func readBlockOutlineEvent(r io.Reader) (Event, error) {
 	}, nil
 }
 
+// readDimensionEvent reads a single dimension event from a Pastry recording.
+func readDimensionEvent(r io.Reader, dict map[int32]string) (Event, error) {
+	name, err := readStringRef(r, dict)
+	if err != nil {
+		return nil, err
+	}
+	return &DimensionEvent{Name: name}, nil
+}
+
 // readEntityEvent reads a single entity event from a Pastry recording.
 func readEntityEvent(r io.Reader, dict map[int32]string) (Event, error) {
 	var (
@@ -489,6 +504,8 @@ func readEvent(r io.Reader, dict map[int32]string) (Event, error) {
 		return readBlockOutlineEvent(r)
 	case Options:
 		return readOptionsEvent(r)
+	case Dimension:
+		return readDimensionEvent(r, dict)
 	default:
 		return nil, fmt.Errorf("unknown event type %d", eventType)
 	}

@@ -35,7 +35,7 @@ public class CaptureListWidget extends ElementListWidget<CaptureListWidget.Eleme
 
         public Element(TextRenderer textRenderer, CaptureListTask.Entry entry) {
             this.name = DATE_FORMAT.format(entry.header.recordedAt);
-            this.fileSize = entry.path.length();
+            this.fileSize = entry.size;
 
             this.textRenderer = textRenderer;
         }

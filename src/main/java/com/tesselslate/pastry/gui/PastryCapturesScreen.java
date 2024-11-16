@@ -2,6 +2,9 @@ package com.tesselslate.pastry.gui;
 
 import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
+
+import org.apache.commons.io.FileUtils;
 
 import com.tesselslate.pastry.Pastry;
 import com.tesselslate.pastry.gui.widgets.CaptureListWidget;
@@ -23,6 +26,7 @@ public class PastryCapturesScreen extends ScreenExtended {
 
     private CaptureListWidget captureList;
     private ButtonWidget doneButton;
+    private LiteralText subtitle;
 
     public PastryCapturesScreen(Screen parent) {
         super(parent, new LiteralText("Pastry Captures"));
@@ -100,6 +104,11 @@ public class PastryCapturesScreen extends ScreenExtended {
         this.captureTaskResult = result;
         this.init();
 
+        int entryCount = this.captureTaskResult.entries.size();
+        this.subtitle = new LiteralText(String.format("%d %s (%s)", entryCount, entryCount > 1 ? "captures" : "capture",
+                FileUtils.byteCountToDisplaySize(this.captureTaskResult.entries.stream().map(entry -> entry.size)
+                        .collect(Collectors.summingLong(Long::longValue)))));
+
         if (result.exceptions.size() > 0) {
             this.client.getToastManager().add(new TaskErrorToast(result.exceptions.size()));
 
@@ -115,6 +124,8 @@ public class PastryCapturesScreen extends ScreenExtended {
 
         this.drawCenteredText(matrices, this.textRenderer, this.title, this.width / 2, 5,
                 Formatting.WHITE.getColorValue());
+        this.drawCenteredText(matrices, this.textRenderer, this.subtitle, this.width / 2, 16,
+                Formatting.GRAY.getColorValue());
 
         this.doneButton.render(matrices, mouseX, mouseY, delta);
     }

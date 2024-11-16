@@ -41,9 +41,11 @@ public class CaptureListTask {
     public static class Entry {
         public PastryCaptureHeader header;
         public File path;
+        public long size;
 
         public Entry(File path) throws FileNotFoundException, IOException, PastryCaptureVersionException {
             this.path = path;
+            this.size = path.length();
 
             try (DataInputStream input = new DataInputStream(new GZIPInputStream(new FileInputStream(path)))) {
                 this.header = new PastryCaptureHeader(input);

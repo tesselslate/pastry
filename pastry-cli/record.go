@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"math"
+	"time"
 )
 
 const (
@@ -28,8 +29,9 @@ const (
 
 // Record contains the data from a parsed Pastry recording.
 type Record struct {
-	Version int32
-	Dict    map[int32]string
+	Version     int32
+	CaptureTime time.Time
+	Dict        map[int32]string
 
 	Structures []Structure
 	Events     []Event
@@ -131,8 +133,9 @@ type WorldLoadEvent struct {
 // NewRecord attempts to read a Pastry recording from r.
 func NewRecord(r io.Reader) (Record, error) {
 	var (
-		record    Record
-		numEvents int32
+		record      Record
+		numEvents   int32
+		captureTime int64
 	)
 
 	gzipReader, err := gzip.NewReader(r)
@@ -155,6 +158,11 @@ func NewRecord(r io.Reader) (Record, error) {
 	if err != nil {
 		return Record{}, fmt.Errorf("read num events: %w", err)
 	}
+	captureTime, err = readInt64(byteReader)
+	if err != nil {
+		return Record{}, fmt.Errorf("read capture time: %w", err)
+	}
+	record.CaptureTime = time.UnixMilli(captureTime)
 	record.Dict, err = readDict(byteReader)
 	if err != nil {
 		return Record{}, fmt.Errorf("read dict: %w", err)

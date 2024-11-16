@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 // Dump formats and writes a human-readable representation of record to w.
 func Dump(record Record) error {
@@ -34,6 +37,7 @@ func Dump(record Record) error {
 	fmt.Printf("Record version: %d\n", record.Version)
 	fmt.Printf("Dictionary len: %d\n", len(record.Dict))
 	fmt.Printf("Event count:    %d\n", len(record.Events))
+	fmt.Printf("Recorded at:    %s\n", record.CaptureTime.Format(time.RFC3339))
 
 	return nil
 }

@@ -76,6 +76,8 @@ public class PastryCaptureManager {
 
             try (OutputStream output = openCaptureFile()) {
                 ACTIVE_CAPTURE.writeTo(output);
+
+                Pastry.LOGGER.info("Stopped capture (wrote " + ACTIVE_CAPTURE.size() + " events)");
             } catch (Exception e) {
                 Pastry.LOGGER.error("Failed to write capture (" + ACTIVE_CAPTURE.size() + " events lost)");
             } finally {

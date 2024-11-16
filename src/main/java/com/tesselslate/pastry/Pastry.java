@@ -7,6 +7,8 @@ import net.minecraft.client.MinecraftClient;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,6 +26,8 @@ public class Pastry implements ClientModInitializer {
 
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
+    public static ExecutorService EXECUTOR;
+
     @Nullable
     public static CullState CURRENT_CULLING_STATE;
 
@@ -34,7 +38,7 @@ public class Pastry implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        // Do nothing.
+        EXECUTOR = Executors.newCachedThreadPool(runnable -> new Thread(runnable, "pastry-worker"));
     }
 
     public static void captureCullingState() {

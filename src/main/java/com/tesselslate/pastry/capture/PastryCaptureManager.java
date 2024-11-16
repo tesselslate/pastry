@@ -99,15 +99,24 @@ public class PastryCaptureManager {
     }
 
     /**
+     * Returns a {@link File} pointing to the instance's capture directory.
+     *
+     * @returns A {@link File} pointing to the instance's capture directory
+     */
+    public static File getCaptureDirectory() {
+        MinecraftClient client = MinecraftClient.getInstance();
+
+        return new File(client.runDirectory, "pastry-recordings");
+    }
+
+    /**
      * Opens an output stream to which the active {@link PastryCapture} should be
      * written.
      *
      * @returns The output stream to write the active {@link PastryCapture} to
      */
     private static OutputStream openCaptureFile() throws FileNotFoundException {
-        MinecraftClient client = MinecraftClient.getInstance();
-
-        File outputDir = new File(client.runDirectory, "pastry-recordings");
+        File outputDir = getCaptureDirectory();
         outputDir.mkdir();
 
         File output = new File(outputDir, OUTPUT_DATE_FORMAT.format(new Date()) + ".bin.gz");

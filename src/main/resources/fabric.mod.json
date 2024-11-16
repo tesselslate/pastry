@@ -2,8 +2,8 @@
 	"schemaVersion": 1,
 	"id": "pastry",
 	"version": "${version}",
-	"name": "Pastry",
-	"description": "Automated profiler data collection",
+	"name": "pastry",
+	"description": "Automated data collection and analysis for Minecraft stronghold navigation",
 	"authors": [
 		"tesselslate"
 	],

@@ -20,6 +20,8 @@ func Dump(record Record) error {
 			dumpOptionsEvent(event)
 		case *DimensionEvent:
 			dumpDimensionEvent(event)
+		case *SysinfoEvent:
+			dumpSysinfoEvent(event)
 		default:
 			return fmt.Errorf("unknown event type %T", event)
 		}
@@ -88,6 +90,21 @@ func dumpOptionsEvent(e *OptionsEvent) {
 	fmt.Printf("\t%53s: %t\n", "Hitboxes", e.Hitboxes)
 	fmt.Printf("\t%53s: %t\n", "Chunk Borders", e.ChunkBorders)
 	fmt.Printf("\t%53s: %t\n", "Cull State Renderer", e.CullState)
+}
+
+func dumpSysinfoEvent(e *SysinfoEvent) {
+	fmt.Println("-------- SYSTEM INFO")
+
+	fmt.Printf("GL Vendor:              %s\n", e.GlVendor)
+	fmt.Printf("GL Renderer:            %s\n", e.GlRenderer)
+	fmt.Printf("GL Version:             %s\n", e.GlVersion)
+	fmt.Printf("CPU:                    %s\n", e.Cpu)
+	fmt.Printf("JVM Version:            %s\n", e.JvmVersion)
+	fmt.Printf("JVM Arguments:          %s\n", e.JvmArgs)
+	fmt.Printf("Max Memory:             %d bytes\n", e.MaxMemory)
+	fmt.Printf("Available Processors:   %d\n", e.AvailableProcessors)
+
+	fmt.Println("-------- END SYSTEM INFO")
 }
 
 func dumpWorldLoadEvent(e *WorldLoadEvent) {

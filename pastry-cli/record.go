@@ -23,6 +23,7 @@ const (
 	BlockOutline = 4
 	Options      = 5
 	Dimension    = 6
+	Sysinfo      = 7
 )
 
 const (
@@ -107,6 +108,21 @@ type OptionsEvent struct {
 	Hitboxes     bool
 	ChunkBorders bool
 	CullState    bool
+}
+
+// SysinfoEvent contains information about the hardware and JVM on which a
+// Pastry capture was recorded.
+type SysinfoEvent struct {
+	GlVendor   string
+	GlRenderer string
+	GlVersion  string
+	Cpu        string
+
+	JvmVersion string
+	JvmArgs    string
+
+	MaxMemory           int64
+	AvailableProcessors int32
 }
 
 // WorldLoadEvent contains metadata about the world which this recording was
@@ -466,6 +482,44 @@ func readOptionsEvent(r io.Reader) (Event, error) {
 	}, nil
 }
 
+// readSysinfoEvent reads a system info event from a Pastry recording.
+func readSysinfoEvent(r io.Reader, dict map[int32]string) (Event, error) {
+	var (
+		strings [6]string
+		err     error
+	)
+
+	for i := range strings {
+		strings[i], err = readStringRef(r, dict)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	maxMemory, err := readInt64(r)
+	if err != nil {
+		return nil, err
+	}
+
+	availableProcessors, err := readInt32(r)
+	if err != nil {
+		return nil, err
+	}
+
+	return &SysinfoEvent{
+		GlVendor:   strings[0],
+		GlRenderer: strings[1],
+		GlVersion:  strings[2],
+		Cpu:        strings[3],
+
+		JvmVersion: strings[4],
+		JvmArgs:    strings[5],
+
+		MaxMemory:           maxMemory,
+		AvailableProcessors: availableProcessors,
+	}, nil
+}
+
 // readWorldLoadEvent reads a world load event from a Pastry recording.
 func readWorldLoadEvent(r io.Reader, dict map[int32]string) (Event, error) {
 	name, err := readStringRef(r, dict)
@@ -506,6 +560,8 @@ func readEvent(r io.Reader, dict map[int32]string) (Event, error) {
 		return readOptionsEvent(r)
 	case Dimension:
 		return readDimensionEvent(r, dict)
+	case Sysinfo:
+		return readSysinfoEvent(r, dict)
 	default:
 		return nil, fmt.Errorf("unknown event type %d", eventType)
 	}

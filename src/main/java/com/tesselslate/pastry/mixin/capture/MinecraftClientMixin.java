@@ -16,6 +16,7 @@ import com.tesselslate.pastry.capture.PastryCaptureManager;
 import com.tesselslate.pastry.capture.events.PastryCaptureDimensionEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureFrameEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureOptionsEvent;
+import com.tesselslate.pastry.capture.events.PastryCaptureSysinfoEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureWorldLoadEvent;
 import com.tesselslate.pastry.mixin.accessor.WorldRendererAccessor;
 
@@ -38,6 +39,8 @@ public abstract class MinecraftClientMixin {
         }
 
         PastryCaptureManager.update(capture -> {
+            capture.add(new PastryCaptureSysinfoEvent());
+
             IntegratedServer server = MinecraftClient.getInstance().getServer();
             if (!capturing && server != null) {
                 capture.add(new PastryCaptureWorldLoadEvent(server.getSaveProperties()));

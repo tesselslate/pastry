@@ -43,7 +43,7 @@ public abstract class ChunkGraphCullerMixin {
         return node;
     }
 
-    @WrapOperation(at = @At(value = "INVOKE", target = "Lme/jellysquid/mods/sodium/client/render/chunk/cull/graph/ChunkGraphIterationQueue;add(Lme/jellysquid/mods/sodium/client/render/chunk/cull/graph/ChunkGraphNode;Lnet/minecraft/util/math/Direction;)V", remap = false), method = "initSearch(Lnet/minecraft/client/render/Camera;Lme/jellysquid/mods/sodium/client/util/math/FrustumExtended;IZ)V", remap = true)
+    @WrapOperation(at = @At(value = "INVOKE", target = "Lme/jellysquid/mods/sodium/client/render/chunk/cull/graph/ChunkGraphIterationQueue;add(Lme/jellysquid/mods/sodium/client/render/chunk/cull/graph/ChunkGraphNode;Lnet/minecraft/util/math/Direction;)V", remap = true), method = "initSearch(Lnet/minecraft/client/render/Camera;Lme/jellysquid/mods/sodium/client/util/math/FrustumExtended;IZ)V", remap = true)
     private void initSearch_markVisible(ChunkGraphIterationQueue queue, ChunkGraphNode node, Direction direction,
             Operation<Void> orig) {
         Pastry.CURRENT_CULLING_STATE.markVisible(new Vec3i(node.getChunkX(), node.getChunkY(), node.getChunkZ()));
@@ -51,7 +51,7 @@ public abstract class ChunkGraphCullerMixin {
         orig.call(queue, node, direction);
     }
 
-    @WrapOperation(at = @At(value = "INVOKE", target = "Lme/jellysquid/mods/sodium/client/render/chunk/cull/graph/ChunkGraphIterationQueue;add(Lme/jellysquid/mods/sodium/client/render/chunk/cull/graph/ChunkGraphNode;Lnet/minecraft/util/math/Direction;)V", remap = false), method = "bfsEnqueue(Lme/jellysquid/mods/sodium/client/render/chunk/cull/graph/ChunkGraphNode;Lme/jellysquid/mods/sodium/client/render/chunk/cull/graph/ChunkGraphNode;Lnet/minecraft/util/math/Direction;)V", remap = true)
+    @WrapOperation(at = @At(value = "INVOKE", target = "Lme/jellysquid/mods/sodium/client/render/chunk/cull/graph/ChunkGraphIterationQueue;add(Lme/jellysquid/mods/sodium/client/render/chunk/cull/graph/ChunkGraphNode;Lnet/minecraft/util/math/Direction;)V", remap = true), method = "bfsEnqueue(Lme/jellysquid/mods/sodium/client/render/chunk/cull/graph/ChunkGraphNode;Lme/jellysquid/mods/sodium/client/render/chunk/cull/graph/ChunkGraphNode;Lnet/minecraft/util/math/Direction;)V", remap = true)
     private void bfsEnqueue_markVisible(ChunkGraphIterationQueue queue, ChunkGraphNode node, Direction flow,
             Operation<Void> orig) {
         Vec3i pos = new Vec3i(node.getChunkX(), node.getChunkY(), node.getChunkZ());

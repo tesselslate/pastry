@@ -25,6 +25,8 @@ func Dump(record Record) error {
 			dumpDimensionEvent(event)
 		case *SysinfoEvent:
 			dumpSysinfoEvent(event)
+		case *ProfilerEvent:
+			dumpProfilerEvent(event)
 		default:
 			return fmt.Errorf("unknown event type %T", event)
 		}
@@ -69,18 +71,6 @@ func dumpEntityEvent(e *EntityEvent) {
 }
 
 func dumpFrameEvent(e *FrameEvent) {
-	sections := []struct {
-		name  string
-		index int
-	}{
-		{"BE", BlockEntities},
-		{"E", Entities},
-		{"U", Unspecified},
-	}
-
-	for _, section := range sections {
-		fmt.Printf("\t%53s: %5.2f%%\n", section.name, e.Percentages[section.index])
-	}
 	fmt.Printf("\t%53s: %.2f %.2f %.2f (%.2f %.2f)\n", "Camera", e.Pos[0], e.Pos[1], e.Pos[2], e.Pitch, e.Yaw)
 
 	fmt.Printf("-------------------------------- end of frame %d\n", e.Num)
@@ -94,6 +84,21 @@ func dumpOptionsEvent(e *OptionsEvent) {
 	fmt.Printf("\t%53s: %t\n", "Hitboxes", e.Hitboxes)
 	fmt.Printf("\t%53s: %t\n", "Chunk Borders", e.ChunkBorders)
 	fmt.Printf("\t%53s: %t\n", "Cull State Renderer", e.CullState)
+}
+
+func dumpProfilerEvent(e *ProfilerEvent) {
+	sections := []struct {
+		name  string
+		index int
+	}{
+		{"BE", BlockEntities},
+		{"E", Entities},
+		{"U", Unspecified},
+	}
+
+	for _, section := range sections {
+		fmt.Printf("\t%53s: %5.2f%%\n", section.name, e.Percentages[section.index])
+	}
 }
 
 func dumpSysinfoEvent(e *SysinfoEvent) {

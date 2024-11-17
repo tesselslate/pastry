@@ -25,9 +25,10 @@ const (
 	Options      = 5
 	Dimension    = 6
 	Sysinfo      = 7
+	Profiler     = 8
 )
 
-const currentVersion = 8
+const currentVersion = 9
 
 // Record contains the data from a parsed Pastry recording.
 type Record struct {
@@ -88,12 +89,12 @@ type EntityEvent struct {
 	Name string
 }
 
-// FrameEvent contains the data for a single frame of a Pastry recording.
+// FrameEvent contains data about the player for a single frame of a Pastry
+// recording.
 type FrameEvent struct {
-	Num         int32      // Frame number
-	Pos         [3]float64 // Camera position
-	Pitch, Yaw  float32    // Camera rotation
-	Percentages [3]float32 // Parent gameRenderer percentages
+	Num        int32      // Frame number
+	Pos        [3]float64 // Camera position
+	Pitch, Yaw float32    // Camera rotation
 }
 
 // OptionsEvent contains various rendering settings for a single frame of a
@@ -108,6 +109,12 @@ type OptionsEvent struct {
 	Hitboxes     bool
 	ChunkBorders bool
 	CullState    bool
+}
+
+// ProfilerEvent contains information about the state of the gameRenderer
+// profiler results for a single frame of a Pastry recording.
+type ProfilerEvent struct {
+	Percentages [3]float32 // Parent gameRenderer percentages
 }
 
 // SysinfoEvent contains information about the hardware and JVM on which a
@@ -400,7 +407,6 @@ func readFrameEvent(r io.Reader) (Event, error) {
 	var (
 		cameraPos [3]float64
 		cameraRot [2]float32
-		percent   [3]float32
 	)
 
 	frameNumber, err := readInt32(r)
@@ -422,26 +428,11 @@ func readFrameEvent(r io.Reader) (Event, error) {
 		}
 	}
 
-	for i := range percent {
-		upper, err := readUint8(r)
-		if err != nil {
-			return nil, err
-		}
-
-		lower, err := readUint8(r)
-		if err != nil {
-			return nil, err
-		}
-
-		percent[i] = float32(upper) + float32(lower)/100.0
-	}
-
 	return &FrameEvent{
-		Num:         frameNumber,
-		Pos:         cameraPos,
-		Pitch:       cameraRot[0],
-		Yaw:         cameraRot[1],
-		Percentages: percent,
+		Num:   frameNumber,
+		Pos:   cameraPos,
+		Pitch: cameraRot[0],
+		Yaw:   cameraRot[1],
 	}, nil
 }
 
@@ -486,6 +477,27 @@ func readOptionsEvent(r io.Reader) (Event, error) {
 		ChunkBorders:   chunkBorders,
 		CullState:      cullState,
 	}, nil
+}
+
+// readProfilerEvent reads a profiler event from a Pastry recording.
+func readProfilerEvent(r io.Reader) (Event, error) {
+	var percent [3]float32
+
+	for i := range percent {
+		upper, err := readUint8(r)
+		if err != nil {
+			return nil, err
+		}
+
+		lower, err := readUint8(r)
+		if err != nil {
+			return nil, err
+		}
+
+		percent[i] = float32(upper) + float32(lower)/100.0
+	}
+
+	return &ProfilerEvent{Percentages: percent}, nil
 }
 
 // readSysinfoEvent reads a system info event from a Pastry recording.
@@ -568,6 +580,8 @@ func readEvent(r io.Reader, dict map[int32]string) (Event, error) {
 		return readDimensionEvent(r, dict)
 	case Sysinfo:
 		return readSysinfoEvent(r, dict)
+	case Profiler:
+		return readProfilerEvent(r)
 	default:
 		return nil, fmt.Errorf("unknown event type %d", eventType)
 	}

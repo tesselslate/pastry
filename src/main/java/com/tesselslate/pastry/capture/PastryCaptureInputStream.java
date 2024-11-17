@@ -16,6 +16,7 @@ import com.tesselslate.pastry.capture.events.PastryCaptureDimensionEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureEntityEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureFrameEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureOptionsEvent;
+import com.tesselslate.pastry.capture.events.PastryCaptureProfilerEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureSysinfoEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureWorldLoadEvent;
 import com.tesselslate.pastry.capture.structure.PastryCaptureStructure;
@@ -104,6 +105,9 @@ public class PastryCaptureInputStream extends DataInputStream {
                     break;
                 case SYSINFO:
                     events[i] = new PastryCaptureSysinfoEvent(this);
+                    break;
+                case PROFILER:
+                    events[i] = new PastryCaptureProfilerEvent(this);
                     break;
             }
         }

@@ -1,9 +1,8 @@
 package com.tesselslate.pastry.mixin.capture;
 
-import java.util.Objects;
-
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -11,11 +10,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.tesselslate.pastry.Pastry;
-import com.tesselslate.pastry.capture.PastryCaptureEvent;
 import com.tesselslate.pastry.capture.PastryCaptureManager;
 import com.tesselslate.pastry.capture.events.PastryCaptureDimensionEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureFrameEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureOptionsEvent;
+import com.tesselslate.pastry.capture.events.PastryCaptureProfilerEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureSysinfoEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureWorldLoadEvent;
 import com.tesselslate.pastry.mixin.accessor.WorldRendererAccessor;
@@ -23,13 +22,15 @@ import com.tesselslate.pastry.mixin.accessor.WorldRendererAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.WorldRenderer;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.util.profiler.ProfileResult;
 
 @Mixin(value = MinecraftClient.class)
 public abstract class MinecraftClientMixin {
+    @Shadow
+    private ProfileResult tickProfilerResult;
+
     @Inject(at = @At("HEAD"), method = "joinWorld(Lnet/minecraft/client/world/ClientWorld;)V")
     private void joinWorld_startCapture(ClientWorld world, CallbackInfo info) {
         boolean capturing = PastryCaptureManager.isCapturing();
@@ -74,9 +75,9 @@ public abstract class MinecraftClientMixin {
         ((WorldRendererAccessor) worldRenderer).setCapturedFrustum(null);
     }
 
-    @Inject(at = @At("HEAD"), method = "drawProfilerResults(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/util/profiler/ProfileResult;)V")
-    private void drawProfilerResults_addFrameEvent(MatrixStack stack, ProfileResult profileResult, CallbackInfo info) {
-        MinecraftClient client = MinecraftClient.getInstance();
+    @Inject(at = @At("TAIL"), method = "render(Z)V")
+    private void render_addFrameEvents(boolean tick, CallbackInfo info) {
+        MinecraftClient client = (MinecraftClient) (Object) this;
         if (client.isPaused()) {
             return;
         }
@@ -86,20 +87,20 @@ public abstract class MinecraftClientMixin {
             return;
         }
 
-        Camera camera = Objects.requireNonNull(client.gameRenderer).getCamera();
+        Camera camera = client.gameRenderer.getCamera();
 
         PastryCaptureManager.update(capture -> {
-            // Add all queued events (entities, blockentities) from this frame to the
-            // capture.
-            capture.addQueued();
+            if (this.tickProfilerResult != null) {
+                // Only capture entities and block entities if the pie chart is open on this
+                // frame.
+                capture.addQueued();
 
-            PastryCaptureEvent event = new PastryCaptureFrameEvent(
-                    ((WorldRendererAccessor) worldRenderer).getFrame(), camera.getPos(), camera.getPitch(),
-                    camera.getYaw(), profileResult);
-            capture.add(event);
+                capture.add(new PastryCaptureProfilerEvent(this.tickProfilerResult));
+            }
 
-            event = new PastryCaptureOptionsEvent(client);
-            capture.add(event);
+            capture.add(new PastryCaptureFrameEvent(((WorldRendererAccessor) worldRenderer).getFrame(), camera.getPos(),
+                    camera.getPitch(), camera.getYaw()));
+            capture.add(new PastryCaptureOptionsEvent(client));
         });
     }
 }

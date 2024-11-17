@@ -8,7 +8,8 @@ public enum PastryCaptureEventType {
     BLOCK_OUTLINE,
     OPTIONS,
     DIMENSION,
-    SYSINFO;
+    SYSINFO,
+    PROFILER;
 
     private static PastryCaptureEventType[] cachedValues = PastryCaptureEventType.values();
 

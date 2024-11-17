@@ -1,4 +1,4 @@
-package com.tesselslate.pastry.gui.widgets;
+package com.tesselslate.pastry.gui.widget;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

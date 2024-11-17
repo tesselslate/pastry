@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 
 import com.tesselslate.pastry.Pastry;
-import com.tesselslate.pastry.gui.widgets.CaptureListWidget;
+import com.tesselslate.pastry.gui.widget.CaptureListWidget;
 import com.tesselslate.pastry.task.CaptureListTask;
 
 import net.minecraft.client.font.TextRenderer;

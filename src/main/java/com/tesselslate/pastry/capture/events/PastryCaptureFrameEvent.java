@@ -7,6 +7,7 @@ import com.tesselslate.pastry.capture.PastryCaptureEventType;
 import com.tesselslate.pastry.capture.PastryCaptureInputStream;
 import com.tesselslate.pastry.capture.PastryCaptureOutputStream;
 
+import net.minecraft.client.render.Camera;
 import net.minecraft.util.math.Vec3d;
 
 /**
@@ -18,23 +19,20 @@ import net.minecraft.util.math.Vec3d;
 public class PastryCaptureFrameEvent implements PastryCaptureEvent {
     private static final PastryCaptureEventType EVENT_TYPE = PastryCaptureEventType.FRAME;
 
-    /**
-     * A unique number which identifies this frame. The frame counter is
-     * monotonically increasing and increments every time a frame is drawn.
-     */
-    public int frameNumber;
+    public int time;
     public Vec3d cameraPos;
     public float pitch, yaw;
 
-    public PastryCaptureFrameEvent(int frameNumber, Vec3d cameraPos, float pitch, float yaw) {
-        this.frameNumber = frameNumber;
-        this.cameraPos = cameraPos;
-        this.pitch = pitch;
-        this.yaw = yaw;
+    public PastryCaptureFrameEvent(int time, Camera camera) {
+        this.time = time;
+
+        this.cameraPos = camera.getPos();
+        this.pitch = camera.getPitch();
+        this.yaw = camera.getYaw();
     }
 
     public PastryCaptureFrameEvent(PastryCaptureInputStream input) throws IOException {
-        this.frameNumber = input.readInt();
+        this.time = input.readInt();
 
         double playerX = input.readDouble();
         double playerY = input.readDouble();
@@ -52,7 +50,7 @@ public class PastryCaptureFrameEvent implements PastryCaptureEvent {
 
     @Override
     public void write(PastryCaptureOutputStream output) throws IOException {
-        output.writeInt(this.frameNumber);
+        output.writeInt(this.time);
 
         output.writeDouble(this.cameraPos.x);
         output.writeDouble(this.cameraPos.y);

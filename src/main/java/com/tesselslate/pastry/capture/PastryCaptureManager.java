@@ -25,6 +25,19 @@ public class PastryCaptureManager {
 
     private static @Nullable PastryCapture ACTIVE_CAPTURE;
 
+    private static long START_MILLIS;
+
+    /**
+     * Returns the number of milliseconds elapsed since the start of the active
+     * {@link PastryCapture}.
+     *
+     * @returns The number of milliseconds elapsed since the start of the active
+     *          {@link PastryCapture}
+     */
+    public static int getElapsedTime() {
+        return (int) (new Date().getTime() - START_MILLIS);
+    }
+
     /**
      * Returns whether or not there is an active {@link PastryCapture}.
      *
@@ -58,6 +71,7 @@ public class PastryCaptureManager {
             }
 
             ACTIVE_CAPTURE = new PastryCapture();
+            START_MILLIS = new Date().getTime();
         }
 
         Pastry.LOGGER.info("Started new capture");

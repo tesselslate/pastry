@@ -29,7 +29,7 @@ const (
 	Gamemode     = 9
 )
 
-const currentVersion = 10
+const currentVersion = 11
 
 // Record contains the data from a parsed Pastry recording.
 type Record struct {
@@ -93,9 +93,9 @@ type EntityEvent struct {
 // FrameEvent contains data about the player for a single frame of a Pastry
 // recording.
 type FrameEvent struct {
-	Num        int32      // Frame number
-	Pos        [3]float64 // Camera position
-	Pitch, Yaw float32    // Camera rotation
+	TimeElapsed int32      // Milliseconds elapsed since capture start
+	Pos         [3]float64 // Camera position
+	Pitch, Yaw  float32    // Camera rotation
 }
 
 // GamemodeEvent contains the current gamemode of the player.
@@ -415,7 +415,7 @@ func readFrameEvent(r io.Reader) (Event, error) {
 		cameraRot [2]float32
 	)
 
-	frameNumber, err := readInt32(r)
+	timeElapsed, err := readInt32(r)
 	if err != nil {
 		return nil, err
 	}
@@ -435,10 +435,10 @@ func readFrameEvent(r io.Reader) (Event, error) {
 	}
 
 	return &FrameEvent{
-		Num:   frameNumber,
-		Pos:   cameraPos,
-		Pitch: cameraRot[0],
-		Yaw:   cameraRot[1],
+		TimeElapsed: timeElapsed,
+		Pos:         cameraPos,
+		Pitch:       cameraRot[0],
+		Yaw:         cameraRot[1],
 	}, nil
 }
 

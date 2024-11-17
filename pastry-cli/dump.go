@@ -75,7 +75,7 @@ func dumpEntityEvent(e *EntityEvent) {
 func dumpFrameEvent(e *FrameEvent) {
 	fmt.Printf("\t%53s: %.2f %.2f %.2f (%.2f %.2f)\n", "Camera", e.Pos[0], e.Pos[1], e.Pos[2], e.Pitch, e.Yaw)
 
-	fmt.Printf("-------------------------------- end of frame %d\n", e.Num)
+	fmt.Printf("-------------------------------- %d ms since capture start\n", e.TimeElapsed)
 }
 
 func dumpGamemodeEvent(e *GamemodeEvent) {

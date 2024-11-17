@@ -11,9 +11,6 @@ public interface WorldRendererAccessor {
     @Accessor("capturedFrustum")
     public Frustum getCapturedFrustum();
 
-    @Accessor("frame")
-    public int getFrame();
-
     @Accessor("capturedFrustum")
     public void setCapturedFrustum(Frustum value);
 

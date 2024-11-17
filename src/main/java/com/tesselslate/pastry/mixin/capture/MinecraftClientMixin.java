@@ -98,8 +98,7 @@ public abstract class MinecraftClientMixin {
                 capture.add(new PastryCaptureProfilerEvent(this.tickProfilerResult));
             }
 
-            capture.add(new PastryCaptureFrameEvent(((WorldRendererAccessor) worldRenderer).getFrame(), camera.getPos(),
-                    camera.getPitch(), camera.getYaw()));
+            capture.add(new PastryCaptureFrameEvent(PastryCaptureManager.getElapsedTime(), camera));
             capture.add(new PastryCaptureOptionsEvent(client));
         });
     }

@@ -27,6 +27,8 @@ func Dump(record Record) error {
 			dumpSysinfoEvent(event)
 		case *ProfilerEvent:
 			dumpProfilerEvent(event)
+		case *GamemodeEvent:
+			dumpGamemodeEvent(event)
 		default:
 			return fmt.Errorf("unknown event type %T", event)
 		}
@@ -74,6 +76,24 @@ func dumpFrameEvent(e *FrameEvent) {
 	fmt.Printf("\t%53s: %.2f %.2f %.2f (%.2f %.2f)\n", "Camera", e.Pos[0], e.Pos[1], e.Pos[2], e.Pitch, e.Yaw)
 
 	fmt.Printf("-------------------------------- end of frame %d\n", e.Num)
+}
+
+func dumpGamemodeEvent(e *GamemodeEvent) {
+	var mode string
+	switch e.Mode {
+	case 0:
+		mode = "survival"
+	case 1:
+		mode = "creative"
+	case 2:
+		mode = "adventure"
+	case 3:
+		mode = "spectator"
+	default:
+		mode = "unknown"
+	}
+
+	fmt.Printf("\t%53s: %s\n", "Gamemode", mode)
 }
 
 func dumpOptionsEvent(e *OptionsEvent) {

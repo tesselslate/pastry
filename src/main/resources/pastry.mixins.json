@@ -9,6 +9,7 @@
         "accessor.DebugRendererAccessor",
         "accessor.WorldRendererAccessor",
         "accessor.sodium.ChunkGraphNodeAccessor",
+        "capture.ClientPlayerInteractionManagerMixin",
         "capture.GameRendererMixin",
         "capture.MinecraftClientMixin",
         "capture.ServerPlayNetworkHandlerMixin",

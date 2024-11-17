@@ -9,7 +9,8 @@ public enum PastryCaptureEventType {
     OPTIONS,
     DIMENSION,
     SYSINFO,
-    PROFILER;
+    PROFILER,
+    GAMEMODE;
 
     private static PastryCaptureEventType[] cachedValues = PastryCaptureEventType.values();
 

@@ -26,9 +26,10 @@ const (
 	Dimension    = 6
 	Sysinfo      = 7
 	Profiler     = 8
+	Gamemode     = 9
 )
 
-const currentVersion = 9
+const currentVersion = 10
 
 // Record contains the data from a parsed Pastry recording.
 type Record struct {
@@ -95,6 +96,11 @@ type FrameEvent struct {
 	Num        int32      // Frame number
 	Pos        [3]float64 // Camera position
 	Pitch, Yaw float32    // Camera rotation
+}
+
+// GamemodeEvent contains the current gamemode of the player.
+type GamemodeEvent struct {
+	Mode uint8
 }
 
 // OptionsEvent contains various rendering settings for a single frame of a
@@ -436,6 +442,16 @@ func readFrameEvent(r io.Reader) (Event, error) {
 	}, nil
 }
 
+// readGamemodeEvent reads a gamemode event from a Pastry recording.
+func readGamemodeEvent(r io.Reader) (Event, error) {
+	mode, err := readUint8(r)
+	if err != nil {
+		return nil, err
+	}
+
+	return &GamemodeEvent{Mode: mode}, nil
+}
+
 // readOptionsEvent reads an options event from a Pastry recording.
 func readOptionsEvent(r io.Reader) (Event, error) {
 	const (
@@ -582,6 +598,8 @@ func readEvent(r io.Reader, dict map[int32]string) (Event, error) {
 		return readSysinfoEvent(r, dict)
 	case Profiler:
 		return readProfilerEvent(r)
+	case Gamemode:
+		return readGamemodeEvent(r)
 	default:
 		return nil, fmt.Errorf("unknown event type %d", eventType)
 	}

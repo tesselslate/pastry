@@ -11,7 +11,7 @@ import java.util.List;
  * recording.
  */
 public class PastryCaptureHeader {
-    private static final int CURRENT_VERSION = 9;
+    private static final int CURRENT_VERSION = 10;
 
     public final int version;
     public final int numEvents;

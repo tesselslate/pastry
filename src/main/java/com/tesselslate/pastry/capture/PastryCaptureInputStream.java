@@ -15,6 +15,7 @@ import com.tesselslate.pastry.capture.events.PastryCaptureBlockOutlineEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureDimensionEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureEntityEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureFrameEvent;
+import com.tesselslate.pastry.capture.events.PastryCaptureGamemodeEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureOptionsEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureProfilerEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureSysinfoEvent;
@@ -108,6 +109,9 @@ public class PastryCaptureInputStream extends DataInputStream {
                     break;
                 case PROFILER:
                     events[i] = new PastryCaptureProfilerEvent(this);
+                    break;
+                case GAMEMODE:
+                    events[i] = new PastryCaptureGamemodeEvent(this);
                     break;
             }
         }

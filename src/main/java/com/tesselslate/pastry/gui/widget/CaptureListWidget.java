@@ -3,6 +3,7 @@ package com.tesselslate.pastry.gui.widget;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 
@@ -10,24 +11,24 @@ import com.tesselslate.pastry.task.CaptureListTask;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.widget.ElementListWidget;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Formatting;
 
-public class CaptureListWidget extends ElementListWidget<CaptureListWidget.Element> {
+public class CaptureListWidget extends PaginatedListWidget<CaptureListWidget.Element> {
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
-    public CaptureListWidget(List<CaptureListTask.Entry> entries, MinecraftClient client, int width, int height,
-            int top,
-            int bottom) {
-        super(client, width, height, top, bottom, client.textRenderer.fontHeight);
-
-        for (CaptureListTask.Entry entry : entries) {
-            super.addEntry(new Element(client.textRenderer, entry));
-        }
+    public CaptureListWidget(List<CaptureListTask.Entry> entries, Screen screen, MinecraftClient client, int width, int height,
+            int top, int bottom, int page) {
+        super(screen, client, width, height, top, bottom, client.textRenderer.fontHeight, 30, createElements(client, entries),
+                page);
     }
 
-    public class Element extends ElementListWidget.Entry<Element> {
+    private static List<Element> createElements(MinecraftClient client, List<CaptureListTask.Entry> entries) {
+        return entries.stream().map(entry -> new Element(client.textRenderer, entry)).collect(Collectors.toList());
+    }
+
+    public static class Element extends PaginatedListWidget.Entry<Element> {
         private final String name;
         private final long fileSize;
 

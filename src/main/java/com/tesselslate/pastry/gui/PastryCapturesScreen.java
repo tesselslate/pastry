@@ -36,13 +36,11 @@ public class PastryCapturesScreen extends ScreenExtended {
 
     @Override
     public void onClose() {
-        this.client.openScreen(this.parent);
+        super.onClose();
 
         if (this.captureTask != null) {
             this.captureTask.cancel(true);
         }
-
-        this.client.getToastManager().clear();
     }
 
     @Override

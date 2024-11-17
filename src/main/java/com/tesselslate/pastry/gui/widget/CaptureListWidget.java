@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 
-import com.tesselslate.pastry.task.CaptureListTask;
+import com.tesselslate.pastry.task.ListCapturesTask;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -18,13 +18,15 @@ import net.minecraft.util.Formatting;
 public class CaptureListWidget extends PaginatedListWidget<CaptureListWidget.Element> {
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
-    public CaptureListWidget(List<CaptureListTask.Entry> entries, Screen screen, MinecraftClient client, int width, int height,
+    public CaptureListWidget(List<ListCapturesTask.Entry> entries, Screen screen, MinecraftClient client, int width,
+            int height,
             int top, int bottom, int page) {
-        super(screen, client, width, height, top, bottom, client.textRenderer.fontHeight, 30, createElements(client, entries),
+        super(screen, client, width, height, top, bottom, client.textRenderer.fontHeight, 30,
+                createElements(client, entries),
                 page);
     }
 
-    private static List<Element> createElements(MinecraftClient client, List<CaptureListTask.Entry> entries) {
+    private static List<Element> createElements(MinecraftClient client, List<ListCapturesTask.Entry> entries) {
         return entries.stream().map(entry -> new Element(client.textRenderer, entry)).collect(Collectors.toList());
     }
 
@@ -34,7 +36,7 @@ public class CaptureListWidget extends PaginatedListWidget<CaptureListWidget.Ele
 
         private TextRenderer textRenderer;
 
-        public Element(TextRenderer textRenderer, CaptureListTask.Entry entry) {
+        public Element(TextRenderer textRenderer, ListCapturesTask.Entry entry) {
             this.name = DATE_FORMAT.format(entry.header.recordedAt);
             this.fileSize = entry.size;
 

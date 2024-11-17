@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.zip.GZIPInputStream;
 
 import com.tesselslate.pastry.capture.PastryCaptureHeader;
@@ -21,8 +20,8 @@ import com.tesselslate.pastry.capture.PastryCaptureVersionException;
  * directory and reads the {@link PastryCaptureHeader} of each available
  * capture.
  */
-public class CaptureListTask {
-    public static void run(CompletableFuture<Result> future) {
+public class ListCapturesTask {
+    public static Result run() {
         File capturesDir = PastryCaptureManager.getCaptureDirectory();
         File[] captures = capturesDir.listFiles();
 
@@ -35,7 +34,7 @@ public class CaptureListTask {
             }
         }
 
-        future.complete(result);
+        return result;
     }
 
     public static class Entry {

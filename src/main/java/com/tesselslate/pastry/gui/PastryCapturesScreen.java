@@ -8,7 +8,7 @@ import org.apache.commons.io.FileUtils;
 
 import com.tesselslate.pastry.Pastry;
 import com.tesselslate.pastry.gui.widget.CaptureListWidget;
-import com.tesselslate.pastry.task.CaptureListTask;
+import com.tesselslate.pastry.task.ListCapturesTask;
 
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
@@ -20,8 +20,8 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
 
 public class PastryCapturesScreen extends ScreenExtended {
-    private CaptureListTask.Result captureTaskResult;
-    private CompletableFuture<CaptureListTask.Result> captureTask;
+    private ListCapturesTask.Result captureTaskResult;
+    private CompletableFuture<ListCapturesTask.Result> captureTask;
     private Exception captureTaskError;
 
     private CaptureListWidget captureList;
@@ -31,8 +31,7 @@ public class PastryCapturesScreen extends ScreenExtended {
     public PastryCapturesScreen(Screen parent) {
         super(parent, new LiteralText("Pastry Captures"));
 
-        this.captureTask = new CompletableFuture<>();
-        Pastry.EXECUTOR.submit(() -> CaptureListTask.run(this.captureTask));
+        this.captureTask = CompletableFuture.supplyAsync(ListCapturesTask::run, Pastry.EXECUTOR);
     }
 
     @Override
@@ -83,7 +82,7 @@ public class PastryCapturesScreen extends ScreenExtended {
             return;
         }
 
-        CaptureListTask.Result result;
+        ListCapturesTask.Result result;
         try {
             result = this.captureTask.getNow(null);
             if (result == null) {
@@ -102,7 +101,7 @@ public class PastryCapturesScreen extends ScreenExtended {
         this.processTaskResult(result);
     }
 
-    private void processTaskResult(CaptureListTask.Result result) {
+    private void processTaskResult(ListCapturesTask.Result result) {
         Collections.sort(result.entries, (a, b) -> b.header.recordedAt.compareTo(a.header.recordedAt));
 
         this.captureTaskResult = result;

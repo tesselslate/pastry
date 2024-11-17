@@ -53,10 +53,10 @@ public class PastryCapturesScreen extends ScreenExtended {
         }
 
         this.captureList = this.addChild(
-                new CaptureListWidget(this.captureTaskResult.entries, this, this.client, this.width, this.height - 64,
-                        32, this.height - 32, this.captureList != null ? this.captureList.getPage() : 0));
-        this.addButton(this.captureList.createNextPageButton(this.width / 2 + 104, this.height - 27, 20, 20));
-        this.addButton(this.captureList.createPrevPageButton(this.width / 2 - 124, this.height - 27, 20, 20));
+                new CaptureListWidget(this.captureTaskResult.entries, this, this.client, this.width, this.height, 32,
+                        this.height - 32, this.captureList != null ? this.captureList.getPage() : 0));
+        this.addButton(this.captureList.createNextPageButton(this.width / 2 + 36, this.height - 27, 20, 20));
+        this.addButton(this.captureList.createPrevPageButton(this.width / 2 - 56, this.height - 27, 20, 20));
 
         this.doneButton = this.addButton(this.createDoneButton());
     }

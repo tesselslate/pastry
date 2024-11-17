@@ -58,7 +58,7 @@ public class PastryCapturesScreen extends ScreenExtended {
         this.addButton(this.captureList.createNextPageButton(this.width / 2 + 36, this.height - 27, 20, 20));
         this.addButton(this.captureList.createPrevPageButton(this.width / 2 - 56, this.height - 27, 20, 20));
 
-        this.doneButton = this.addButton(this.createDoneButton());
+        this.doneButton = this.addButton(this.createDoneButton(this.width / 2 - 32, this.height - 27, 64, 20));
     }
 
     @Override

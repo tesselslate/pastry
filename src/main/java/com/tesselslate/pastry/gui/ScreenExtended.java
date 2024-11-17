@@ -20,8 +20,8 @@ public abstract class ScreenExtended extends Screen {
         this.parent = parent;
     }
 
-    protected ButtonWidget createDoneButton() {
-        return new ButtonWidget(this.width / 2 - 100, this.height - 27, 200, 20, ScreenTexts.DONE, button -> {
+    protected ButtonWidget createDoneButton(int x, int y, int width, int height) {
+        return new ButtonWidget(x, y, width, height, ScreenTexts.DONE, button -> {
             this.client.openScreen(this.parent);
         });
     }

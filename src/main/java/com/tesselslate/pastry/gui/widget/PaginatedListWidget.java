@@ -26,8 +26,7 @@ public class PaginatedListWidget<E extends PaginatedListWidget.Entry<E>> extends
     private int page = -1;
 
     public PaginatedListWidget(Screen screen, MinecraftClient client, int width, int height, int top, int bottom,
-            int rowHeight,
-            int entriesPerPage, List<E> entries, int page) {
+            int rowHeight, int entriesPerPage, List<E> entries, int page) {
         super(client, width, height, top, bottom, rowHeight);
 
         this.parent = screen;

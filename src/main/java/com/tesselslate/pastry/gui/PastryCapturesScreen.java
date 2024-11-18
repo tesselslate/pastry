@@ -31,7 +31,7 @@ public class PastryCapturesScreen extends ScreenExtended {
     public PastryCapturesScreen(Screen parent) {
         super(parent, new LiteralText("Pastry Captures"));
 
-        this.task = CompletableFuture.supplyAsync(ListCapturesTask::run, Pastry.EXECUTOR);
+        this.task = CompletableFuture.supplyAsync(ListCapturesTask::run, Pastry.TASK_POOL);
     }
 
     @Override

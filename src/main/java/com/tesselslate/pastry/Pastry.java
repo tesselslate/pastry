@@ -7,8 +7,8 @@ import net.minecraft.client.MinecraftClient;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinWorkerThread;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,7 +26,7 @@ public class Pastry implements ClientModInitializer {
 
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
-    public static ExecutorService EXECUTOR;
+    public static ForkJoinPool TASK_POOL;
 
     @Nullable
     public static CullState CURRENT_CULLING_STATE;
@@ -38,7 +38,11 @@ public class Pastry implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        EXECUTOR = Executors.newCachedThreadPool(runnable -> new Thread(runnable, "pastry-worker"));
+        TASK_POOL = new ForkJoinPool(Runtime.getRuntime().availableProcessors(), pool -> {
+            ForkJoinWorkerThread thread = ForkJoinPool.defaultForkJoinWorkerThreadFactory.newThread(pool);
+            thread.setName("pastry-worker-" + thread.getPoolIndex());
+            return thread;
+        }, null, false);
     }
 
     public static void captureCullingState() {

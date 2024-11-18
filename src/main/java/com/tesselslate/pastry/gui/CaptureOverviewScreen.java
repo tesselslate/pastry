@@ -32,7 +32,7 @@ public class CaptureOverviewScreen extends ScreenExtended {
                 this.taskException = e;
                 return null;
             }
-        }, Pastry.EXECUTOR);
+        }, Pastry.TASK_POOL);
     }
 
     @Override

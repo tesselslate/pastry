@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.RecursiveTask;
 import java.util.zip.GZIPInputStream;
 
 import com.tesselslate.pastry.capture.PastryCaptureHeader;
@@ -20,8 +21,9 @@ import com.tesselslate.pastry.capture.PastryCaptureVersionException;
  * directory and reads the {@link PastryCaptureHeader} of each available
  * capture.
  */
-public class ListCapturesTask {
-    public static Result run() {
+public class ListCapturesTask extends RecursiveTask<ListCapturesTask.Result> {
+    @Override
+    protected Result compute() {
         File capturesDir = PastryCaptureManager.getCaptureDirectory();
         File[] captures = capturesDir.listFiles();
 
@@ -53,8 +55,8 @@ public class ListCapturesTask {
     }
 
     public static class Result {
-        public List<Entry> entries;
-        public Map<File, Exception> exceptions;
+        public final List<Entry> entries;
+        public final Map<File, Exception> exceptions;
 
         public Result() {
             this.entries = new ArrayList<>();

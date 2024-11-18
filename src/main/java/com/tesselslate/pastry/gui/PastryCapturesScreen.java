@@ -1,7 +1,7 @@
 package com.tesselslate.pastry.gui;
 
 import java.util.Collections;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ForkJoinTask;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
@@ -22,7 +22,7 @@ import net.minecraft.util.Formatting;
 public class PastryCapturesScreen extends ScreenExtended {
     private ListCapturesTask.Result result;
     private Exception taskException;
-    private CompletableFuture<ListCapturesTask.Result> task;
+    private ForkJoinTask<ListCapturesTask.Result> task;
 
     private CaptureListWidget captureList;
     private ButtonWidget doneButton;
@@ -31,7 +31,7 @@ public class PastryCapturesScreen extends ScreenExtended {
     public PastryCapturesScreen(Screen parent) {
         super(parent, new LiteralText("Pastry Captures"));
 
-        this.task = CompletableFuture.supplyAsync(ListCapturesTask::run, Pastry.TASK_POOL);
+        this.task = Pastry.TASK_POOL.submit(new ListCapturesTask());
     }
 
     @Override
@@ -80,21 +80,11 @@ public class PastryCapturesScreen extends ScreenExtended {
             return;
         }
 
-        ListCapturesTask.Result result;
-        try {
-            result = this.task.getNow(null);
-            if (result == null) {
-                return;
-            }
-
-            this.task = null;
-        } catch (Exception e) {
-            this.taskException = e;
-
-            this.task.cancel(true);
-            this.task = null;
+        ListCapturesTask.Result result = this.task.getRawResult();
+        if (result == null) {
             return;
         }
+        this.task = null;
 
         this.processTaskResult(result);
     }

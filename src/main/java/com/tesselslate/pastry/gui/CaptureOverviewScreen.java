@@ -3,7 +3,7 @@ package com.tesselslate.pastry.gui;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ForkJoinTask;
 
 import com.tesselslate.pastry.Pastry;
 import com.tesselslate.pastry.capture.PastryCapture;
@@ -20,19 +20,12 @@ public class CaptureOverviewScreen extends ScreenExtended {
 
     private PastryCapture capture;
     private Exception taskException;
-    private CompletableFuture<PastryCapture> task;
+    private ForkJoinTask<ReadCaptureTask.Result> task;
 
     public CaptureOverviewScreen(Screen parent, File file, PastryCaptureHeader header) {
         super(parent, new LiteralText("Overview of " + DATE_FORMAT.format(header.recordedAt)));
 
-        this.task = CompletableFuture.supplyAsync(() -> {
-            try {
-                return ReadCaptureTask.run(file);
-            } catch (Exception e) {
-                this.taskException = e;
-                return null;
-            }
-        }, Pastry.TASK_POOL);
+        this.task = Pastry.TASK_POOL.submit(new ReadCaptureTask(file));
     }
 
     @Override
@@ -73,23 +66,18 @@ public class CaptureOverviewScreen extends ScreenExtended {
             return;
         }
 
-        PastryCapture result;
-        try {
-            result = this.task.getNow(null);
-            if (result == null) {
-                return;
-            }
+        ReadCaptureTask.Result result = this.task.getRawResult();
+        if (result == null) {
+            return;
+        }
+        this.task = null;
 
-            this.task = null;
-        } catch (Exception e) {
-            this.taskException = e;
-
-            this.task.cancel(true);
-            this.task = null;
+        if (result.exception != null) {
+            this.taskException = result.exception;
             return;
         }
 
-        this.processTaskResult(result);
+        this.processTaskResult(result.capture);
     }
 
     private void processTaskResult(PastryCapture capture) {

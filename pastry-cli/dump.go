@@ -111,14 +111,18 @@ func dumpProfilerEvent(e *ProfilerEvent) {
 		name  string
 		index int
 	}{
-		{"BE", BlockEntities},
-		{"E", Entities},
-		{"U", Unspecified},
+		{"Block Entities", BlockEntities},
+		{"Entities", Entities},
+		{"Unspecified", Unspecified},
+		{"Destroy Progress", DestroyProgress},
+		{"Prepare", Prepare},
 	}
 
 	for _, section := range sections {
-		fmt.Printf("\t%53s: %5.2f%%\n", section.name, e.Percentages[section.index])
+		fmt.Printf("\t%53s: %5.2f%% %5.2f%%\n", section.name, e.Parent[section.index], e.Total[section.index])
 	}
+
+	fmt.Printf("\t%53s: %5.2f%%\n", "gameRenderer Total", e.SumTotal)
 }
 
 func dumpSysinfoEvent(e *SysinfoEvent) {

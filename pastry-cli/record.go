@@ -11,9 +11,11 @@ import (
 )
 
 const (
-	BlockEntities = 0
-	Entities      = 1
-	Unspecified   = 2
+	BlockEntities   = 0
+	Entities        = 1
+	Unspecified     = 2
+	DestroyProgress = 3
+	Prepare         = 4
 )
 
 const (
@@ -29,7 +31,7 @@ const (
 	Gamemode     = 9
 )
 
-const currentVersion = 11
+const currentVersion = 12
 
 // Record contains the data from a parsed Pastry recording.
 type Record struct {
@@ -120,7 +122,10 @@ type OptionsEvent struct {
 // ProfilerEvent contains information about the state of the gameRenderer
 // profiler results for a single frame of a Pastry recording.
 type ProfilerEvent struct {
-	Percentages [3]float32 // Parent gameRenderer percentages
+	Parent [5]float32 // Parent gameRenderer percentages
+	Total  [5]float32 // Total gameRenderer percentages
+
+	SumTotal float32 // Total percentage of gameRenderer
 }
 
 // SysinfoEvent contains information about the hardware and JVM on which a
@@ -497,7 +502,7 @@ func readOptionsEvent(r io.Reader) (Event, error) {
 
 // readProfilerEvent reads a profiler event from a Pastry recording.
 func readProfilerEvent(r io.Reader) (Event, error) {
-	var percent [3]float32
+	var percent [11]float32
 
 	for i := range percent {
 		upper, err := readUint8(r)
@@ -513,7 +518,11 @@ func readProfilerEvent(r io.Reader) (Event, error) {
 		percent[i] = float32(upper) + float32(lower)/100.0
 	}
 
-	return &ProfilerEvent{Percentages: percent}, nil
+	return &ProfilerEvent{
+		Parent:   *(*[5]float32)(percent[0:5]),
+		Total:    *(*[5]float32)(percent[5:10]),
+		SumTotal: percent[10],
+	}, nil
 }
 
 // readSysinfoEvent reads a system info event from a Pastry recording.

@@ -11,7 +11,7 @@ import java.util.List;
  * recording.
  */
 public class PastryCaptureHeader {
-    private static final int CURRENT_VERSION = 11;
+    private static final int CURRENT_VERSION = 12;
 
     public final int version;
     public final int numEvents;
@@ -62,9 +62,9 @@ public class PastryCaptureHeader {
      * @throws PastryCaptureVersionException If {@code version} cannot be handled
      */
     private static void checkCaptureVersion(int version) throws PastryCaptureVersionException {
-        if (version < 9) {
-            // Version 9 changed the format of {@link PastryCaptureFrameEvent}.
-            throw new PastryCaptureVersionException(version, "Cannot process captures below version 9");
+        if (version < 12) {
+            // Version 12 changed the format of {@link PastryCaptureProfilerEvent}.
+            throw new PastryCaptureVersionException(version, "Cannot process captures below version 12");
         }
         if (version > CURRENT_VERSION) {
             throw new PastryCaptureVersionException(version,

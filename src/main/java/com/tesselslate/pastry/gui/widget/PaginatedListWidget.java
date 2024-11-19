@@ -50,30 +50,30 @@ public class PaginatedListWidget<E extends PaginatedListWidget.Entry<E>> extends
     }
 
     public ButtonWidget createNextPageButton(int x, int y, int w, int h) {
-        this.nextPageButton = new ButtonWidget(x, y, w, h, new LiteralText(RIGHT_ARROW), button -> {
-            this.nextPage();
-        }, (button, matrices, mouseX, mouseY) -> {
-            if (button.active) {
-                this.parent.renderTooltip(matrices,
-                        StringRenderable.plain(String.format("Page %d/%d", this.page + 2, this.getPageCount())), mouseX,
-                        mouseY);
-            }
-        });
+        this.nextPageButton = new ButtonWidget(x, y, w, h, new LiteralText(RIGHT_ARROW), button -> this.nextPage(),
+                (button, matrices, mouseX, mouseY) -> {
+                    if (button.active) {
+                        this.parent.renderTooltip(matrices,
+                                StringRenderable.plain(String.format("Page %d/%d", this.page + 2, this.getPageCount())),
+                                mouseX,
+                                mouseY);
+                    }
+                });
 
         this.nextPageButton.active = this.nextPageExists();
         return this.nextPageButton;
     }
 
     public ButtonWidget createPrevPageButton(int x, int y, int w, int h) {
-        this.prevPageButton = new ButtonWidget(x, y, w, h, new LiteralText(LEFT_ARROW), button -> {
-            this.prevPage();
-        }, (button, matrices, mouseX, mouseY) -> {
-            if (button.active) {
-                this.parent.renderTooltip(matrices,
-                        StringRenderable.plain(String.format("Page %d/%d", this.page, this.getPageCount())), mouseX,
-                        mouseY);
-            }
-        });
+        this.prevPageButton = new ButtonWidget(x, y, w, h, new LiteralText(LEFT_ARROW), button -> this.prevPage(),
+                (button, matrices, mouseX, mouseY) -> {
+                    if (button.active) {
+                        this.parent.renderTooltip(matrices,
+                                StringRenderable.plain(String.format("Page %d/%d", this.page, this.getPageCount())),
+                                mouseX,
+                                mouseY);
+                    }
+                });
 
         this.prevPageButton.active = this.prevPageExists();
         return this.prevPageButton;
@@ -88,7 +88,7 @@ public class PaginatedListWidget<E extends PaginatedListWidget.Entry<E>> extends
     }
 
     public boolean nextPageExists() {
-        return this.page < getPageCount() - 1;
+        return this.page < this.getPageCount() - 1;
     }
 
     public void nextPage() {

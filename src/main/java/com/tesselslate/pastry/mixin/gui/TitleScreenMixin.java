@@ -4,7 +4,7 @@ import org.spongepowered.asm.mixin.Mixin;
 
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.tesselslate.pastry.gui.PastryCapturesScreen;
+import com.tesselslate.pastry.gui.CaptureListScreen;
 
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
@@ -27,7 +27,7 @@ public abstract class TitleScreenMixin extends Screen {
         orig.call();
 
         this.addButton(new Button(this.width / 2 - 124, this.height / 4 + 72, 20, 20, LiteralText.EMPTY, button -> {
-            MinecraftClient.getInstance().openScreen(new PastryCapturesScreen(this));
+            MinecraftClient.getInstance().openScreen(new CaptureListScreen(this));
         }));
     }
 

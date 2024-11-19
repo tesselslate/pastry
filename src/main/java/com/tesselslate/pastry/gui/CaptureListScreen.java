@@ -17,7 +17,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
 
-public class PastryCapturesScreen extends ScreenExtended {
+public class CaptureListScreen extends ScreenExtended {
     private ListCapturesTask.Result result;
     private Exception taskException;
     private ForkJoinTask<ListCapturesTask.Result> task;
@@ -26,7 +26,7 @@ public class PastryCapturesScreen extends ScreenExtended {
     private ButtonWidget doneButton;
     private LiteralText subtitle;
 
-    public PastryCapturesScreen(Screen parent) {
+    public CaptureListScreen(Screen parent) {
         super(parent, new LiteralText("Pastry Captures"));
 
         this.task = Pastry.TASK_POOL.submit(new ListCapturesTask());

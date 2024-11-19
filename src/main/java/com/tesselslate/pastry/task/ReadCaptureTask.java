@@ -10,7 +10,7 @@ import com.tesselslate.pastry.capture.PastryCapture;
 /**
  * Reads and parses a single {@link PastryCapture} from {@code file}.
  */
-public class ReadCaptureTask extends RecursiveTask<ReadCaptureTask.Result> {
+public class ReadCaptureTask extends RecursiveTask<Exceptional<PastryCapture>> {
     private final File file;
 
     public ReadCaptureTask(File file) {
@@ -18,29 +18,13 @@ public class ReadCaptureTask extends RecursiveTask<ReadCaptureTask.Result> {
     }
 
     @Override
-    protected Result compute() {
+    protected Exceptional<PastryCapture> compute() {
         try (GZIPInputStream input = new GZIPInputStream(new FileInputStream(file))) {
             PastryCapture capture = new PastryCapture(input);
 
-            return new ReadCaptureTask.Result(capture);
+            return new Exceptional<>(capture);
         } catch (Exception e) {
-            return new ReadCaptureTask.Result(e);
-        }
-    }
-
-    public static class Result {
-        public final PastryCapture capture;
-
-        public final Exception exception;
-
-        private Result(PastryCapture capture) {
-            this.capture = capture;
-            this.exception = null;
-        }
-
-        private Result(Exception exception) {
-            this.capture = null;
-            this.exception = exception;
+            return new Exceptional<>(e);
         }
     }
 }

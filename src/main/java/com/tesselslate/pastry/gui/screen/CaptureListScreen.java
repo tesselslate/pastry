@@ -1,4 +1,4 @@
-package com.tesselslate.pastry.gui;
+package com.tesselslate.pastry.gui.screen;
 
 import java.util.Collections;
 import java.util.concurrent.ForkJoinTask;
@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 
 import com.tesselslate.pastry.Pastry;
+import com.tesselslate.pastry.gui.ScreenExtended;
 import com.tesselslate.pastry.gui.toast.ErrorToast;
 import com.tesselslate.pastry.gui.widget.CaptureListWidget;
 import com.tesselslate.pastry.task.ListCapturesTask;

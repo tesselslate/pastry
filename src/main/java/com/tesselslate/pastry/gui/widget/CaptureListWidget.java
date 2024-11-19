@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.lwjgl.glfw.GLFW;
 
-import com.tesselslate.pastry.gui.CaptureOverviewScreen;
+import com.tesselslate.pastry.gui.screen.CaptureOverviewScreen;
 import com.tesselslate.pastry.task.ListCapturesTask;
 
 import net.minecraft.client.MinecraftClient;

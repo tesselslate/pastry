@@ -1,4 +1,4 @@
-package com.tesselslate.pastry.gui;
+package com.tesselslate.pastry.gui.screen;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -13,6 +13,7 @@ import com.tesselslate.pastry.analysis.preemptive.PreemptiveAnalysis;
 import com.tesselslate.pastry.analysis.preemptive.PreemptiveReading;
 import com.tesselslate.pastry.capture.PastryCapture;
 import com.tesselslate.pastry.capture.PastryCaptureHeader;
+import com.tesselslate.pastry.gui.ScreenExtended;
 import com.tesselslate.pastry.gui.widget.PieChartWidget;
 import com.tesselslate.pastry.task.AnalyzeCaptureTask;
 import com.tesselslate.pastry.task.Exceptional;

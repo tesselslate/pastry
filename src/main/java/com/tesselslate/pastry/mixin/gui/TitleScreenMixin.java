@@ -4,7 +4,7 @@ import org.spongepowered.asm.mixin.Mixin;
 
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.tesselslate.pastry.gui.CaptureListScreen;
+import com.tesselslate.pastry.gui.screen.CaptureListScreen;
 
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;

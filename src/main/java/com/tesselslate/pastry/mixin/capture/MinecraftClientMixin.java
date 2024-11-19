@@ -75,6 +75,11 @@ public abstract class MinecraftClientMixin {
         ((WorldRendererAccessor) worldRenderer).setCapturedFrustum(null);
     }
 
+    @Inject(at = @At("HEAD"), method = "render(Z)V")
+    private void render_clearQueuedEvents(boolean tick, CallbackInfo info) {
+        PastryCaptureManager.update(capture -> capture.clearQueue());
+    }
+
     @Inject(at = @At("TAIL"), method = "render(Z)V")
     private void render_addFrameEvents(boolean tick, CallbackInfo info) {
         MinecraftClient client = (MinecraftClient) (Object) this;

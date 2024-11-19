@@ -106,7 +106,8 @@ public class PastryCaptureBlockEntityEvent implements PastryCaptureEvent {
         } else {
             PastryCaptureBlockEntityEvent other = (PastryCaptureBlockEntityEvent) obj;
 
-            return (this.pos.equals(other.pos)) && (this.name.equals(other.name)) && (this.data.equals(other.data));
+            return (this.pos.equals(other.pos)) && (this.name.equals(other.name))
+                    && (Objects.equals(this.data, other.data));
         }
     }
 }

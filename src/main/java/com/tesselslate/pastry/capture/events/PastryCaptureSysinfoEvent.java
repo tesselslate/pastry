@@ -2,6 +2,9 @@ package com.tesselslate.pastry.capture.events;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.util.Objects;
+
+import org.jetbrains.annotations.NotNull;
 
 import com.mojang.blaze3d.platform.GlDebugInfo;
 import com.tesselslate.pastry.capture.PastryCaptureEvent;
@@ -17,16 +20,26 @@ import com.tesselslate.pastry.capture.PastryCaptureOutputStream;
 public class PastryCaptureSysinfoEvent implements PastryCaptureEvent {
     private static final PastryCaptureEventType EVENT_TYPE = PastryCaptureEventType.SYSINFO;
 
-    public String glVendor;
-    public String glRenderer;
-    public String glVersion;
-    public String cpu;
+    @NotNull
+    public final String glVendor;
 
-    public String jvmVersion;
-    public String jvmArgs;
+    @NotNull
+    public final String glRenderer;
 
-    public long maxMemory;
-    public int availableProcessors;
+    @NotNull
+    public final String glVersion;
+
+    @NotNull
+    public final String cpu;
+
+    @NotNull
+    public final String jvmVersion;
+
+    @NotNull
+    public final String jvmArgs;
+
+    public final long maxMemory;
+    public final int availableProcessors;
 
     public PastryCaptureSysinfoEvent() {
         this.glVendor = GlDebugInfo.getVendor();
@@ -71,5 +84,36 @@ public class PastryCaptureSysinfoEvent implements PastryCaptureEvent {
 
         output.writeLong(this.maxMemory);
         output.writeInt(this.availableProcessors);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Objects.hashCode(this.glVendor);
+        result = prime * result + Objects.hashCode(this.glRenderer);
+        result = prime * result + Objects.hashCode(this.glVersion);
+        result = prime * result + Objects.hashCode(this.cpu);
+        result = prime * result + Objects.hashCode(this.jvmVersion);
+        result = prime * result + Objects.hashCode(this.jvmArgs);
+        result = prime * result + (int) (this.maxMemory ^ (this.maxMemory >>> 32));
+        result = prime * result + this.availableProcessors;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (!(obj instanceof PastryCaptureSysinfoEvent)) {
+            return false;
+        } else {
+            PastryCaptureSysinfoEvent other = (PastryCaptureSysinfoEvent) obj;
+
+            return (this.glVendor.equals(other.glVendor)) && (this.glRenderer.equals(other.glRenderer))
+                    && (this.glVersion.equals(other.glVersion)) && (this.cpu.equals(other.cpu))
+                    && (this.jvmVersion.equals(other.jvmVersion)) && (this.jvmArgs.equals(other.jvmArgs))
+                    && (this.maxMemory == other.maxMemory) && (this.availableProcessors == other.availableProcessors);
+        }
     }
 }

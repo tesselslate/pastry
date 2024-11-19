@@ -1,7 +1,9 @@
 package com.tesselslate.pastry.capture.events;
 
 import java.io.IOException;
+import java.util.Objects;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.tesselslate.pastry.capture.PastryCaptureEvent;
@@ -27,19 +29,21 @@ public class PastryCaptureBlockEntityEvent implements PastryCaptureEvent {
     /**
      * The world coordinates of the block entity.
      */
-    public Vec3i pos;
+    @NotNull
+    public final Vec3i pos;
 
     /**
      * The ID of the block entity (namespace not included.)
      */
-    public String name;
+    @NotNull
+    public final String name;
 
     /**
      * Auxiliary data related to the block entity, such as the name of the mob
      * being spawned by a mob spawner.
      */
     @Nullable
-    public String data;
+    public final String data;
 
     public PastryCaptureBlockEntityEvent(BlockEntity blockEntity) {
         BlockPos blockPos = blockEntity.getPos();
@@ -50,6 +54,9 @@ public class PastryCaptureBlockEntityEvent implements PastryCaptureEvent {
             this.data = EntityType.getId(mobSpawner.getLogic().getRenderedEntity().getType()).getPath();
         } else {
             this.name = BlockEntityType.getId(blockEntity.getType()).getPath();
+            Objects.requireNonNull(this.name);
+
+            this.data = null;
         }
     }
 
@@ -60,6 +67,8 @@ public class PastryCaptureBlockEntityEvent implements PastryCaptureEvent {
         this.pos = new Vec3i(x, y, z);
 
         this.name = input.readString();
+        Objects.requireNonNull(this.name);
+
         this.data = input.readString();
     }
 
@@ -76,5 +85,28 @@ public class PastryCaptureBlockEntityEvent implements PastryCaptureEvent {
 
         output.writeString(this.name);
         output.writeString(this.data);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Objects.hashCode(this.pos);
+        result = prime * result + Objects.hashCode(this.name);
+        result = prime * result + Objects.hashCode(this.data);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (!(obj instanceof PastryCaptureBlockEntityEvent)) {
+            return false;
+        } else {
+            PastryCaptureBlockEntityEvent other = (PastryCaptureBlockEntityEvent) obj;
+
+            return (this.pos.equals(other.pos)) && (this.name.equals(other.name)) && (this.data.equals(other.data));
+        }
     }
 }

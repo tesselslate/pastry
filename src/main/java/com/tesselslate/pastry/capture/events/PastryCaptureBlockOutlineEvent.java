@@ -1,6 +1,9 @@
 package com.tesselslate.pastry.capture.events;
 
 import java.io.IOException;
+import java.util.Objects;
+
+import org.jetbrains.annotations.NotNull;
 
 import com.tesselslate.pastry.capture.PastryCaptureEvent;
 import com.tesselslate.pastry.capture.PastryCaptureEventType;
@@ -20,9 +23,12 @@ public class PastryCaptureBlockOutlineEvent implements PastryCaptureEvent {
     /**
      * The position of the targeted block in the world.
      */
-    public BlockPos blockPos;
+    @NotNull
+    public final BlockPos blockPos;
 
-    public PastryCaptureBlockOutlineEvent(BlockPos blockPos) {
+    public PastryCaptureBlockOutlineEvent(@NotNull BlockPos blockPos) {
+        Objects.requireNonNull(blockPos);
+
         this.blockPos = blockPos;
     }
 
@@ -43,5 +49,23 @@ public class PastryCaptureBlockOutlineEvent implements PastryCaptureEvent {
         long packedPos = this.blockPos.asLong();
 
         output.writeLong(packedPos);
+    }
+
+    @Override
+    public int hashCode() {
+        return this.blockPos.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (!(obj instanceof PastryCaptureBlockOutlineEvent)) {
+            return false;
+        } else {
+            PastryCaptureBlockOutlineEvent other = (PastryCaptureBlockOutlineEvent) obj;
+
+            return this.blockPos.equals(other.blockPos);
+        }
     }
 }

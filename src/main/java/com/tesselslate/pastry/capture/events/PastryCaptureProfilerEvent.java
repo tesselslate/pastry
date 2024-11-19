@@ -23,25 +23,33 @@ public class PastryCaptureProfilerEvent implements PastryCaptureEvent {
 
     private static final String GAMERENDERER_DIRECTORY = "root.gameRenderer.level.entities".replace('.', '\u001e');
 
-    public float blockEntityPercentage;
-    public float entityPercentage;
-    public float unspecifiedPercentage;
+    public final float blockEntityPercentage;
+    public final float entityPercentage;
+    public final float unspecifiedPercentage;
 
     public PastryCaptureProfilerEvent(ProfileResult profileResult) {
+        float blockEntityPercentage = 0;
+        float entityPercentage = 0;
+        float unspecifiedPercentage = 0;
+
         List<ProfilerTiming> timings = profileResult.getTimings(GAMERENDERER_DIRECTORY);
         for (ProfilerTiming timing : timings) {
             switch (timing.name) {
                 case "blockentities":
-                    this.blockEntityPercentage = (float) timing.parentSectionUsagePercentage;
+                    blockEntityPercentage = (float) timing.parentSectionUsagePercentage;
                     break;
                 case "entities":
-                    this.entityPercentage = (float) timing.parentSectionUsagePercentage;
+                    entityPercentage = (float) timing.parentSectionUsagePercentage;
                     break;
                 case "unspecified":
-                    this.unspecifiedPercentage = (float) timing.parentSectionUsagePercentage;
+                    unspecifiedPercentage = (float) timing.parentSectionUsagePercentage;
                     break;
             }
         }
+
+        this.blockEntityPercentage = blockEntityPercentage;
+        this.entityPercentage = entityPercentage;
+        this.unspecifiedPercentage = unspecifiedPercentage;
     }
 
     public PastryCaptureProfilerEvent(PastryCaptureInputStream input) throws IOException {
@@ -75,5 +83,30 @@ public class PastryCaptureProfilerEvent implements PastryCaptureEvent {
 
         output.writeByte(whole);
         output.writeByte(decimal);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Float.floatToIntBits(this.blockEntityPercentage);
+        result = prime * result + Float.floatToIntBits(this.entityPercentage);
+        result = prime * result + Float.floatToIntBits(this.unspecifiedPercentage);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (!(obj instanceof PastryCaptureProfilerEvent)) {
+            return false;
+        } else {
+            PastryCaptureProfilerEvent other = (PastryCaptureProfilerEvent) obj;
+
+            return (this.blockEntityPercentage == other.blockEntityPercentage)
+                    && (this.entityPercentage == other.entityPercentage)
+                    && (this.unspecifiedPercentage == other.unspecifiedPercentage);
+        }
     }
 }

@@ -25,13 +25,14 @@ public class PastryCaptureEntityEvent implements PastryCaptureEvent {
     /**
      * The world coordinates of the entity.
      */
-    public Vec3d pos;
+    @NotNull
+    public final Vec3d pos;
 
     /**
      * The ID of the entity (namespace not included.)
      */
     @NotNull
-    public String name;
+    public final String name;
 
     public PastryCaptureEntityEvent(Entity entity) {
         this.pos = new Vec3d(entity.getX(), entity.getY(), entity.getZ());
@@ -61,5 +62,27 @@ public class PastryCaptureEntityEvent implements PastryCaptureEvent {
         output.writeDouble(this.pos.z);
 
         output.writeString(this.name);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Objects.hashCode(this.pos);
+        result = prime * result + Objects.hashCode(this.name);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (!(obj instanceof PastryCaptureEntityEvent)) {
+            return false;
+        } else {
+            PastryCaptureEntityEvent other = (PastryCaptureEntityEvent) obj;
+
+            return (this.pos.equals(other.pos)) && (this.name.equals(other.name));
+        }
     }
 }

@@ -24,15 +24,15 @@ public class PastryCaptureOptionsEvent implements PastryCaptureEvent {
     private static final int MASK_CHUNK_BORDERS = 0x02000000;
     private static final int MASK_CULL_STATE = 0x04000000;
 
-    public int renderDistance;
-    public int entityDistance;
-    public int fov;
+    public final int renderDistance;
+    public final int entityDistance;
+    public final int fov;
 
-    public int gameWidth, gameHeight;
+    public final int gameWidth, gameHeight;
 
-    public boolean hitboxes;
-    public boolean chunkBorders;
-    public boolean cullState;
+    public final boolean hitboxes;
+    public final boolean chunkBorders;
+    public final boolean cullState;
 
     public PastryCaptureOptionsEvent(MinecraftClient client) {
         this.renderDistance = client.options.viewDistance;
@@ -83,5 +83,36 @@ public class PastryCaptureOptionsEvent implements PastryCaptureEvent {
 
         output.writeInt(this.gameWidth);
         output.writeInt(this.gameHeight);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + this.renderDistance;
+        result = prime * result + this.entityDistance;
+        result = prime * result + this.fov;
+        result = prime * result + this.gameWidth;
+        result = prime * result + this.gameHeight;
+        result = prime * result + (this.hitboxes ? 1231 : 1237);
+        result = prime * result + (this.chunkBorders ? 1231 : 1237);
+        result = prime * result + (this.cullState ? 1231 : 1237);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (!(obj instanceof PastryCaptureOptionsEvent)) {
+            return false;
+        } else {
+            PastryCaptureOptionsEvent other = (PastryCaptureOptionsEvent) obj;
+
+            return (this.renderDistance == other.renderDistance) && (this.entityDistance == other.entityDistance)
+                    && (this.fov == other.fov) && (this.gameWidth == other.gameWidth)
+                    && (this.gameHeight == other.gameHeight) && (this.hitboxes == other.hitboxes)
+                    && (this.chunkBorders == other.chunkBorders) && (this.cullState == other.cullState);
+        }
     }
 }

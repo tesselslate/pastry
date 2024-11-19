@@ -7,14 +7,12 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 
 import com.tesselslate.pastry.Pastry;
+import com.tesselslate.pastry.gui.toast.ErrorToast;
 import com.tesselslate.pastry.gui.widget.CaptureListWidget;
 import com.tesselslate.pastry.task.ListCapturesTask;
 
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.toast.Toast;
-import net.minecraft.client.toast.ToastManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
@@ -101,7 +99,8 @@ public class PastryCapturesScreen extends ScreenExtended {
                         .map(entry -> entry.size).collect(Collectors.summingLong(Long::longValue)))));
 
         if (result.exceptions.size() > 0) {
-            this.client.getToastManager().add(new TaskErrorToast(result.exceptions.size()));
+            String error = String.format("%d captures not included", result.exceptions.size());
+            this.client.getToastManager().add(new ErrorToast(error));
 
             Pastry.LOGGER.error("Failed to process " + result.exceptions.size() + " captures:");
             result.exceptions.forEach((file, exception) -> {
@@ -119,36 +118,5 @@ public class PastryCapturesScreen extends ScreenExtended {
                 Formatting.GRAY.getColorValue());
 
         this.doneButton.render(matrices, mouseX, mouseY, delta);
-    }
-
-    private class TaskErrorToast implements Toast {
-        private static final String TOAST_TEXT = "See latest.log for more info";
-
-        private final int errors;
-
-        private long startTime = Long.MIN_VALUE;
-
-        public TaskErrorToast(int numErrors) {
-            this.errors = numErrors;
-        }
-
-        @Override
-        public Visibility draw(MatrixStack matrices, ToastManager manager, long startTime) {
-            if (this.startTime == Long.MIN_VALUE) {
-                this.startTime = startTime;
-            }
-
-            @SuppressWarnings("resource")
-            TextRenderer textRenderer = manager.getGame().textRenderer;
-
-            manager.getGame().getTextureManager().bindTexture(TOASTS_TEX);
-            manager.drawTexture(matrices, 0, 0, 0, 0, this.getWidth(), this.getHeight());
-
-            String title = String.format("%d captures not included", this.errors);
-            textRenderer.draw(matrices, title, 7.0f, 7.0f, Formatting.RED.getColorValue());
-            textRenderer.draw(matrices, TOAST_TEXT, 7.0f, 18.0f, Formatting.WHITE.getColorValue());
-
-            return (startTime - this.startTime) > 4000 ? Visibility.HIDE : Visibility.SHOW;
-        }
     }
 }

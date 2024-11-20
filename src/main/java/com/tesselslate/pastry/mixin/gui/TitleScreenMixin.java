@@ -14,6 +14,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.StringRenderable;
 import net.minecraft.text.Text;
 
 @Mixin(value = TitleScreen.class)
@@ -33,7 +34,9 @@ public abstract class TitleScreenMixin extends Screen {
 
     private class Button extends ButtonWidget {
         private Button(int x, int y, int width, int height, Text message, PressAction onPress) {
-            super(x, y, width, height, message, onPress);
+            super(x, y, width, height, message, onPress, (button, matrices, mouseX, mouseY) -> {
+                TitleScreenMixin.this.renderTooltip(matrices, StringRenderable.plain("Pastry"), mouseX, mouseY);
+            });
         }
 
         @Override

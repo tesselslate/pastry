@@ -2,29 +2,29 @@ package com.tesselslate.pastry.task;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.concurrent.RecursiveTask;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.zip.GZIPInputStream;
 
 import com.tesselslate.pastry.capture.PastryCapture;
+import com.tesselslate.pastry.capture.PastryCaptureVersionException;
 
 /**
  * Reads and parses a single {@link PastryCapture} from {@code file}.
  */
-public class ReadCaptureTask extends RecursiveTask<Exceptional<PastryCapture>> {
+public class ReadCaptureTask extends PastryTask<PastryCapture> {
     private final File file;
 
     public ReadCaptureTask(File file) {
+        super("ReadCaptureTask");
+
         this.file = file;
     }
 
     @Override
-    protected Exceptional<PastryCapture> compute() {
+    protected PastryCapture runTask() throws FileNotFoundException, IOException, PastryCaptureVersionException {
         try (GZIPInputStream input = new GZIPInputStream(new FileInputStream(file))) {
-            PastryCapture capture = new PastryCapture(input);
-
-            return new Exceptional<>(capture);
-        } catch (Exception e) {
-            return new Exceptional<>(e);
+            return new PastryCapture(input);
         }
     }
 }

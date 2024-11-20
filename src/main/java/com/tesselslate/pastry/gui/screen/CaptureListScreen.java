@@ -10,6 +10,7 @@ import com.tesselslate.pastry.Pastry;
 import com.tesselslate.pastry.gui.ScreenExtended;
 import com.tesselslate.pastry.gui.toast.ErrorToast;
 import com.tesselslate.pastry.gui.widget.CaptureListWidget;
+import com.tesselslate.pastry.task.Exceptional;
 import com.tesselslate.pastry.task.ListCapturesTask;
 
 import net.minecraft.client.gui.screen.Screen;
@@ -20,7 +21,7 @@ import net.minecraft.util.Formatting;
 
 public class CaptureListScreen extends ScreenExtended {
     private ListCapturesTask.Result result;
-    private ForkJoinTask<ListCapturesTask.Result> task;
+    private ForkJoinTask<Exceptional<ListCapturesTask.Result>> task;
 
     private CaptureListWidget captureList;
     private ButtonWidget doneButton;
@@ -75,13 +76,21 @@ public class CaptureListScreen extends ScreenExtended {
             return;
         }
 
-        ListCapturesTask.Result result = this.task.getRawResult();
+        Exceptional<ListCapturesTask.Result> result = this.task.getRawResult();
         if (result == null) {
             return;
         }
         this.task = null;
 
-        this.processTaskResult(result);
+        if (result.hasError()) {
+            this.onClose();
+
+            this.client.getToastManager().add(new ErrorToast("Failed to list captures"));
+            Pastry.LOGGER.error("Failed to list captures: " + result.getError());
+            return;
+        }
+
+        this.processTaskResult(result.getValue());
     }
 
     private void processTaskResult(ListCapturesTask.Result result) {

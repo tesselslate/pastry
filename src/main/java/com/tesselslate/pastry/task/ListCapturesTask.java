@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.RecursiveTask;
 import java.util.zip.GZIPInputStream;
 
 import com.tesselslate.pastry.capture.PastryCaptureHeader;
@@ -21,9 +20,13 @@ import com.tesselslate.pastry.capture.PastryCaptureVersionException;
  * directory and reads the {@link PastryCaptureHeader} of each available
  * capture.
  */
-public class ListCapturesTask extends RecursiveTask<ListCapturesTask.Result> {
+public class ListCapturesTask extends PastryTask<ListCapturesTask.Result> {
+    public ListCapturesTask() {
+        super("ListCapturesTask");
+    }
+
     @Override
-    protected Result compute() {
+    protected ListCapturesTask.Result runTask() {
         File capturesDir = PastryCaptureManager.getCaptureDirectory();
         File[] captures = capturesDir.listFiles();
 

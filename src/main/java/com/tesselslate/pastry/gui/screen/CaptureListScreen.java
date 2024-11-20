@@ -20,7 +20,6 @@ import net.minecraft.util.Formatting;
 
 public class CaptureListScreen extends ScreenExtended {
     private ListCapturesTask.Result result;
-    private Exception taskException;
     private ForkJoinTask<ListCapturesTask.Result> task;
 
     private CaptureListWidget captureList;
@@ -61,10 +60,7 @@ public class CaptureListScreen extends ScreenExtended {
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         this.renderBackground(matrices);
 
-        if (this.taskException != null) {
-            this.drawCenteredStringWrapping(matrices, "Failed to get captures: " + this.taskException,
-                    Formatting.RED.getColorValue());
-        } else if (this.task != null) {
+        if (this.task != null) {
             this.drawProgressText(matrices, "Loading captures...");
         } else if (this.captureList != null) {
             this.renderWidgets(matrices, mouseX, mouseY, delta);

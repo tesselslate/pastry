@@ -1,13 +1,10 @@
 package com.tesselslate.pastry.gui;
 
-import java.util.List;
-
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.StringRenderable;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Util;
@@ -38,18 +35,6 @@ public abstract class ScreenExtended extends Screen {
                 this.client.getToastManager().clear();
             }
         });
-    }
-
-    protected void drawCenteredStringWrapping(MatrixStack matrices, String text, int color) {
-        List<StringRenderable> lines = this.textRenderer.wrapLines(StringRenderable.plain(text), this.width / 2);
-
-        int height = lines.size() * (this.textRenderer.fontHeight + 1);
-        for (int row = 0; row < lines.size(); row++) {
-            int x = (this.width / 2) - (this.textRenderer.getWidth(lines.get(row)) / 2);
-            int y = (this.height / 2) - (height / 2) + (row * (this.textRenderer.fontHeight + 1));
-
-            this.textRenderer.draw(matrices, lines.get(row), x, y, color);
-        }
     }
 
     protected void drawProgressText(MatrixStack matrices, String text) {

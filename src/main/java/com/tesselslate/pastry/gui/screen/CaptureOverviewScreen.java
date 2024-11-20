@@ -14,6 +14,7 @@ import com.tesselslate.pastry.analysis.preemptive.PreemptiveReading;
 import com.tesselslate.pastry.capture.PastryCapture;
 import com.tesselslate.pastry.capture.PastryCaptureHeader;
 import com.tesselslate.pastry.gui.ScreenExtended;
+import com.tesselslate.pastry.gui.toast.ErrorToast;
 import com.tesselslate.pastry.gui.widget.PieChartWidget;
 import com.tesselslate.pastry.task.AnalyzeCaptureTask;
 import com.tesselslate.pastry.task.Exceptional;
@@ -35,7 +36,6 @@ public class CaptureOverviewScreen extends ScreenExtended {
 
     private PastryCapture capture;
     private PreemptiveAnalysis analysis;
-    private Exception taskException;
     private ForkJoinTask<Exceptional<PastryCapture>> readTask;
     private ForkJoinTask<Exceptional<PreemptiveAnalysis>> analyzeTask;
 
@@ -106,10 +106,7 @@ public class CaptureOverviewScreen extends ScreenExtended {
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         this.renderBackground(matrices);
 
-        if (this.taskException != null) {
-            this.drawCenteredStringWrapping(matrices, "Failed to read capture: " + this.taskException,
-                    Formatting.RED.getColorValue());
-        } else if (this.readTask != null) {
+        if (this.readTask != null) {
             this.drawProgressText(matrices, "Reading capture...");
         } else if (this.analyzeTask != null) {
             this.drawProgressText(matrices, "Analyzing capture...");
@@ -161,7 +158,10 @@ public class CaptureOverviewScreen extends ScreenExtended {
         this.analyzeTask = null;
 
         if (result.hasError()) {
-            this.taskException = result.getError();
+            this.onClose();
+
+            this.client.getToastManager().add(new ErrorToast("Failed to analyze capture"));
+            Pastry.LOGGER.error("Failed to analyze capture: " + result.getError());
             return;
         }
 
@@ -180,7 +180,10 @@ public class CaptureOverviewScreen extends ScreenExtended {
         this.readTask = null;
 
         if (result.hasError()) {
-            this.taskException = result.getError();
+            this.onClose();
+
+            this.client.getToastManager().add(new ErrorToast("Failed to read capture"));
+            Pastry.LOGGER.error("Failed to read capture: " + result.getError());
             return;
         }
 

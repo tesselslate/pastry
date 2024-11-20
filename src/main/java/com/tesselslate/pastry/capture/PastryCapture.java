@@ -120,15 +120,8 @@ public class PastryCapture {
      */
     public void writeTo(OutputStream output) throws IOException {
         try (PastryCaptureOutputStream pastryOutput = new PastryCaptureOutputStream(output, this.events)) {
-            pastryOutput.writeInt(this.structures.size());
-            for (PastryCaptureStructure structure : this.structures) {
-                structure.write(pastryOutput);
-            }
-
-            for (PastryCaptureEvent event : this.events) {
-                pastryOutput.writeInt(event.getEventType().ordinal());
-                event.write(pastryOutput);
-            }
+            pastryOutput.writeStructures(this.structures);
+            pastryOutput.writeEvents(this.events);
         }
     }
 

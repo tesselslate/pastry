@@ -4,10 +4,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collection;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
 import org.jetbrains.annotations.Nullable;
+
+import com.tesselslate.pastry.capture.structure.PastryCaptureStructure;
 
 import net.minecraft.util.math.BlockBox;
 
@@ -63,6 +66,29 @@ public class PastryCaptureOutputStream extends DataOutputStream {
         super.writeInt(blockBox.maxX);
         super.writeInt(blockBox.maxY);
         super.writeInt(blockBox.maxZ);
+    }
+
+    /**
+     * Writes all of the given events to the output stream.
+     *
+     * @param events The list of events to write.
+     */
+    public void writeEvents(List<PastryCaptureEvent> events) throws IOException {
+        for (PastryCaptureEvent event : events) {
+            super.writeInt(event.getEventType().ordinal());
+            event.write(this);
+        }
+    }
+
+    /**
+     * Writes all of the given structures to the output stream.
+     *
+     * @param structures The list of structures to write.
+     */
+    public void writeStructures(Collection<PastryCaptureStructure> structures) throws IOException {
+        for (PastryCaptureStructure structure : structures) {
+            structure.write(this);
+        }
     }
 
     /**

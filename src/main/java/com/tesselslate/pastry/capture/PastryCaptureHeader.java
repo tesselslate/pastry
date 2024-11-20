@@ -21,15 +21,11 @@ public class PastryCaptureHeader {
      */
     public final Date recordedAt;
 
-    protected PastryCaptureDictionary dictionary;
-
     public PastryCaptureHeader(List<PastryCaptureEvent> events) {
         this.version = CURRENT_VERSION;
 
         this.numEvents = events.size();
         this.recordedAt = new Date();
-
-        this.dictionary = new PastryCaptureDictionary();
     }
 
     public PastryCaptureHeader(DataInputStream input) throws IOException, PastryCaptureVersionException {
@@ -38,8 +34,6 @@ public class PastryCaptureHeader {
 
         this.numEvents = input.readInt();
         this.recordedAt = new Date(input.readLong());
-
-        this.dictionary = new PastryCaptureDictionary(input);
     }
 
     /**
@@ -51,8 +45,6 @@ public class PastryCaptureHeader {
         output.writeInt(this.version);
         output.writeInt(this.numEvents);
         output.writeLong(this.recordedAt.getTime());
-
-        this.dictionary.write(output);
     }
 
     /**

@@ -19,6 +19,7 @@ import net.minecraft.util.math.BlockBox;
  */
 public class PastryCaptureOutputStream extends DataOutputStream {
     private PastryCaptureHeader header;
+    private PastryCaptureDictionary dictionary;
 
     private GZIPOutputStream parentOutput;
     private ByteArrayOutputStream buffer;
@@ -32,6 +33,7 @@ public class PastryCaptureOutputStream extends DataOutputStream {
         super(buffer);
 
         this.header = new PastryCaptureHeader(events);
+        this.dictionary = new PastryCaptureDictionary();
 
         this.parentOutput = new GZIPOutputStream(output);
         this.buffer = buffer;
@@ -42,6 +44,7 @@ public class PastryCaptureOutputStream extends DataOutputStream {
         DataOutputStream parentDataOutput = new DataOutputStream(this.parentOutput);
 
         this.header.write(parentDataOutput);
+        this.dictionary.write(parentDataOutput);
         this.buffer.writeTo(parentDataOutput);
 
         parentDataOutput.close();
@@ -69,6 +72,6 @@ public class PastryCaptureOutputStream extends DataOutputStream {
      * @param string The string to reference
      */
     public void writeString(@Nullable String string) throws IOException {
-        super.writeInt(string != null ? this.header.dictionary.get(string) : 0);
+        super.writeInt(string != null ? this.dictionary.get(string) : 0);
     }
 }

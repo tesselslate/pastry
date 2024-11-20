@@ -32,11 +32,13 @@ import net.minecraft.util.math.BlockBox;
  */
 public class PastryCaptureInputStream extends DataInputStream {
     private PastryCaptureHeader header;
+    private PastryCaptureDictionary dictionary;
 
     public PastryCaptureInputStream(InputStream input) throws IOException, PastryCaptureVersionException {
         super(input);
 
-        this.header = new PastryCaptureHeader(new DataInputStream(input));
+        this.header = new PastryCaptureHeader(this);
+        this.dictionary = new PastryCaptureDictionary(this);
     }
 
     /**
@@ -68,7 +70,7 @@ public class PastryCaptureInputStream extends DataInputStream {
             return null;
         }
 
-        return this.header.dictionary.get(id);
+        return this.dictionary.get(id);
     }
 
     /**

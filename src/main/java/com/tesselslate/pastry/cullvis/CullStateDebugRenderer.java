@@ -42,27 +42,27 @@ public class CullStateDebugRenderer implements DebugRenderer.Renderer {
         this.state = state;
     }
 
-    private void buildLine(double ax, double ay, double az, double bx, double by, double bz, Vec3d color) {
+    private void buildLine(double ax, double ay, double az, double bx, double by, double bz, Vector3f color) {
         Vec3d c = this.cameraPos;
 
-        this.bufferBuilder.vertex(ax - c.x, ay - c.y, az - c.z)
-                .color((float) color.x, (float) color.y, (float) color.z, 1.0f).next();
-        this.bufferBuilder.vertex(bx - c.x, by - c.y, bz - c.z)
-                .color((float) color.x, (float) color.y, (float) color.z, 1.0f).next();
+        this.bufferBuilder.vertex(ax - c.x, ay - c.y, az - c.z).color(color.getX(), color.getY(), color.getZ(), 1.0f)
+                .next();
+        this.bufferBuilder.vertex(bx - c.x, by - c.y, bz - c.z).color(color.getX(), color.getY(), color.getZ(), 1.0f)
+                .next();
     }
 
-    private void buildLine(Vector3f a, Vector3f b, Vec3d aColor, Vec3d bColor) {
+    private void buildLine(Vector3f a, Vector3f b, Vector3f aColor, Vector3f bColor) {
         Vec3d c = this.cameraPos;
 
         this.bufferBuilder.vertex(a.getX() - c.x, a.getY() - c.y, a.getZ() - c.z)
-                .color((float) aColor.x, (float) aColor.y, (float) aColor.z, 1.0f).next();
+                .color(aColor.getX(), aColor.getY(), aColor.getZ(), 1.0f).next();
         this.bufferBuilder.vertex(b.getX() - c.x, b.getY() - c.y, b.getZ() - c.z)
-                .color((float) bColor.x, (float) bColor.y, (float) bColor.z, 1.0f).next();
+                .color(bColor.getX(), bColor.getY(), bColor.getZ(), 1.0f).next();
     }
 
     private void buildVisibleSubchunkFlow() {
-        Vec3d innerColor = new Vec3d(0.0f, 1.0f, 0.0f);
-        Vec3d outerColor = new Vec3d(0.0f, 0.0f, 1.0f);
+        Vector3f innerColor = new Vector3f(0.0f, 1.0f, 0.0f);
+        Vector3f outerColor = new Vector3f(0.0f, 0.0f, 1.0f);
 
         this.state.data.forEach((pos, subchunk) -> {
             int cx = pos.getX() * 16 + 8;
@@ -88,7 +88,7 @@ public class CullStateDebugRenderer implements DebugRenderer.Renderer {
     }
 
     private void buildVisibleSubchunkOutlines() {
-        Vec3d color = new Vec3d(1.0f, 0.0f, 1.0f);
+        Vector3f color = new Vector3f(1.0f, 0.0f, 1.0f);
 
         for (Vec3i pos : this.state.visible) {
             int ax = pos.getX() * 16;

@@ -25,7 +25,7 @@ import net.minecraft.util.math.Vec3i;
 public abstract class ChunkGraphCullerMixin {
     @Inject(at = @At("HEAD"), method = "computeVisible(Lnet/minecraft/client/render/Camera;Lme/jellysquid/mods/sodium/client/util/math/FrustumExtended;IZ)Lit/unimi/dsi/fastutil/ints/IntArrayList;", remap = true)
     private void computeVisible_resetCullingState(Camera camera, FrustumExtended frustum, int frame,
-            boolean spectator, CallbackInfoReturnable<IntArrayList> info) {
+            boolean spectator, CallbackInfoReturnable<IntArrayList> cir) {
         Pastry.CURRENT_CULLING_STATE = new CullState();
     }
 
@@ -61,7 +61,7 @@ public abstract class ChunkGraphCullerMixin {
     }
 
     @Inject(at = @At("TAIL"), method = "bfsEnqueue(Lme/jellysquid/mods/sodium/client/render/chunk/cull/graph/ChunkGraphNode;Lme/jellysquid/mods/sodium/client/render/chunk/cull/graph/ChunkGraphNode;Lnet/minecraft/util/math/Direction;)V", remap = true)
-    private void bfsEnqueue_markFlow(ChunkGraphNode parent, ChunkGraphNode node, Direction flow, CallbackInfo info) {
+    private void bfsEnqueue_markFlow(ChunkGraphNode parent, ChunkGraphNode node, Direction flow, CallbackInfo ci) {
         CullState.Subchunk subchunk = Pastry.CURRENT_CULLING_STATE
                 .get(new Vec3i(node.getChunkX(), node.getChunkY(), node.getChunkZ()));
 

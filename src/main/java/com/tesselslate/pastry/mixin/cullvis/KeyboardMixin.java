@@ -19,7 +19,7 @@ import net.minecraft.util.Formatting;
 @Mixin(value = Keyboard.class)
 public abstract class KeyboardMixin {
     @Inject(method = "processF3", cancellable = true, at = @At("HEAD"))
-    private void processF3_addCullvisKeys(int key, CallbackInfoReturnable<Boolean> info) {
+    private void processF3_addCullvisKeys(int key, CallbackInfoReturnable<Boolean> cir) {
         switch (key) {
             case GLFW.GLFW_KEY_W:
                 Pastry.captureCullingState();
@@ -28,7 +28,7 @@ public abstract class KeyboardMixin {
                         : 0;
                 sendChat(new LiteralText("Captured culling state (" + numVisible + " subchunks visible)"));
 
-                info.setReturnValue(true);
+                cir.setReturnValue(true);
                 return;
             case GLFW.GLFW_KEY_E:
                 Pastry.toggleCullingVisualizer();
@@ -36,20 +36,20 @@ public abstract class KeyboardMixin {
                 sendChat(new LiteralText(
                         "Subchunk info display " + (Pastry.DISPLAY_CULLING_STATE ? "enabled" : "disabled")));
 
-                info.setReturnValue(true);
+                cir.setReturnValue(true);
                 return;
             case GLFW.GLFW_KEY_R:
                 boolean captured = Pastry.toggleFrustumCapture();
 
                 sendChat(new LiteralText((captured ? "Captured" : "Cleared") + " camera frustum"));
 
-                info.setReturnValue(true);
+                cir.setReturnValue(true);
                 return;
         }
     }
 
     @Inject(method = "processF3", at = @At("RETURN"))
-    private void processF3_showCullvisKeys(int key, CallbackInfoReturnable<Boolean> info) {
+    private void processF3_showCullvisKeys(int key, CallbackInfoReturnable<Boolean> cir) {
         if (key != GLFW.GLFW_KEY_Q) {
             return;
         }

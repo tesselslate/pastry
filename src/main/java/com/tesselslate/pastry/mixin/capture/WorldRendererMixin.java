@@ -22,7 +22,7 @@ import net.minecraft.util.math.BlockPos;
 public abstract class WorldRendererMixin {
     @Inject(at = @At("HEAD"), method = "renderEntity(Lnet/minecraft/entity/Entity;DDDFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;)V")
     private void renderEntity_recordEntity(Entity entity, double cameraX, double cameraY, double cameraZ,
-            float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, CallbackInfo info) {
+            float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, CallbackInfo ci) {
         PastryCaptureManager.update(capture -> capture.queue(new PastryCaptureEntityEvent(entity)));
     }
 

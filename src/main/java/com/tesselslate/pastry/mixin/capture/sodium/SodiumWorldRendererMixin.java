@@ -34,7 +34,7 @@ public abstract class SodiumWorldRendererMixin {
     @Inject(at = @At("HEAD"), method = "renderTileEntities(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/BufferBuilderStorage;Lit/unimi/dsi/fastutil/longs/Long2ObjectMap;Lnet/minecraft/client/render/Camera;F)V", remap = true)
     private void renderTileEntities_recordBlockEntities(MatrixStack matrices, BufferBuilderStorage bufferBuilders,
             Long2ObjectMap<SortedSet<BlockBreakingInfo>> blockBreakingProgressions, Camera camera, float tickDelta,
-            CallbackInfo info) {
+            CallbackInfo ci) {
         PastryCaptureManager.update(capture -> {
             for (BlockEntity blockEntity : this.chunkRenderManager.getVisibleBlockEntities()) {
                 capture.queue(new PastryCaptureBlockEntityEvent(blockEntity));

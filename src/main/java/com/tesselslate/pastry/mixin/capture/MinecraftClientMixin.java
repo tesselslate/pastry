@@ -32,7 +32,7 @@ public abstract class MinecraftClientMixin {
     private ProfileResult tickProfilerResult;
 
     @Inject(at = @At("HEAD"), method = "joinWorld(Lnet/minecraft/client/world/ClientWorld;)V")
-    private void joinWorld_startCapture(ClientWorld world, CallbackInfo info) {
+    private void joinWorld_startCapture(ClientWorld world, CallbackInfo ci) {
         boolean capturing = PastryCaptureManager.isCapturing();
 
         if (!capturing) {
@@ -65,7 +65,7 @@ public abstract class MinecraftClientMixin {
     }
 
     @Inject(at = @At("HEAD"), method = "joinWorld(Lnet/minecraft/client/world/ClientWorld;)V")
-    private void joinWorld_resetCullState(ClientWorld world, CallbackInfo info) {
+    private void joinWorld_resetCullState(ClientWorld world, CallbackInfo ci) {
         // Reset the captured culling state and disable the debug renderer.
         Pastry.CAPTURED_CULLING_STATE = null;
         Pastry.DISPLAY_CULLING_STATE = false;
@@ -76,12 +76,12 @@ public abstract class MinecraftClientMixin {
     }
 
     @Inject(at = @At("HEAD"), method = "render(Z)V")
-    private void render_clearQueuedEvents(boolean tick, CallbackInfo info) {
+    private void render_clearQueuedEvents(boolean tick, CallbackInfo ci) {
         PastryCaptureManager.update(capture -> capture.clearQueue());
     }
 
     @Inject(at = @At("TAIL"), method = "render(Z)V")
-    private void render_addFrameEvents(boolean tick, CallbackInfo info) {
+    private void render_addFrameEvents(boolean tick, CallbackInfo ci) {
         MinecraftClient client = (MinecraftClient) (Object) this;
         if (client.isPaused()) {
             return;

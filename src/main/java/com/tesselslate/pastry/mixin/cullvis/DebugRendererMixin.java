@@ -20,7 +20,7 @@ public abstract class DebugRendererMixin {
     private CullStateDebugRenderer cullStateDebugRenderer;
 
     @Inject(at = @At("TAIL"), method = "<init>(Lnet/minecraft/client/MinecraftClient;)V")
-    private void init_createCullStateDebugRenderer(MinecraftClient client, CallbackInfo info) {
+    private void init_createCullStateDebugRenderer(MinecraftClient client, CallbackInfo ci) {
         this.cullStateDebugRenderer = new CullStateDebugRenderer();
     }
 

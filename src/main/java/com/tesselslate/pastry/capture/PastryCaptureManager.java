@@ -11,6 +11,8 @@ import java.util.Date;
 import org.jetbrains.annotations.Nullable;
 
 import com.tesselslate.pastry.Pastry;
+import com.tesselslate.pastry.gui.toast.CaptureSizeToast;
+import com.tesselslate.pastry.gui.toast.ErrorToast;
 
 import net.minecraft.client.MinecraftClient;
 
@@ -19,6 +21,7 @@ import net.minecraft.client.MinecraftClient;
  * Minecraft world.
  */
 public class PastryCaptureManager {
+    private static final int MAXIMUM_EVENTS = 10000000;
     private static final DateFormat OUTPUT_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");
 
     private static final Object LOCK = new Object();
@@ -94,6 +97,9 @@ public class PastryCaptureManager {
                 Pastry.LOGGER.info("Stopped capture (wrote " + ACTIVE_CAPTURE.size() + " events)");
             } catch (Exception e) {
                 Pastry.LOGGER.error("Failed to write capture (" + ACTIVE_CAPTURE.size() + " events lost)");
+
+                MinecraftClient client = MinecraftClient.getInstance();
+                client.getToastManager().add(new ErrorToast("Failed to stop capture"));
             } finally {
                 ACTIVE_CAPTURE = null;
             }
@@ -105,10 +111,21 @@ public class PastryCaptureManager {
      * and runs {@code function}.
      */
     public static void update(Update function) {
+        boolean shouldStop = false;
+
         synchronized (LOCK) {
             if (ACTIVE_CAPTURE != null) {
                 function.run(ACTIVE_CAPTURE);
+
+                shouldStop = ACTIVE_CAPTURE.size() > MAXIMUM_EVENTS;
             }
+        }
+
+        if (shouldStop) {
+            stopCapture();
+
+            MinecraftClient client = MinecraftClient.getInstance();
+            client.getToastManager().add(new CaptureSizeToast());
         }
     }
 

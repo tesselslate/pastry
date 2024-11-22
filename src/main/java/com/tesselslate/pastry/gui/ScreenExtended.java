@@ -40,11 +40,11 @@ public abstract class ScreenExtended extends Screen {
     protected void drawProgressText(MatrixStack matrices, String text) {
         String progressString = getProgressString();
         int x = (this.width / 2) - (this.textRenderer.getWidth(progressString) / 2);
-        int y = (this.height / 2) - (this.textRenderer.fontHeight + 1);
+        int y = this.height / 2;
         this.textRenderer.draw(matrices, progressString, x, y, Formatting.GRAY.getColorValue());
 
         x = (this.width / 2) - (this.textRenderer.getWidth(text) / 2);
-        y = this.height / 2;
+        y = (this.height / 2) - (this.textRenderer.fontHeight + 1);
         this.textRenderer.draw(matrices, text, x, y, Formatting.WHITE.getColorValue());
     }
 

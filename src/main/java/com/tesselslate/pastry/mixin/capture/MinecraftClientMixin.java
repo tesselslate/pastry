@@ -103,7 +103,7 @@ public abstract class MinecraftClientMixin {
                 capture.add(new PastryCaptureProfilerEvent(this.tickProfilerResult));
             }
 
-            capture.add(new PastryCaptureFrameEvent(PastryCaptureManager.getElapsedTime(), camera));
+            capture.add(new PastryCaptureFrameEvent(PastryCaptureManager.getElapsedTime(), camera, client.world.getRegularEntityCount()));
             capture.add(new PastryCaptureOptionsEvent(client));
         });
     }

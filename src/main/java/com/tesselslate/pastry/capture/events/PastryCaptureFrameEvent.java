@@ -29,7 +29,12 @@ public class PastryCaptureFrameEvent implements PastryCaptureEvent {
 
     public final float pitch, yaw;
 
-    public PastryCaptureFrameEvent(int time, Camera camera) {
+    /**
+     * @since format V13
+     */
+    public final int totalEntities;
+
+    public PastryCaptureFrameEvent(int time, Camera camera, int totalEntities) {
         this.time = time;
 
         this.cameraPos = camera.getPos();
@@ -37,6 +42,8 @@ public class PastryCaptureFrameEvent implements PastryCaptureEvent {
 
         this.pitch = camera.getPitch();
         this.yaw = camera.getYaw();
+
+        this.totalEntities = totalEntities;
     }
 
     public PastryCaptureFrameEvent(PastryCaptureInputStream input) throws IOException {
@@ -49,6 +56,8 @@ public class PastryCaptureFrameEvent implements PastryCaptureEvent {
 
         this.pitch = input.readFloat();
         this.yaw = input.readFloat();
+
+        this.totalEntities = input.readInt();
     }
 
     @Override
@@ -66,6 +75,8 @@ public class PastryCaptureFrameEvent implements PastryCaptureEvent {
 
         output.writeFloat(this.pitch);
         output.writeFloat(this.yaw);
+
+        output.writeInt(this.totalEntities);
     }
 
     @Override

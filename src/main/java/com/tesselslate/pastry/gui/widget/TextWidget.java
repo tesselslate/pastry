@@ -5,13 +5,15 @@ import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.StringRenderable;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class TextWidget implements Drawable, Element {
     private final TextRenderer textRenderer;
-    private final String text;
+    private final StringRenderable text;
     private final Callback onClick;
+    private final TooltipSupplier tooltipSupplier;
 
     public int x;
     public int y;
@@ -19,13 +21,23 @@ public class TextWidget implements Drawable, Element {
     private int cachedWidth = Integer.MIN_VALUE;
 
     public TextWidget(TextRenderer textRenderer, String text) {
-        this(textRenderer, text, null);
+        this(textRenderer, text, null, null);
     }
 
     public TextWidget(TextRenderer textRenderer, String text, Callback onClick) {
+        this(textRenderer, text, onClick, null);
+    }
+
+    public TextWidget(TextRenderer textRenderer, String text, Callback onClick, TooltipSupplier tooltipSupplier) {
+        this(textRenderer, StringRenderable.plain(text), onClick, tooltipSupplier);
+    }
+
+    public TextWidget(TextRenderer textRenderer, StringRenderable text, Callback onClick,
+            TooltipSupplier tooltipSupplier) {
         this.textRenderer = textRenderer;
         this.text = text;
         this.onClick = onClick;
+        this.tooltipSupplier = tooltipSupplier;
     }
 
     public int getWidth() {
@@ -38,10 +50,20 @@ public class TextWidget implements Drawable, Element {
     }
 
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        boolean shouldUnderline = this.onClick != null && this.isMouseOver(mouseX, mouseY);
-        Text text = new LiteralText(this.text).formatted(shouldUnderline ? Formatting.UNDERLINE : Formatting.RESET);
+        boolean hovered = this.isMouseOver(mouseX, mouseY);
+        boolean shouldUnderline = this.onClick != null && hovered;
 
-        this.textRenderer.draw(matrices, text, this.x, this.y, Formatting.WHITE.getColorValue());
+        if (shouldUnderline) {
+            // TODO: Support underlining styled text
+            Text text = new LiteralText(this.text.getString()).formatted(Formatting.UNDERLINE);
+            this.textRenderer.draw(matrices, text, this.x, this.y, Formatting.WHITE.getColorValue());
+        } else {
+            this.textRenderer.draw(matrices, this.text, this.x, this.y, Formatting.WHITE.getColorValue());
+        }
+
+        if (hovered && this.tooltipSupplier != null) {
+            this.tooltipSupplier.onTooltip(this, matrices, mouseX, mouseY);
+        }
     }
 
     @Override
@@ -61,5 +83,9 @@ public class TextWidget implements Drawable, Element {
 
     public interface Callback {
         public boolean run(double mouseX, double mouseY, int button);
+    }
+
+    public interface TooltipSupplier {
+        public void onTooltip(TextWidget widget, MatrixStack matrices, int mouseX, int mouseY);
     }
 }

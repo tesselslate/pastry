@@ -86,6 +86,8 @@ public class PastryCaptureOutputStream extends DataOutputStream {
      * @param structures The list of structures to write.
      */
     public void writeStructures(Collection<PastryCaptureStructure> structures) throws IOException {
+        super.writeInt(structures.size());
+
         for (PastryCaptureStructure structure : structures) {
             structure.write(this);
         }

@@ -44,7 +44,7 @@ public class PastryCaptureInputStream extends DataInputStream {
     /**
      * Returns the version of the capture being read by this input stream.
      *
-     * @returns The version of the capture being read by this input stream.
+     * @return The version of the capture being read by this input stream.
      */
     public int getVersion() {
         return this.header.version;

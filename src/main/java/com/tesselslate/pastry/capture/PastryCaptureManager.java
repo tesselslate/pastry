@@ -34,7 +34,7 @@ public class PastryCaptureManager {
      * Returns the number of milliseconds elapsed since the start of the active
      * {@link PastryCapture}.
      *
-     * @returns The number of milliseconds elapsed since the start of the active
+     * @return The number of milliseconds elapsed since the start of the active
      *          {@link PastryCapture}
      */
     public static int getElapsedTime() {
@@ -44,7 +44,7 @@ public class PastryCaptureManager {
     /**
      * Returns whether or not there is an active {@link PastryCapture}.
      *
-     * @returns Whether there is an active {@link PastryCapture}.
+     * @return Whether there is an active {@link PastryCapture}.
      */
     public static boolean isCapturing() {
         synchronized (LOCK) {
@@ -132,7 +132,7 @@ public class PastryCaptureManager {
     /**
      * Returns a {@link File} pointing to the instance's capture directory.
      *
-     * @returns A {@link File} pointing to the instance's capture directory
+     * @return A {@link File} pointing to the instance's capture directory
      */
     public static File getCaptureDirectory() {
         MinecraftClient client = MinecraftClient.getInstance();
@@ -144,7 +144,7 @@ public class PastryCaptureManager {
      * Opens an output stream to which the active {@link PastryCapture} should be
      * written.
      *
-     * @returns The output stream to write the active {@link PastryCapture} to
+     * @return The output stream to write the active {@link PastryCapture} to
      */
     private static OutputStream openCaptureFile() throws FileNotFoundException {
         File outputDir = getCaptureDirectory();

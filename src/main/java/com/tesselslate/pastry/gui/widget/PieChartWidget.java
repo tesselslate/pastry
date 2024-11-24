@@ -85,7 +85,7 @@ public class PieChartWidget implements Drawable, Element {
      * Calculates the width in UI pixels of a {@link PieChartWidget} rendered with
      * the given {@code scaleFactor}.
      *
-     * @returns The width in UI pixels of a {@link PieChartWidget} with the given
+     * @return The width in UI pixels of a {@link PieChartWidget} with the given
      *          {@code scaleFactor}.
      */
     public static int calculateWidth(double scaleFactor) {
@@ -96,7 +96,7 @@ public class PieChartWidget implements Drawable, Element {
      * Calculates the height in UI pixels of a {@link PieChartWidget} rendered with
      * the given {@code scaleFactor} and number of profiler results.
      *
-     * @returns The height in UI pixels of a {@link PieChartWidget} with the given
+     * @return The height in UI pixels of a {@link PieChartWidget} with the given
      *          configuration
      */
     public static int calculateHeight(double scaleFactor, int resultsCount) {

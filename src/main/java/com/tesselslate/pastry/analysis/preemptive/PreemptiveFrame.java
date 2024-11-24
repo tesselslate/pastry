@@ -30,7 +30,7 @@ public final record PreemptiveFrame(@NotNull PastryCaptureFrameEvent frame, @Not
      * if the only visible block entity is a single silverfish spawner and there are
      * no other visible entities.
      *
-     * @returns Whether or not the frame is pure
+     * @return Whether or not the frame is pure
      */
     public boolean isPure() {
         return this.entities == null && this.blockEntities.length == 1

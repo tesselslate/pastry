@@ -128,7 +128,7 @@ public class PastryCapture {
     /**
      * Returns the list of all events contained in this capture.
      *
-     * @returns All events in this capture
+     * @return All events in this capture
      */
     public List<PastryCaptureEvent> getEvents() {
         return this.events;
@@ -137,7 +137,7 @@ public class PastryCapture {
     /**
      * Returns the set of all structures contained in this capture.
      *
-     * @returns All structures in this capture
+     * @return All structures in this capture
      */
     public Set<PastryCaptureStructure> getStructures() {
         return this.structures;

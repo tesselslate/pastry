@@ -47,7 +47,7 @@ public class PreemptiveStronghold {
     /**
      * Reads a list of {@link PreemptiveStronghold} from a {@link PastryCapture}.
      *
-     * @returns The list of strongholds and their readings present in the capture
+     * @return The list of strongholds and their readings present in the capture
      */
     public static List<PreemptiveStronghold> readFromCapture(PastryCapture capture) {
         Set<PastryCaptureStructure> structures = capture.getStructures().stream()

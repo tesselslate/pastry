@@ -18,7 +18,7 @@ public record PreemptiveReading(@NotNull PreemptiveFrame[] frames) {
     /**
      * Tests whether all frames of this reading are accepted by {@code predicate}.
      *
-     * @returns Whether all frames of this reading are accepted by {@code predicate}
+     * @return Whether all frames of this reading are accepted by {@code predicate}
      */
     public boolean all(Predicate<PreemptiveFrame> predicate) {
         for (PreemptiveFrame frame : this.frames) {
@@ -36,7 +36,7 @@ public record PreemptiveReading(@NotNull PreemptiveFrame[] frames) {
      * target or do not target a block, have the same game options, and have the
      * same set of visible entities and block entities.
      *
-     * @returns Whether the given preemptive reading is consistent
+     * @return Whether the given preemptive reading is consistent
      */
     public boolean isConsistent() {
         PreemptiveFrame a = this.frames[0];

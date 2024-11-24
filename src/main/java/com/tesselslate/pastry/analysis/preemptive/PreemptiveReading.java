@@ -50,7 +50,7 @@ public record PreemptiveReading(@NotNull PreemptiveFrame[] frames) {
             if (!a.options().equals(b.options())) {
                 return false;
             }
-            if (!Arrays.equals(a.entities(), b.entities())) {
+            if (a.entities().length != b.entities().length) {
                 return false;
             }
             if (!Arrays.equals(a.blockEntities(), b.blockEntities())) {

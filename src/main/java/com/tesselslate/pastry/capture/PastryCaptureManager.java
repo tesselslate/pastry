@@ -7,6 +7,8 @@ import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +37,7 @@ public class PastryCaptureManager {
      * {@link PastryCapture}.
      *
      * @return The number of milliseconds elapsed since the start of the active
-     *          {@link PastryCapture}
+     *         {@link PastryCapture}
      */
     public static int getElapsedTime() {
         return (int) (new Date().getTime() - START_MILLIS);
@@ -49,6 +51,29 @@ public class PastryCaptureManager {
     public static boolean isCapturing() {
         synchronized (LOCK) {
             return ACTIVE_CAPTURE != null;
+        }
+    }
+
+    /**
+     * Acquires a lock for the capture manager and runs the provided function.
+     *
+     * @param function The function to run while the capture manager is locked
+     */
+    public static void runLocked(Consumer<PastryCapture> function) {
+        synchronized (LOCK) {
+            function.accept(ACTIVE_CAPTURE);
+        }
+    }
+
+    /**
+     * Acquires a lock for the capture manager and runs the provided function.
+     *
+     * @param function The function to run while the capture manager is locked
+     * @return The return value of {@code function}
+     */
+    public static <T> T runLocked(Function<PastryCapture, T> function) {
+        synchronized (LOCK) {
+            return function.apply(ACTIVE_CAPTURE);
         }
     }
 

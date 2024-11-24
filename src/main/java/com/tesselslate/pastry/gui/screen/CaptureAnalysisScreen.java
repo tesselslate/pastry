@@ -1,15 +1,11 @@
 package com.tesselslate.pastry.gui.screen;
 
-import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
-
 import com.tesselslate.pastry.analysis.preemptive.PreemptiveAnalysis;
 import com.tesselslate.pastry.analysis.preemptive.PreemptiveReading;
-import com.tesselslate.pastry.capture.PastryCapture;
 import com.tesselslate.pastry.capture.PastryCaptureHeader;
 import com.tesselslate.pastry.gui.ScreenExtended;
 import com.tesselslate.pastry.gui.widget.PieChartWidget;
@@ -26,7 +22,6 @@ public class CaptureAnalysisScreen extends ScreenExtended {
 
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
-    private final PastryCapture capture;
     private final PreemptiveAnalysis analysis;
 
     private final LiteralText subtitle;
@@ -37,24 +32,28 @@ public class CaptureAnalysisScreen extends ScreenExtended {
     private ButtonWidget prevPieChartButton;
     private int pieChartNumber;
 
-    public CaptureAnalysisScreen(Screen parent, File file, PastryCaptureHeader header, PastryCapture capture,
-            PreemptiveAnalysis analysis) {
-        super(parent, new LiteralText("Overview of " + DATE_FORMAT.format(header.recordedAt)));
+    public CaptureAnalysisScreen(Screen parent, PastryCaptureHeader header, PreemptiveAnalysis analysis) {
+        super(parent, new LiteralText("Analysis of " + DATE_FORMAT.format(header.recordedAt)));
 
-        this.capture = capture;
         this.analysis = analysis;
 
-        long fileSize = file.length();
-        this.subtitle = new LiteralText(String.format("%d events (%s)", this.capture.getEvents().size(),
-                FileUtils.byteCountToDisplaySize(fileSize)));
+        int valid = analysis.valid.getReadings().size();
+        int invalid = analysis.invalid.getReadings().size();
+        this.subtitle = new LiteralText(String.format("%d/%d valid readings", valid, valid + invalid));
+    }
+
+    public CaptureAnalysisScreen(Screen parent, PreemptiveAnalysis analysis) {
+        super(parent, new LiteralText("Analysis"));
+
+        this.analysis = analysis;
+
+        int valid = analysis.valid.getReadings().size();
+        int invalid = analysis.invalid.getReadings().size();
+        this.subtitle = new LiteralText(String.format("%d/%d valid readings", valid, valid + invalid));
     }
 
     @Override
     protected void init() {
-        if (this.capture == null || this.analysis == null) {
-            return;
-        }
-
         double scaleFactor = this.client.getWindow().getScaleFactor();
         int pieChartWidth = PieChartWidget.calculateWidth(scaleFactor);
         int pieChartHeight = PieChartWidget.calculateHeight(scaleFactor, 5);

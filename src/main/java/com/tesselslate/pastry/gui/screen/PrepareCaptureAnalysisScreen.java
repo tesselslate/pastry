@@ -14,7 +14,6 @@ import com.tesselslate.pastry.task.ReadCaptureTask;
 import net.minecraft.client.gui.screen.Screen;
 
 public class PrepareCaptureAnalysisScreen extends TaskProgressScreen {
-    private final File file;
     private final PastryCaptureHeader header;
 
     private ForkJoinTask<Exceptional<PreemptiveAnalysis>> analyzeTask;
@@ -25,7 +24,6 @@ public class PrepareCaptureAnalysisScreen extends TaskProgressScreen {
     public PrepareCaptureAnalysisScreen(Screen parent, File file, PastryCaptureHeader header) {
         super(parent);
 
-        this.file = file;
         this.header = header;
 
         this.readTask = Pastry.TASK_POOL.submit(new ReadCaptureTask(file));
@@ -93,6 +91,6 @@ public class PrepareCaptureAnalysisScreen extends TaskProgressScreen {
     }
 
     private Screen finish(PreemptiveAnalysis analysis) {
-        return new CaptureAnalysisScreen(parent, this.file, this.header, this.capture, analysis);
+        return new CaptureAnalysisScreen(this.parent, this.header, analysis);
     }
 }

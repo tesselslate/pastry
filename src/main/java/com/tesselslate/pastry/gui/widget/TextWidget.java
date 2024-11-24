@@ -56,9 +56,9 @@ public class TextWidget implements Drawable, Element {
         if (shouldUnderline) {
             // TODO: Support underlining styled text
             Text text = new LiteralText(this.text.getString()).formatted(Formatting.UNDERLINE);
-            this.textRenderer.draw(matrices, text, this.x, this.y, Formatting.WHITE.getColorValue());
+            this.textRenderer.drawWithShadow(matrices, text, this.x, this.y, Formatting.WHITE.getColorValue());
         } else {
-            this.textRenderer.draw(matrices, this.text, this.x, this.y, Formatting.WHITE.getColorValue());
+            this.textRenderer.drawWithShadow(matrices, this.text, this.x, this.y, Formatting.WHITE.getColorValue());
         }
 
         if (hovered && this.tooltipSupplier != null) {

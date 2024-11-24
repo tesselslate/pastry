@@ -29,7 +29,7 @@ public class PastryCaptureManager {
     private static final Object LOCK = new Object();
 
     private static @Nullable PastryCapture ACTIVE_CAPTURE;
-
+    private static boolean PAUSED;
     private static long START_MILLIS;
 
     /**
@@ -51,6 +51,17 @@ public class PastryCaptureManager {
     public static boolean isCapturing() {
         synchronized (LOCK) {
             return ACTIVE_CAPTURE != null;
+        }
+    }
+
+    /**
+     * Returns whether or not the active {@link PastryCapture} is paused.
+     *
+     * @return Whether or not the active capture is paused
+     */
+    public static boolean isPaused() {
+        synchronized (LOCK) {
+            return PAUSED;
         }
     }
 
@@ -78,6 +89,17 @@ public class PastryCaptureManager {
     }
 
     /**
+     * Pauses or unpauses the active {@link PastryCapture}, if any.
+     *
+     * @param paused Whether to pause or unpause the active capture
+     */
+    public static void setPaused(boolean paused) {
+        synchronized (LOCK) {
+            PAUSED = paused;
+        }
+    }
+
+    /**
      * Returns the number of events present in the active {@link PastryCapture}, if
      * any.
      */
@@ -100,6 +122,7 @@ public class PastryCaptureManager {
 
             ACTIVE_CAPTURE = new PastryCapture();
             START_MILLIS = new Date().getTime();
+            PAUSED = false;
         }
 
         Pastry.LOGGER.info("Started new capture");
@@ -127,6 +150,7 @@ public class PastryCaptureManager {
                 client.getToastManager().add(new ErrorToast("Failed to stop capture"));
             } finally {
                 ACTIVE_CAPTURE = null;
+                PAUSED = false;
             }
         }
     }
@@ -139,7 +163,7 @@ public class PastryCaptureManager {
         boolean shouldStop = false;
 
         synchronized (LOCK) {
-            if (ACTIVE_CAPTURE != null) {
+            if (!PAUSED && ACTIVE_CAPTURE != null) {
                 function.run(ACTIVE_CAPTURE);
 
                 shouldStop = ACTIVE_CAPTURE.size() > MAXIMUM_EVENTS;

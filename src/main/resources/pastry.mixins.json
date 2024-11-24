@@ -21,6 +21,7 @@
         "cullvis.WorldRendererMixin",
         "cullvis.sodium.ChunkGraphCullerMixin",
         "debug.DebugHudMixin",
+        "gui.GameMenuScreenMixin",
         "gui.TitleScreenMixin"
     ]
 }

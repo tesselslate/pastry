@@ -33,17 +33,19 @@ public abstract class MinecraftClientMixin {
 
     @Inject(at = @At("HEAD"), method = "joinWorld(Lnet/minecraft/client/world/ClientWorld;)V")
     private void joinWorld_startCapture(ClientWorld world, CallbackInfo ci) {
-        boolean capturing = PastryCaptureManager.isCapturing();
+        boolean startedCapture = PastryCaptureManager.runLocked(capture -> {
+            if (capture == null) {
+                PastryCaptureManager.startCapture();
+            }
 
-        if (!capturing) {
-            PastryCaptureManager.startCapture();
-        }
+            return capture == null;
+        });
 
         PastryCaptureManager.update(capture -> {
             capture.add(new PastryCaptureSysinfoEvent());
 
             IntegratedServer server = MinecraftClient.getInstance().getServer();
-            if (!capturing && server != null) {
+            if (startedCapture && server != null) {
                 capture.add(new PastryCaptureWorldLoadEvent(server.getSaveProperties()));
             }
 
@@ -54,9 +56,11 @@ public abstract class MinecraftClientMixin {
     @WrapOperation(at = @At(value = "FIELD", target = "Lnet/minecraft/client/MinecraftClient;server:Lnet/minecraft/server/integrated/IntegratedServer;", opcode = Opcodes.GETFIELD), method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V")
     private IntegratedServer disconnect_stopCapture(MinecraftClient client, Operation<IntegratedServer> orig) {
         try {
-            if (PastryCaptureManager.isCapturing()) {
-                PastryCaptureManager.stopCapture();
-            }
+            PastryCaptureManager.runLocked(capture -> {
+                if (capture != null) {
+                    PastryCaptureManager.stopCapture();
+                }
+            });
         } catch (Exception e) {
             Pastry.LOGGER.error("Failed to stop capture: " + e);
         }
@@ -103,7 +107,8 @@ public abstract class MinecraftClientMixin {
                 capture.add(new PastryCaptureProfilerEvent(this.tickProfilerResult));
             }
 
-            capture.add(new PastryCaptureFrameEvent(PastryCaptureManager.getElapsedTime(), camera, client.world.getRegularEntityCount()));
+            capture.add(new PastryCaptureFrameEvent(PastryCaptureManager.getElapsedTime(), camera,
+                    client.world.getRegularEntityCount()));
             capture.add(new PastryCaptureOptionsEvent(client));
         });
     }

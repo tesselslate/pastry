@@ -8,7 +8,7 @@ import com.tesselslate.pastry.analysis.preemptive.PreemptiveAnalysis;
 import com.tesselslate.pastry.analysis.preemptive.PreemptiveReading;
 import com.tesselslate.pastry.capture.PastryCaptureHeader;
 import com.tesselslate.pastry.gui.ScreenExtended;
-import com.tesselslate.pastry.gui.widget.PieChartWidget;
+import com.tesselslate.pastry.gui.widget.CaptureAnalysisPageWidget;
 
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -26,10 +26,8 @@ public class CaptureAnalysisScreen extends ScreenExtended {
 
     private final LiteralText subtitle;
 
-    private PieChartWidget pieChart;
-    private ButtonWidget nextPieChartButton;
-    private ButtonWidget prevPieChartButton;
-    private int pieChartNumber;
+    private CaptureAnalysisPageWidget reading;
+    private int readingNumber;
 
     public CaptureAnalysisScreen(Screen parent, PastryCaptureHeader header, PreemptiveAnalysis analysis) {
         super(parent, new LiteralText("Analysis of " + DATE_FORMAT.format(header.recordedAt)));
@@ -53,31 +51,23 @@ public class CaptureAnalysisScreen extends ScreenExtended {
 
     @Override
     protected void init() {
-        double scaleFactor = this.client.getWindow().getScaleFactor();
-        int pieChartWidth = PieChartWidget.calculateWidth(scaleFactor);
-        int pieChartHeight = PieChartWidget.calculateHeight(scaleFactor, 5);
-        int pieChartX = (this.width / 2) - (pieChartWidth / 2);
-        int pieChartY = (this.height / 2) - (pieChartHeight / 2);
-
         List<PreemptiveReading> validSpikes = this.analysis.valid.getReadings();
         if (validSpikes.size() > 0) {
-            this.pieChart = new PieChartWidget(this.client, pieChartX, pieChartY,
-                    validSpikes.get(this.pieChartNumber).frames()[0].profiler());
+            this.reading = new CaptureAnalysisPageWidget(this, validSpikes.get(this.readingNumber));
         }
-        this.nextPieChartButton = this.addButton(new ButtonWidget(this.width / 2 + 104, this.height - 27, 20, 20,
-                new LiteralText(RIGHT_ARROW), button -> {
-                    if (this.pieChartNumber < validSpikes.size() - 1) {
-                        this.pieChartNumber++;
-                        this.pieChart = new PieChartWidget(this.client, pieChartX, pieChartY,
-                                validSpikes.get(this.pieChartNumber).frames()[0].profiler());
+
+        this.addButton(new ButtonWidget(this.width / 2 + 104, this.height - 27, 20, 20, new LiteralText(RIGHT_ARROW),
+                button -> {
+                    if (this.readingNumber < validSpikes.size() - 1) {
+                        this.readingNumber++;
+                        this.reading = new CaptureAnalysisPageWidget(this, validSpikes.get(this.readingNumber));
                     }
                 }));
-        this.prevPieChartButton = this.addButton(new ButtonWidget(this.width / 2 - 124, this.height - 27, 20, 20,
-                new LiteralText(LEFT_ARROW), button -> {
-                    if (this.pieChartNumber > 0) {
-                        this.pieChartNumber--;
-                        this.pieChart = new PieChartWidget(this.client, pieChartX, pieChartY,
-                                validSpikes.get(this.pieChartNumber).frames()[0].profiler());
+        this.addButton(new ButtonWidget(this.width / 2 - 124, this.height - 27, 20, 20, new LiteralText(LEFT_ARROW),
+                button -> {
+                    if (this.readingNumber > 0) {
+                        this.readingNumber--;
+                        this.reading = new CaptureAnalysisPageWidget(this, validSpikes.get(this.readingNumber));
                     }
                 }));
 
@@ -88,14 +78,11 @@ public class CaptureAnalysisScreen extends ScreenExtended {
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         this.renderBackground(matrices);
 
-        if (this.pieChart != null) {
-            this.pieChart.render(matrices, mouseX, mouseY, delta);
+        if (this.reading != null) {
+            this.reading.render(matrices, mouseX, mouseY, delta);
         } else {
             // TODO: draw "no valid spikes" text
         }
-
-        this.nextPieChartButton.render(matrices, mouseX, mouseY, delta);
-        this.prevPieChartButton.render(matrices, mouseX, mouseY, delta);
 
         this.drawCenteredText(matrices, this.textRenderer, this.title, this.width / 2, 5,
                 Formatting.WHITE.getColorValue());

@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import com.tesselslate.pastry.analysis.preemptive.PreemptiveReading;
 import com.tesselslate.pastry.capture.events.PastryCaptureBlockEntityEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureEntityEvent;
+import com.tesselslate.pastry.capture.events.PastryCaptureFrameEvent;
 
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
@@ -80,6 +81,7 @@ public class CaptureAnalysisPageWidget extends AbstractParentElement implements 
     }
 
     private void initializeEntityText(TextRenderer textRenderer, int startX, int startY) {
+        PastryCaptureFrameEvent frame = this.reading.frames()[0].frame();
         PastryCaptureEntityEvent[] entities = this.reading.frames()[0].entities();
 
         Object2IntArrayMap<String> entityCounts = new Object2IntArrayMap<>();
@@ -88,8 +90,8 @@ public class CaptureAnalysisPageWidget extends AbstractParentElement implements 
             entityCounts.put(entity.name, count + 1);
         }
 
-        int totalEntities = entityCounts.values().stream().collect(Collectors.summingInt(Integer::intValue));
-        String text = String.format("Entities: %d", totalEntities);
+        int visibleEntities = entityCounts.values().stream().collect(Collectors.summingInt(Integer::intValue));
+        String text = String.format("Entities: %d/%d", visibleEntities, frame.totalEntities);
 
         this.entitiesText = new TextWidget(textRenderer, text, null, this::onEntityTooltip);
         this.entitiesText.x = startX + 40 - textRenderer.getWidth(text);

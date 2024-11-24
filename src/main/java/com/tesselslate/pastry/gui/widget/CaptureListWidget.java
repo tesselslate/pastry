@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.lwjgl.glfw.GLFW;
 
-import com.tesselslate.pastry.gui.screen.CaptureOverviewScreen;
+import com.tesselslate.pastry.gui.screen.PrepareCaptureAnalysisScreen;
 import com.tesselslate.pastry.task.ListCapturesTask;
 
 import net.minecraft.client.MinecraftClient;
@@ -41,7 +41,7 @@ public class CaptureListWidget extends PaginatedListWidget<CaptureListWidget.Ent
 
             this.nameWidget = new TextWidget(client.textRenderer, name, (mouseX, mouseY, button) -> {
                 if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-                    client.openScreen(new CaptureOverviewScreen(screen, entry.path, entry.header));
+                    client.openScreen(new PrepareCaptureAnalysisScreen(screen, entry.path, entry.header));
                 }
 
                 return button == GLFW.GLFW_MOUSE_BUTTON_LEFT;

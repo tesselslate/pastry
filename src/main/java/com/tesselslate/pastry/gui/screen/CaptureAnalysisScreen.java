@@ -4,21 +4,15 @@ import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.concurrent.ForkJoinTask;
 
 import org.apache.commons.io.FileUtils;
 
-import com.tesselslate.pastry.Pastry;
 import com.tesselslate.pastry.analysis.preemptive.PreemptiveAnalysis;
 import com.tesselslate.pastry.analysis.preemptive.PreemptiveReading;
 import com.tesselslate.pastry.capture.PastryCapture;
 import com.tesselslate.pastry.capture.PastryCaptureHeader;
 import com.tesselslate.pastry.gui.ScreenExtended;
-import com.tesselslate.pastry.gui.toast.ErrorToast;
 import com.tesselslate.pastry.gui.widget.PieChartWidget;
-import com.tesselslate.pastry.task.AnalyzeCaptureTask;
-import com.tesselslate.pastry.task.Exceptional;
-import com.tesselslate.pastry.task.ReadCaptureTask;
 
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -26,43 +20,33 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
 
-public class CaptureOverviewScreen extends ScreenExtended {
+public class CaptureAnalysisScreen extends ScreenExtended {
     private static final String LEFT_ARROW = "\u25c0";
     private static final String RIGHT_ARROW = "\u25b6";
 
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
-    private final long fileSize;
+    private final PastryCapture capture;
+    private final PreemptiveAnalysis analysis;
 
-    private PastryCapture capture;
-    private PreemptiveAnalysis analysis;
-    private ForkJoinTask<Exceptional<PastryCapture>> readTask;
-    private ForkJoinTask<Exceptional<PreemptiveAnalysis>> analyzeTask;
+    private final LiteralText subtitle;
 
     private ButtonWidget doneButton;
-    private LiteralText subtitle;
     private PieChartWidget pieChart;
     private ButtonWidget nextPieChartButton;
     private ButtonWidget prevPieChartButton;
     private int pieChartNumber;
 
-    public CaptureOverviewScreen(Screen parent, File file, PastryCaptureHeader header) {
+    public CaptureAnalysisScreen(Screen parent, File file, PastryCaptureHeader header, PastryCapture capture,
+            PreemptiveAnalysis analysis) {
         super(parent, new LiteralText("Overview of " + DATE_FORMAT.format(header.recordedAt)));
 
-        this.fileSize = file.length();
-        this.readTask = Pastry.TASK_POOL.submit(new ReadCaptureTask(file));
-    }
+        this.capture = capture;
+        this.analysis = analysis;
 
-    @Override
-    public void onClose() {
-        super.onClose();
-
-        if (this.readTask != null) {
-            this.readTask.cancel(true);
-        }
-        if (this.analyzeTask != null) {
-            this.analyzeTask.cancel(true);
-        }
+        long fileSize = file.length();
+        this.subtitle = new LiteralText(String.format("%d events (%s)", this.capture.getEvents().size(),
+                FileUtils.byteCountToDisplaySize(fileSize)));
     }
 
     @Override
@@ -106,33 +90,6 @@ public class CaptureOverviewScreen extends ScreenExtended {
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         this.renderBackground(matrices);
 
-        if (this.readTask != null) {
-            this.drawProgressText(matrices, "Reading capture...");
-        } else if (this.analyzeTask != null) {
-            this.drawProgressText(matrices, "Analyzing capture...");
-        } else if (this.capture != null) {
-            this.renderWidgets(matrices, mouseX, mouseY, delta);
-        }
-
-        super.render(matrices, mouseX, mouseY, delta);
-    }
-
-    @Override
-    public void tick() {
-        if (this.readTask == null && this.analyzeTask == null) {
-            return;
-        }
-
-        if (this.readTask != null) {
-            this.tickReadTask();
-        }
-
-        if (this.analyzeTask != null) {
-            this.tickAnalyzeTask();
-        }
-    }
-
-    private void renderWidgets(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         if (this.pieChart != null) {
             this.pieChart.render(matrices, mouseX, mouseY, delta);
         } else {
@@ -148,47 +105,7 @@ public class CaptureOverviewScreen extends ScreenExtended {
                 Formatting.GRAY.getColorValue());
 
         this.doneButton.render(matrices, mouseX, mouseY, delta);
-    }
 
-    private void tickAnalyzeTask() {
-        Exceptional<PreemptiveAnalysis> result = this.analyzeTask.getRawResult();
-        if (result == null) {
-            return;
-        }
-        this.analyzeTask = null;
-
-        if (result.hasError()) {
-            this.onClose();
-
-            this.client.getToastManager().add(new ErrorToast("Failed to analyze capture"));
-            Pastry.LOGGER.error("Failed to analyze capture: " + result.getError());
-            return;
-        }
-
-        this.analysis = result.getValue();
-        this.init();
-
-        this.subtitle = new LiteralText(String.format("%d events (%s)", this.capture.getEvents().size(),
-                FileUtils.byteCountToDisplaySize(this.fileSize)));
-    }
-
-    private void tickReadTask() {
-        Exceptional<PastryCapture> result = this.readTask.getRawResult();
-        if (result == null) {
-            return;
-        }
-        this.readTask = null;
-
-        if (result.hasError()) {
-            this.onClose();
-
-            this.client.getToastManager().add(new ErrorToast("Failed to read capture"));
-            Pastry.LOGGER.error("Failed to read capture: " + result.getError());
-            return;
-        }
-
-        this.capture = result.getValue();
-
-        this.analyzeTask = Pastry.TASK_POOL.submit(new AnalyzeCaptureTask(this.capture));
+        super.render(matrices, mouseX, mouseY, delta);
     }
 }

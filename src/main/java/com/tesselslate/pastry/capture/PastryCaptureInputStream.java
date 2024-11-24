@@ -42,6 +42,15 @@ public class PastryCaptureInputStream extends DataInputStream {
     }
 
     /**
+     * Returns the version of the capture being read by this input stream.
+     *
+     * @returns The version of the capture being read by this input stream.
+     */
+    public int getVersion() {
+        return this.header.version;
+    }
+
+    /**
      * Reads a {@link BlockBox} from the input stream.
      *
      * @return The deserialized block box read from the input stream

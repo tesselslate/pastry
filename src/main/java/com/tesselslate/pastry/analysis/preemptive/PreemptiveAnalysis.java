@@ -18,6 +18,11 @@ public class PreemptiveAnalysis {
         this.invalid = new PreemptiveSpikes();
     }
 
+    public void add(PreemptiveAnalysis analysis) {
+        this.valid.add(analysis.valid);
+        this.invalid.add(analysis.invalid);
+    }
+
     public void process(PreemptiveStronghold stronghold) {
         stronghold.readings.stream().filter(PreemptiveReading::isConsistent).forEach(reading -> {
             boolean isSpike = reading.all(frame -> Arrays.stream(frame.blockEntities())

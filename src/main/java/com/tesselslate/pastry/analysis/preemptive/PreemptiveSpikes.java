@@ -18,6 +18,10 @@ public class PreemptiveSpikes {
         this.readings.add(reading);
     }
 
+    public void add(PreemptiveSpikes spikes) {
+        this.readings.addAll(spikes.readings);
+    }
+
     public List<PreemptiveReading> getReadings() {
         return this.readings;
     }

@@ -26,7 +26,6 @@ public class CaptureAnalysisScreen extends ScreenExtended {
 
     private final LiteralText subtitle;
 
-    private ButtonWidget doneButton;
     private PieChartWidget pieChart;
     private ButtonWidget nextPieChartButton;
     private ButtonWidget prevPieChartButton;
@@ -65,7 +64,7 @@ public class CaptureAnalysisScreen extends ScreenExtended {
             this.pieChart = new PieChartWidget(this.client, pieChartX, pieChartY,
                     validSpikes.get(this.pieChartNumber).frames()[0].profiler());
         }
-        this.nextPieChartButton = this.addButton(new ButtonWidget(this.width / 2 + 36, this.height - 27, 20, 20,
+        this.nextPieChartButton = this.addButton(new ButtonWidget(this.width / 2 + 104, this.height - 27, 20, 20,
                 new LiteralText(RIGHT_ARROW), button -> {
                     if (this.pieChartNumber < validSpikes.size() - 1) {
                         this.pieChartNumber++;
@@ -73,8 +72,8 @@ public class CaptureAnalysisScreen extends ScreenExtended {
                                 validSpikes.get(this.pieChartNumber).frames()[0].profiler());
                     }
                 }));
-        this.prevPieChartButton = this.addButton(
-                new ButtonWidget(this.width / 2 - 56, this.height - 27, 20, 20, new LiteralText(LEFT_ARROW), button -> {
+        this.prevPieChartButton = this.addButton(new ButtonWidget(this.width / 2 - 124, this.height - 27, 20, 20,
+                new LiteralText(LEFT_ARROW), button -> {
                     if (this.pieChartNumber > 0) {
                         this.pieChartNumber--;
                         this.pieChart = new PieChartWidget(this.client, pieChartX, pieChartY,
@@ -82,7 +81,7 @@ public class CaptureAnalysisScreen extends ScreenExtended {
                     }
                 }));
 
-        this.doneButton = this.addButton(this.createDoneButton(this.width / 2 - 32, this.height - 27, 64, 20));
+        this.addButton(this.createDoneButton(this.width / 2 - 100, this.height - 27, 200, 20));
     }
 
     @Override
@@ -102,8 +101,6 @@ public class CaptureAnalysisScreen extends ScreenExtended {
                 Formatting.WHITE.getColorValue());
         this.drawCenteredText(matrices, this.textRenderer, this.subtitle, this.width / 2, 16,
                 Formatting.GRAY.getColorValue());
-
-        this.doneButton.render(matrices, mouseX, mouseY, delta);
 
         super.render(matrices, mouseX, mouseY, delta);
     }

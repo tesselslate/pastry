@@ -20,7 +20,6 @@ public class CaptureListScreen extends ScreenExtended {
     private final LiteralText subtitle;
 
     private CaptureListWidget captureList;
-    private ButtonWidget doneButton;
 
     public CaptureListScreen(Screen parent, ListCapturesTask.Result result) {
         super(parent, new LiteralText("Pastry Captures"));
@@ -43,10 +42,12 @@ public class CaptureListScreen extends ScreenExtended {
     protected void init() {
         this.captureList = this.addChild(new CaptureListWidget(this.captures, this, this.client, this.width,
                 this.height, 32, this.height - 32, this.captureList != null ? this.captureList.getPage() : 0));
-        this.addButton(this.captureList.createNextPageButton(this.width / 2 + 36, this.height - 27, 20, 20));
-        this.addButton(this.captureList.createPrevPageButton(this.width / 2 - 56, this.height - 27, 20, 20));
+        this.addButton(this.captureList.createNextPageButton(this.width / 2 + 104, this.height - 27, 20, 20));
+        this.addButton(this.captureList.createPrevPageButton(this.width / 2 - 124, this.height - 27, 20, 20));
 
-        this.doneButton = this.addButton(this.createDoneButton(this.width / 2 - 32, this.height - 27, 64, 20));
+        this.addButton(new ButtonWidget(this.width / 2 + 2, this.height - 27, 98, 20, new LiteralText("Analyze All"),
+                button -> this.client.openScreen(new PrepareMultiCaptureAnalysisScreen(this, this.captures))));
+        this.addButton(this.createDoneButton(this.width / 2 - 100, this.height - 27, 98, 20));
     }
 
     @Override
@@ -58,7 +59,6 @@ public class CaptureListScreen extends ScreenExtended {
                 Formatting.WHITE.getColorValue());
         this.drawCenteredText(matrices, this.textRenderer, this.subtitle, this.width / 2, 16,
                 Formatting.GRAY.getColorValue());
-        this.doneButton.render(matrices, mouseX, mouseY, delta);
 
         super.render(matrices, mouseX, mouseY, delta);
     }

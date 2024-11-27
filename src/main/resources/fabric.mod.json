@@ -1,30 +1,30 @@
 {
-	"schemaVersion": 1,
-	"id": "pastry",
-	"version": "${version}",
-	"name": "pastry",
-	"description": "Automated data collection and analysis for Minecraft stronghold navigation",
-	"authors": [
-		"tesselslate"
-	],
-	"contact": {
-		"homepage": "https://github.com/tesselslate/pastry/",
-		"sources": "https://github.com/tesselslate/pastry"
-	},
-	"license": "LGPL-3.0-only",
-	"environment": "*",
-	"entrypoints": {
-		"client": [
-			"com.tesselslate.pastry.Pastry"
-		]
-	},
-	"mixins": [
-		"pastry.mixins.json"
-	],
-	"depends": {
-		"fabricloader": ">=0.16.7",
-		"minecraft": "1.16.1",
-		"java": ">=21",
-		"sodium": ">=2.3.1"
-	}
+    "schemaVersion": 1,
+    "id": "pastry",
+    "version": "${version}",
+    "name": "pastry",
+    "description": "Automated data collection and analysis for Minecraft stronghold navigation",
+    "authors": [
+        "tesselslate"
+    ],
+    "contact": {
+        "homepage": "https://github.com/tesselslate/pastry/",
+        "sources": "https://github.com/tesselslate/pastry"
+    },
+    "license": "LGPL-3.0-only",
+    "environment": "*",
+    "entrypoints": {
+        "client": [
+            "com.tesselslate.pastry.Pastry"
+        ]
+    },
+    "mixins": [
+        "pastry.mixins.json"
+    ],
+    "depends": {
+        "fabricloader": ">=0.16.7",
+        "minecraft": "1.16.1",
+        "java": ">=21",
+        "sodium": ">=2.3.1"
+    }
 }

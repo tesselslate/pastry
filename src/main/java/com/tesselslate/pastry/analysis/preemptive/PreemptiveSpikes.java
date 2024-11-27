@@ -22,6 +22,10 @@ public class PreemptiveSpikes {
         this.readings.addAll(spikes.readings);
     }
 
+    public PreemptiveReadingAverage average() {
+        return new PreemptiveReadingAverage(this);
+    }
+
     public List<PreemptiveReading> getReadings() {
         return this.readings;
     }

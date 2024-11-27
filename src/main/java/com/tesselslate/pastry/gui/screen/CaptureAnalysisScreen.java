@@ -13,6 +13,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.StringRenderable;
 import net.minecraft.util.Formatting;
 
 import java.text.DateFormat;
@@ -30,6 +31,8 @@ public class CaptureAnalysisScreen extends ScreenExtended {
     private final LiteralText subtitle;
 
     private CaptureAnalysisPageWidget page;
+    private ButtonWidget nextPageButton;
+    private ButtonWidget prevPageButton;
     private FrameSliderWidget frameSlider;
 
     private int pageNumber;
@@ -61,21 +64,8 @@ public class CaptureAnalysisScreen extends ScreenExtended {
             this.initPageWidgets(this.page == null);
         }
 
-        this.addButton(new ButtonWidget(
-                this.width / 2 + 104, this.height - 27, 20, 20, new LiteralText(RIGHT_ARROW), button -> {
-                    if (this.pageNumber < validSpikes.size() - 1) {
-                        this.pageNumber++;
-                        this.initPageWidgets(true);
-                    }
-                }));
-        this.addButton(new ButtonWidget(
-                this.width / 2 - 124, this.height - 27, 20, 20, new LiteralText(LEFT_ARROW), button -> {
-                    if (this.pageNumber > 0) {
-                        this.pageNumber--;
-                        this.initPageWidgets(true);
-                    }
-                }));
-
+        this.addButton(this.createNextPageButton(this.width / 2 + 104, this.height - 27, 20, 20));
+        this.addButton(this.createPrevPageButton(this.width / 2 - 124, this.height - 27, 20, 20));
         this.addButton(this.createDoneButton(this.width / 2 - 100, this.height - 27, 200, 20));
     }
 
@@ -95,6 +85,66 @@ public class CaptureAnalysisScreen extends ScreenExtended {
                 matrices, this.textRenderer, this.subtitle, this.width / 2, 16, Formatting.GRAY.getColorValue());
 
         super.render(matrices, mouseX, mouseY, delta);
+    }
+
+    private ButtonWidget createNextPageButton(int x, int y, int w, int h) {
+        List<PreemptiveReading> validSpikes = this.analysisResult.valid.getReadings();
+
+        this.nextPageButton = new ButtonWidget(
+                x,
+                y,
+                w,
+                h,
+                new LiteralText(RIGHT_ARROW),
+                button -> {
+                    if (this.pageNumber < validSpikes.size() - 1) {
+                        this.setPage(this.pageNumber + 1);
+                    }
+                },
+                (button, matrices, mouseX, mouseY) -> {
+                    if (button.active) {
+                        this.parent.renderTooltip(
+                                matrices,
+                                StringRenderable.plain(
+                                        String.format("Page %d/%d", this.pageNumber + 2, validSpikes.size())),
+                                mouseX,
+                                mouseY);
+                    }
+                });
+
+        this.nextPageButton.active = this.pageNumber < validSpikes.size() - 1;
+
+        return this.nextPageButton;
+    }
+
+    private ButtonWidget createPrevPageButton(int x, int y, int w, int h) {
+        List<PreemptiveReading> validSpikes = this.analysisResult.valid.getReadings();
+
+        this.prevPageButton = new ButtonWidget(
+                x,
+                y,
+                w,
+                h,
+                new LiteralText(LEFT_ARROW),
+                button -> {
+                    if (this.pageNumber > 0) {
+                        this.setPage(this.pageNumber - 1);
+                    }
+                },
+                (button, matrices, mouseX, mouseY) -> {
+                    if (button.active) {
+                        this.parent.renderTooltip(
+                                matrices,
+                                StringRenderable.plain(
+                                        String.format("Page %d/%d", this.pageNumber, validSpikes.size())),
+                                mouseX,
+                                mouseY);
+                    }
+                });
+
+        this.prevPageButton.active = this.pageNumber > 0;
+
+        return this.prevPageButton;
     }
 
     private void initPageWidgets(boolean newPage) {
@@ -120,5 +170,19 @@ public class CaptureAnalysisScreen extends ScreenExtended {
                 spikes.get(this.pageNumber),
                 frame);
         this.addButton(this.frameSlider);
+    }
+
+    private void setPage(int page) {
+        this.pageNumber = page;
+
+        if (this.nextPageButton != null) {
+            this.nextPageButton.active =
+                    this.pageNumber < this.analysisResult.valid.getReadings().size() - 1;
+        }
+        if (this.prevPageButton != null) {
+            this.prevPageButton.active = this.pageNumber > 0;
+        }
+
+        initPageWidgets(true);
     }
 }

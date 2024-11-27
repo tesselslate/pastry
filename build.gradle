@@ -13,6 +13,17 @@ spotless {
         indentWithSpaces(4)
         endWithNewline()
     }
+
+    java {
+        palantirJavaFormat()
+
+        importOrder('com.tesselslate', 'net', 'java|javax', 'org')
+        removeUnusedImports()
+
+        trimTrailingWhitespace()
+        indentWithSpaces(4)
+        endWithNewline()
+    }
 }
 
 version = project.mod_version

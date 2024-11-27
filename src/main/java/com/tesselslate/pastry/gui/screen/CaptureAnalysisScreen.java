@@ -6,6 +6,8 @@ import com.tesselslate.pastry.analysis.preemptive.PreemptiveReading;
 import com.tesselslate.pastry.capture.PastryCaptureHeader;
 import com.tesselslate.pastry.gui.ScreenExtended;
 import com.tesselslate.pastry.gui.widget.CaptureAnalysisPageWidget;
+import com.tesselslate.pastry.gui.widget.FrameSliderWidget;
+import com.tesselslate.pastry.gui.widget.PieChartWidget;
 
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -27,8 +29,10 @@ public class CaptureAnalysisScreen extends ScreenExtended {
 
     private final LiteralText subtitle;
 
-    private CaptureAnalysisPageWidget reading;
-    private int readingNumber;
+    private CaptureAnalysisPageWidget page;
+    private FrameSliderWidget frameSlider;
+
+    private int pageNumber;
 
     public CaptureAnalysisScreen(Screen parent, PastryCaptureHeader header, PreemptiveAnalysis analysis) {
         super(parent, new LiteralText("Analysis of " + DATE_FORMAT.format(header.recordedAt)));
@@ -54,21 +58,21 @@ public class CaptureAnalysisScreen extends ScreenExtended {
     protected void init() {
         List<PreemptiveReading> validSpikes = this.analysisResult.valid.getReadings();
         if (validSpikes.size() > 0) {
-            this.reading = new CaptureAnalysisPageWidget(this, validSpikes.get(this.readingNumber));
+            this.initPageWidgets(this.page == null);
         }
 
         this.addButton(new ButtonWidget(
                 this.width / 2 + 104, this.height - 27, 20, 20, new LiteralText(RIGHT_ARROW), button -> {
-                    if (this.readingNumber < validSpikes.size() - 1) {
-                        this.readingNumber++;
-                        this.reading = new CaptureAnalysisPageWidget(this, validSpikes.get(this.readingNumber));
+                    if (this.pageNumber < validSpikes.size() - 1) {
+                        this.pageNumber++;
+                        this.initPageWidgets(true);
                     }
                 }));
         this.addButton(new ButtonWidget(
                 this.width / 2 - 124, this.height - 27, 20, 20, new LiteralText(LEFT_ARROW), button -> {
-                    if (this.readingNumber > 0) {
-                        this.readingNumber--;
-                        this.reading = new CaptureAnalysisPageWidget(this, validSpikes.get(this.readingNumber));
+                    if (this.pageNumber > 0) {
+                        this.pageNumber--;
+                        this.initPageWidgets(true);
                     }
                 }));
 
@@ -79,8 +83,8 @@ public class CaptureAnalysisScreen extends ScreenExtended {
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         this.renderBackground(matrices);
 
-        if (this.reading != null) {
-            this.reading.render(matrices, mouseX, mouseY, delta);
+        if (this.page != null) {
+            this.page.render(matrices, mouseX, mouseY, delta);
         } else {
             // TODO: draw "no valid spikes" text
         }
@@ -91,5 +95,30 @@ public class CaptureAnalysisScreen extends ScreenExtended {
                 matrices, this.textRenderer, this.subtitle, this.width / 2, 16, Formatting.GRAY.getColorValue());
 
         super.render(matrices, mouseX, mouseY, delta);
+    }
+
+    private void initPageWidgets(boolean newPage) {
+        if (this.frameSlider != null) {
+            this.buttons.remove(this.frameSlider);
+            this.children.remove(this.frameSlider);
+        }
+
+        List<PreemptiveReading> spikes = this.analysisResult.valid.getReadings();
+
+        int pieChartRightX = this.width / 2
+                + PieChartWidget.calculateWidth(this.client.getWindow().getScaleFactor()) / 2;
+
+        int frame = newPage ? -1 : this.page.getActiveFrame();
+        this.page = new CaptureAnalysisPageWidget(this, spikes.get(this.pageNumber));
+        this.page.setActiveFrame(frame);
+        this.frameSlider = new FrameSliderWidget(
+                pieChartRightX + 20,
+                this.height / 2 - 10,
+                150,
+                20,
+                value -> this.page.setActiveFrame(value),
+                spikes.get(this.pageNumber),
+                frame);
+        this.addButton(this.frameSlider);
     }
 }

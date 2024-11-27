@@ -1,5 +1,6 @@
 package com.tesselslate.pastry.gui.widget;
 
+import com.tesselslate.pastry.analysis.preemptive.PreemptiveReadingAverage;
 import com.tesselslate.pastry.capture.events.PastryCaptureProfilerEvent;
 
 import net.minecraft.client.MinecraftClient;
@@ -54,6 +55,10 @@ public class PieChartWidget implements Drawable, Element {
         this(client, x, y, createEntryList(profilerEvent));
     }
 
+    public PieChartWidget(MinecraftClient client, int x, int y, PreemptiveReadingAverage average) {
+        this(client, x, y, createEntryList(average));
+    }
+
     private PieChartWidget(MinecraftClient client, int x, int y, List<PieChartWidget.Entry> profileResults) {
         this.x = x;
         this.y = y;
@@ -87,7 +92,7 @@ public class PieChartWidget implements Drawable, Element {
      * the given {@code scaleFactor}.
      *
      * @return The width in UI pixels of a {@link PieChartWidget} with the given
-     *          {@code scaleFactor}.
+     *         {@code scaleFactor}.
      */
     public static int calculateWidth(double scaleFactor) {
         return (int) (WIDTH / scaleFactor);
@@ -98,7 +103,7 @@ public class PieChartWidget implements Drawable, Element {
      * the given {@code scaleFactor} and number of profiler results.
      *
      * @return The height in UI pixels of a {@link PieChartWidget} with the given
-     *          configuration
+     *         configuration
      */
     public static int calculateHeight(double scaleFactor, int resultsCount) {
         return (int) ((HEIGHT + 20 + resultsCount * 8) / scaleFactor);
@@ -252,6 +257,23 @@ public class PieChartWidget implements Drawable, Element {
         entries.add(new PieChartWidget.Entry(
                 "destroyProgress", event.destroyProgressParentPercentage, event.destroyProgressTotalPercentage));
         entries.add(new PieChartWidget.Entry("prepare", event.prepareParentPercentage, event.prepareTotalPercentage));
+
+        return entries;
+    }
+
+    private static List<PieChartWidget.Entry> createEntryList(PreemptiveReadingAverage average) {
+        ArrayList<PieChartWidget.Entry> entries = new ArrayList<>();
+
+        entries.add(new PieChartWidget.Entry(
+                "blockentities", average.blockEntityParentPercentage, average.blockEntityTotalPercentage));
+        entries.add(
+                new PieChartWidget.Entry("entities", average.entityParentPercentage, average.entityTotalPercentage));
+        entries.add(new PieChartWidget.Entry(
+                "unspecified", average.unspecifiedParentPercentage, average.unspecifiedTotalPercentage));
+        entries.add(new PieChartWidget.Entry(
+                "destroyProgress", average.destroyProgressParentPercentage, average.destroyProgressTotalPercentage));
+        entries.add(
+                new PieChartWidget.Entry("prepare", average.prepareParentPercentage, average.prepareTotalPercentage));
 
         return entries;
     }

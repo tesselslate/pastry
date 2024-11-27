@@ -1,6 +1,7 @@
 package com.tesselslate.pastry.gui.widget;
 
 import com.tesselslate.pastry.analysis.preemptive.PreemptiveReading;
+import com.tesselslate.pastry.analysis.preemptive.PreemptiveReadingAverage;
 import com.tesselslate.pastry.capture.events.PastryCaptureBlockEntityEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureEntityEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureFrameEvent;
@@ -35,9 +36,21 @@ public class CaptureAnalysisPageWidget extends AbstractParentElement implements 
     private List<StringRenderable> entitiesTooltip;
     private List<StringRenderable> blockEntitiesTooltip;
 
+    private int frame;
+
     public CaptureAnalysisPageWidget(Screen screen, PreemptiveReading reading) {
         this.screen = screen;
         this.reading = reading;
+
+        this.setActiveFrame(0);
+    }
+
+    public int getActiveFrame() {
+        return this.frame;
+    }
+
+    public void setActiveFrame(int frame) {
+        this.frame = frame;
 
         MinecraftClient client = MinecraftClient.getInstance();
         double scaleFactor = client.getWindow().getScaleFactor();
@@ -46,8 +59,13 @@ public class CaptureAnalysisPageWidget extends AbstractParentElement implements 
         int pieChartHeight = PieChartWidget.calculateHeight(scaleFactor, 5);
         int pieChartX = (screen.width / 2) - (pieChartWidth / 2);
         int pieChartY = (screen.height / 2) - (pieChartHeight / 2);
-
-        this.pieChart = new PieChartWidget(client, pieChartX, pieChartY, reading.frames()[0].profiler());
+        if (this.frame >= 0) {
+            this.pieChart =
+                    new PieChartWidget(client, pieChartX, pieChartY, this.reading.frames()[this.frame].profiler());
+        } else {
+            this.pieChart =
+                    new PieChartWidget(client, pieChartX, pieChartY, new PreemptiveReadingAverage(this.reading));
+        }
 
         int textY = pieChartY + (pieChartHeight / 2) - ((client.textRenderer.fontHeight * 3 + 4) / 2);
         this.initializeTextWidgets(client.textRenderer, pieChartX - 80, textY);

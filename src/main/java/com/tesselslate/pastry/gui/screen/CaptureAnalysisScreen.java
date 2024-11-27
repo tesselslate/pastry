@@ -76,7 +76,13 @@ public class CaptureAnalysisScreen extends ScreenExtended {
         if (this.page != null) {
             this.page.render(matrices, mouseX, mouseY, delta);
         } else {
-            // TODO: draw "no valid spikes" text
+            this.drawCenteredText(
+                    matrices,
+                    this.textRenderer,
+                    StringRenderable.plain("No readings to show"),
+                    this.width / 2,
+                    this.height / 2 - this.textRenderer.fontHeight / 2,
+                    Formatting.WHITE.getColorValue());
         }
 
         this.drawCenteredText(

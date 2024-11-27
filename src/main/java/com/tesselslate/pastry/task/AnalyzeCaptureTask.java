@@ -23,7 +23,7 @@ public class AnalyzeCaptureTask extends PastryTask<PreemptiveAnalysis> {
         List<PreemptiveStronghold> strongholds = PreemptiveStronghold.readFromCapture(capture);
 
         PreemptiveAnalysis analysis = new PreemptiveAnalysis();
-        strongholds.forEach(stronghold -> analysis.process(stronghold));
+        strongholds.forEach(stronghold -> analysis.add(stronghold));
         return analysis;
     }
 }

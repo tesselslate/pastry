@@ -1,6 +1,7 @@
 package com.tesselslate.pastry.gui.screen;
 
 import com.tesselslate.pastry.analysis.preemptive.PreemptiveAnalysis;
+import com.tesselslate.pastry.analysis.preemptive.PreemptiveAnalysisResult;
 import com.tesselslate.pastry.analysis.preemptive.PreemptiveReading;
 import com.tesselslate.pastry.capture.PastryCaptureHeader;
 import com.tesselslate.pastry.gui.ScreenExtended;
@@ -22,7 +23,7 @@ public class CaptureAnalysisScreen extends ScreenExtended {
 
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
-    private final PreemptiveAnalysis analysis;
+    private PreemptiveAnalysisResult analysisResult;
 
     private final LiteralText subtitle;
 
@@ -32,26 +33,26 @@ public class CaptureAnalysisScreen extends ScreenExtended {
     public CaptureAnalysisScreen(Screen parent, PastryCaptureHeader header, PreemptiveAnalysis analysis) {
         super(parent, new LiteralText("Analysis of " + DATE_FORMAT.format(header.recordedAt)));
 
-        this.analysis = analysis;
+        this.analysisResult = analysis.process();
 
-        int valid = analysis.valid.getReadings().size();
-        int invalid = analysis.invalid.getReadings().size();
+        int valid = this.analysisResult.valid.getReadings().size();
+        int invalid = this.analysisResult.invalid.getReadings().size();
         this.subtitle = new LiteralText(String.format("%d/%d valid readings", valid, valid + invalid));
     }
 
     public CaptureAnalysisScreen(Screen parent, PreemptiveAnalysis analysis) {
         super(parent, new LiteralText("Analysis"));
 
-        this.analysis = analysis;
+        this.analysisResult = analysis.process();
 
-        int valid = analysis.valid.getReadings().size();
-        int invalid = analysis.invalid.getReadings().size();
+        int valid = this.analysisResult.valid.getReadings().size();
+        int invalid = this.analysisResult.invalid.getReadings().size();
         this.subtitle = new LiteralText(String.format("%d/%d valid readings", valid, valid + invalid));
     }
 
     @Override
     protected void init() {
-        List<PreemptiveReading> validSpikes = this.analysis.valid.getReadings();
+        List<PreemptiveReading> validSpikes = this.analysisResult.valid.getReadings();
         if (validSpikes.size() > 0) {
             this.reading = new CaptureAnalysisPageWidget(this, validSpikes.get(this.readingNumber));
         }

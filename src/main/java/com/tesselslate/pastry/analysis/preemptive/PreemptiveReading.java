@@ -1,6 +1,5 @@
 package com.tesselslate.pastry.analysis.preemptive;
 
-import java.util.Arrays;
 import java.util.function.Predicate;
 
 import org.jetbrains.annotations.NotNull;
@@ -23,37 +22,6 @@ public record PreemptiveReading(@NotNull PreemptiveFrame[] frames) {
     public boolean all(Predicate<PreemptiveFrame> predicate) {
         for (PreemptiveFrame frame : this.frames) {
             if (!predicate.test(frame)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Returns whether or not the given preemptive reading is consistent. A
-     * preemptive reading is considered consistent if all of its frames either
-     * target or do not target a block, have the same game options, and have the
-     * same set of visible entities and block entities.
-     *
-     * @return Whether the given preemptive reading is consistent
-     */
-    public boolean isConsistent() {
-        PreemptiveFrame a = this.frames[0];
-
-        for (int i = 1; i < frames.length; i++) {
-            PreemptiveFrame b = this.frames[i];
-
-            if ((a.blockOutline() == null) != (b.blockOutline() == null)) {
-                return false;
-            }
-            if (!a.options().equals(b.options())) {
-                return false;
-            }
-            if (a.entities().length != b.entities().length) {
-                return false;
-            }
-            if (!Arrays.equals(a.blockEntities(), b.blockEntities())) {
                 return false;
             }
         }

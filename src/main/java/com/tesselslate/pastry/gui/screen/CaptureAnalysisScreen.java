@@ -1,9 +1,5 @@
 package com.tesselslate.pastry.gui.screen;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.List;
-
 import com.tesselslate.pastry.analysis.preemptive.PreemptiveAnalysis;
 import com.tesselslate.pastry.analysis.preemptive.PreemptiveReading;
 import com.tesselslate.pastry.capture.PastryCaptureHeader;
@@ -15,6 +11,10 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.List;
 
 public class CaptureAnalysisScreen extends ScreenExtended {
     private static final String LEFT_ARROW = "\u25c0";
@@ -56,15 +56,15 @@ public class CaptureAnalysisScreen extends ScreenExtended {
             this.reading = new CaptureAnalysisPageWidget(this, validSpikes.get(this.readingNumber));
         }
 
-        this.addButton(new ButtonWidget(this.width / 2 + 104, this.height - 27, 20, 20, new LiteralText(RIGHT_ARROW),
-                button -> {
+        this.addButton(new ButtonWidget(
+                this.width / 2 + 104, this.height - 27, 20, 20, new LiteralText(RIGHT_ARROW), button -> {
                     if (this.readingNumber < validSpikes.size() - 1) {
                         this.readingNumber++;
                         this.reading = new CaptureAnalysisPageWidget(this, validSpikes.get(this.readingNumber));
                     }
                 }));
-        this.addButton(new ButtonWidget(this.width / 2 - 124, this.height - 27, 20, 20, new LiteralText(LEFT_ARROW),
-                button -> {
+        this.addButton(new ButtonWidget(
+                this.width / 2 - 124, this.height - 27, 20, 20, new LiteralText(LEFT_ARROW), button -> {
                     if (this.readingNumber > 0) {
                         this.readingNumber--;
                         this.reading = new CaptureAnalysisPageWidget(this, validSpikes.get(this.readingNumber));
@@ -84,10 +84,10 @@ public class CaptureAnalysisScreen extends ScreenExtended {
             // TODO: draw "no valid spikes" text
         }
 
-        this.drawCenteredText(matrices, this.textRenderer, this.title, this.width / 2, 5,
-                Formatting.WHITE.getColorValue());
-        this.drawCenteredText(matrices, this.textRenderer, this.subtitle, this.width / 2, 16,
-                Formatting.GRAY.getColorValue());
+        this.drawCenteredText(
+                matrices, this.textRenderer, this.title, this.width / 2, 5, Formatting.WHITE.getColorValue());
+        this.drawCenteredText(
+                matrices, this.textRenderer, this.subtitle, this.width / 2, 16, Formatting.GRAY.getColorValue());
 
         super.render(matrices, mouseX, mouseY, delta);
     }

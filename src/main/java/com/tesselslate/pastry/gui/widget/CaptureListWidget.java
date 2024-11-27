@@ -1,13 +1,5 @@
 package com.tesselslate.pastry.gui.widget;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.apache.commons.io.FileUtils;
-import org.lwjgl.glfw.GLFW;
-
 import com.tesselslate.pastry.gui.screen.PrepareCaptureAnalysisScreen;
 import com.tesselslate.pastry.task.ListCapturesTask;
 
@@ -16,18 +8,41 @@ import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.io.FileUtils;
+import org.lwjgl.glfw.GLFW;
+
 public class CaptureListWidget extends PaginatedListWidget<CaptureListWidget.Entry> {
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
-    public CaptureListWidget(List<ListCapturesTask.Entry> entries, Screen screen, MinecraftClient client, int width,
+    public CaptureListWidget(
+            List<ListCapturesTask.Entry> entries,
+            Screen screen,
+            MinecraftClient client,
+            int width,
             int height,
-            int top, int bottom, int page) {
-        super(screen, client, width, height, top, bottom, client.textRenderer.fontHeight + 2, 50,
-                createElements(screen, client, entries), page);
+            int top,
+            int bottom,
+            int page) {
+        super(
+                screen,
+                client,
+                width,
+                height,
+                top,
+                bottom,
+                client.textRenderer.fontHeight + 2,
+                50,
+                createElements(screen, client, entries),
+                page);
     }
 
-    private static List<Entry> createElements(Screen screen, MinecraftClient client,
-            List<ListCapturesTask.Entry> entries) {
+    private static List<Entry> createElements(
+            Screen screen, MinecraftClient client, List<ListCapturesTask.Entry> entries) {
         return entries.stream().map(entry -> new Entry(screen, client, entry)).collect(Collectors.toList());
     }
 
@@ -56,8 +71,17 @@ public class CaptureListWidget extends PaginatedListWidget<CaptureListWidget.Ent
         }
 
         @Override
-        public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX,
-                int mouseY, boolean hovered, float tickDelta) {
+        public void render(
+                MatrixStack matrices,
+                int index,
+                int y,
+                int x,
+                int entryWidth,
+                int entryHeight,
+                int mouseX,
+                int mouseY,
+                boolean hovered,
+                float tickDelta) {
             int rightX = x + entryWidth - this.sizeWidget.getWidth();
 
             this.nameWidget.x = x;

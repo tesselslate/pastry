@@ -1,8 +1,5 @@
 package com.tesselslate.pastry.gui.screen;
 
-import java.util.Collections;
-import java.util.concurrent.ForkJoinTask;
-
 import com.tesselslate.pastry.Pastry;
 import com.tesselslate.pastry.gui.toast.ErrorToast;
 import com.tesselslate.pastry.task.Exceptional;
@@ -10,6 +7,9 @@ import com.tesselslate.pastry.task.ListCapturesTask;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+
+import java.util.Collections;
+import java.util.concurrent.ForkJoinTask;
 
 public class PrepareCaptureListScreen extends TaskProgressScreen {
     private final ForkJoinTask<Exceptional<ListCapturesTask.Result>> task;

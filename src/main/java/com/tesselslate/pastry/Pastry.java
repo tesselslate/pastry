@@ -1,5 +1,9 @@
 package com.tesselslate.pastry;
 
+import com.tesselslate.pastry.capture.PastryCaptureManager;
+import com.tesselslate.pastry.cullvis.CullState;
+import com.tesselslate.pastry.mixin.accessor.WorldRendererAccessor;
+
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.Version;
@@ -14,13 +18,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
-import com.tesselslate.pastry.capture.PastryCaptureManager;
-import com.tesselslate.pastry.cullvis.CullState;
-import com.tesselslate.pastry.mixin.accessor.WorldRendererAccessor;
-
 public class Pastry implements ClientModInitializer {
-    private static final Version VERSION = FabricLoader.getInstance().getModContainer("pastry")
-            .orElseThrow(IllegalStateException::new).getMetadata().getVersion();
+    private static final Version VERSION = FabricLoader.getInstance()
+            .getModContainer("pastry")
+            .orElseThrow(IllegalStateException::new)
+            .getMetadata()
+            .getVersion();
 
     public static final String MOD_ID = "pastry";
 
@@ -38,11 +41,15 @@ public class Pastry implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        TASK_POOL = new ForkJoinPool(Runtime.getRuntime().availableProcessors(), pool -> {
-            ForkJoinWorkerThread thread = ForkJoinPool.defaultForkJoinWorkerThreadFactory.newThread(pool);
-            thread.setName("pastry-worker-" + thread.getPoolIndex());
-            return thread;
-        }, null, false);
+        TASK_POOL = new ForkJoinPool(
+                Runtime.getRuntime().availableProcessors(),
+                pool -> {
+                    ForkJoinWorkerThread thread = ForkJoinPool.defaultForkJoinWorkerThreadFactory.newThread(pool);
+                    thread.setName("pastry-worker-" + thread.getPoolIndex());
+                    return thread;
+                },
+                null,
+                false);
     }
 
     public static void captureCullingState() {

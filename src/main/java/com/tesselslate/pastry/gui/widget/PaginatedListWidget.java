@@ -1,8 +1,5 @@
 package com.tesselslate.pastry.gui.widget;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -10,6 +7,9 @@ import net.minecraft.client.gui.widget.ElementListWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.StringRenderable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PaginatedListWidget<E extends PaginatedListWidget.Entry<E>> extends ElementListWidget<E> {
     private static final String LEFT_ARROW = "\u25c0";
@@ -25,8 +25,17 @@ public class PaginatedListWidget<E extends PaginatedListWidget.Entry<E>> extends
 
     private int page = -1;
 
-    public PaginatedListWidget(Screen screen, MinecraftClient client, int width, int height, int top, int bottom,
-            int rowHeight, int entriesPerPage, List<E> entries, int page) {
+    public PaginatedListWidget(
+            Screen screen,
+            MinecraftClient client,
+            int width,
+            int height,
+            int top,
+            int bottom,
+            int rowHeight,
+            int entriesPerPage,
+            List<E> entries,
+            int page) {
         super(client, width, height, top, bottom, rowHeight);
 
         this.parent = screen;
@@ -50,10 +59,17 @@ public class PaginatedListWidget<E extends PaginatedListWidget.Entry<E>> extends
     }
 
     public ButtonWidget createNextPageButton(int x, int y, int w, int h) {
-        this.nextPageButton = new ButtonWidget(x, y, w, h, new LiteralText(RIGHT_ARROW), button -> this.nextPage(),
+        this.nextPageButton = new ButtonWidget(
+                x,
+                y,
+                w,
+                h,
+                new LiteralText(RIGHT_ARROW),
+                button -> this.nextPage(),
                 (button, matrices, mouseX, mouseY) -> {
                     if (button.active) {
-                        this.parent.renderTooltip(matrices,
+                        this.parent.renderTooltip(
+                                matrices,
                                 StringRenderable.plain(String.format("Page %d/%d", this.page + 2, this.getPageCount())),
                                 mouseX,
                                 mouseY);
@@ -65,10 +81,17 @@ public class PaginatedListWidget<E extends PaginatedListWidget.Entry<E>> extends
     }
 
     public ButtonWidget createPrevPageButton(int x, int y, int w, int h) {
-        this.prevPageButton = new ButtonWidget(x, y, w, h, new LiteralText(LEFT_ARROW), button -> this.prevPage(),
+        this.prevPageButton = new ButtonWidget(
+                x,
+                y,
+                w,
+                h,
+                new LiteralText(LEFT_ARROW),
+                button -> this.prevPage(),
                 (button, matrices, mouseX, mouseY) -> {
                     if (button.active) {
-                        this.parent.renderTooltip(matrices,
+                        this.parent.renderTooltip(
+                                matrices,
                                 StringRenderable.plain(String.format("Page %d/%d", this.page, this.getPageCount())),
                                 mouseX,
                                 mouseY);
@@ -117,8 +140,8 @@ public class PaginatedListWidget<E extends PaginatedListWidget.Entry<E>> extends
         this.page = page;
         assert this.page * this.entriesPerPage <= this.entries.size();
 
-        List<E> pageEntries = this.entries.subList(this.page * this.entriesPerPage,
-                Math.min(this.entries.size(), (this.page + 1) * this.entriesPerPage));
+        List<E> pageEntries = this.entries.subList(
+                this.page * this.entriesPerPage, Math.min(this.entries.size(), (this.page + 1) * this.entriesPerPage));
 
         this.clearEntries();
         for (E entry : pageEntries) {

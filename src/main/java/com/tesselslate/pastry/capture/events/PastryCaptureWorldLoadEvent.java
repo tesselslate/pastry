@@ -1,16 +1,16 @@
 package com.tesselslate.pastry.capture.events;
 
-import java.io.IOException;
-import java.util.Objects;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.tesselslate.pastry.capture.PastryCaptureEvent;
 import com.tesselslate.pastry.capture.PastryCaptureEventType;
 import com.tesselslate.pastry.capture.PastryCaptureInputStream;
 import com.tesselslate.pastry.capture.PastryCaptureOutputStream;
 
 import net.minecraft.world.SaveProperties;
+
+import java.io.IOException;
+import java.util.Objects;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Contains information about the world which this recording was taken in. This
@@ -24,6 +24,7 @@ public class PastryCaptureWorldLoadEvent implements PastryCaptureEvent {
 
     @NotNull
     public final String worldName;
+
     public final long worldSeed;
 
     public PastryCaptureWorldLoadEvent(SaveProperties properties) {

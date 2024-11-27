@@ -1,9 +1,5 @@
 package com.tesselslate.pastry.mixin.capture;
 
-import org.spongepowered.asm.mixin.Mixin;
-
-import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.tesselslate.pastry.capture.PastryCaptureManager;
 import com.tesselslate.pastry.capture.structure.PastryCaptureStructure;
 import com.tesselslate.pastry.capture.structure.PastryStructureCache;
@@ -14,6 +10,11 @@ import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.chunk.ChunkStatus;
+
+import org.spongepowered.asm.mixin.Mixin;
+
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 
 @Mixin(value = ServerPlayNetworkHandler.class)
 public abstract class ServerPlayNetworkHandlerMixin {

@@ -32,8 +32,8 @@ public class TextWidget implements Drawable, Element {
         this(textRenderer, StringRenderable.plain(text), onClick, tooltipSupplier);
     }
 
-    public TextWidget(TextRenderer textRenderer, StringRenderable text, Callback onClick,
-            TooltipSupplier tooltipSupplier) {
+    public TextWidget(
+            TextRenderer textRenderer, StringRenderable text, Callback onClick, TooltipSupplier tooltipSupplier) {
         this.textRenderer = textRenderer;
         this.text = text;
         this.onClick = onClick;
@@ -77,7 +77,9 @@ public class TextWidget implements Drawable, Element {
 
     @Override
     public boolean isMouseOver(double mouseX, double mouseY) {
-        return mouseX >= this.x && mouseX < this.x + this.getWidth() && mouseY >= this.y
+        return mouseX >= this.x
+                && mouseX < this.x + this.getWidth()
+                && mouseY >= this.y
                 && mouseY < this.y + this.textRenderer.fontHeight;
     }
 

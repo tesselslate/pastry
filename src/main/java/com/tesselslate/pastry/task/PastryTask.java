@@ -1,13 +1,13 @@
 package com.tesselslate.pastry.task;
 
+import com.tesselslate.pastry.Pastry;
+
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.concurrent.RecursiveTask;
 
 import org.jetbrains.annotations.NotNull;
-
-import com.tesselslate.pastry.Pastry;
 
 abstract class PastryTask<V> extends RecursiveTask<Exceptional<V>> {
     @NotNull

@@ -1,16 +1,16 @@
 package com.tesselslate.pastry.capture.events;
 
-import java.io.IOException;
-import java.util.Objects;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.tesselslate.pastry.capture.PastryCaptureEvent;
 import com.tesselslate.pastry.capture.PastryCaptureEventType;
 import com.tesselslate.pastry.capture.PastryCaptureInputStream;
 import com.tesselslate.pastry.capture.PastryCaptureOutputStream;
 
 import net.minecraft.world.GameMode;
+
+import java.io.IOException;
+import java.util.Objects;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Contains the current gamemode of the player.

@@ -1,11 +1,5 @@
 package com.tesselslate.pastry.capture.events;
 
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.util.List;
-
-import org.jetbrains.annotations.Nullable;
-
 import com.tesselslate.pastry.capture.PastryCaptureEvent;
 import com.tesselslate.pastry.capture.PastryCaptureEventType;
 import com.tesselslate.pastry.capture.PastryCaptureInputStream;
@@ -13,6 +7,12 @@ import com.tesselslate.pastry.capture.PastryCaptureOutputStream;
 
 import net.minecraft.util.profiler.ProfileResult;
 import net.minecraft.util.profiler.ProfilerTiming;
+
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.util.List;
+
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Contains information about the gameRenderer profiler results for a single

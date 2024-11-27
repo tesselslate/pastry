@@ -1,14 +1,5 @@
 package com.tesselslate.pastry.mixin.capture;
 
-import org.objectweb.asm.Opcodes;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.tesselslate.pastry.Pastry;
 import com.tesselslate.pastry.capture.PastryCaptureManager;
 import com.tesselslate.pastry.capture.events.PastryCaptureDimensionEvent;
@@ -25,6 +16,16 @@ import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.util.profiler.ProfileResult;
+
+import org.objectweb.asm.Opcodes;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 @Mixin(value = MinecraftClient.class)
 public abstract class MinecraftClientMixin {
@@ -53,7 +54,14 @@ public abstract class MinecraftClientMixin {
         });
     }
 
-    @WrapOperation(at = @At(value = "FIELD", target = "Lnet/minecraft/client/MinecraftClient;server:Lnet/minecraft/server/integrated/IntegratedServer;", opcode = Opcodes.GETFIELD), method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V")
+    @WrapOperation(
+            at =
+                    @At(
+                            value = "FIELD",
+                            target =
+                                    "Lnet/minecraft/client/MinecraftClient;server:Lnet/minecraft/server/integrated/IntegratedServer;",
+                            opcode = Opcodes.GETFIELD),
+            method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V")
     private IntegratedServer disconnect_stopCapture(MinecraftClient client, Operation<IntegratedServer> orig) {
         try {
             PastryCaptureManager.runLocked(capture -> {
@@ -107,8 +115,8 @@ public abstract class MinecraftClientMixin {
                 capture.add(new PastryCaptureProfilerEvent(this.tickProfilerResult));
             }
 
-            capture.add(new PastryCaptureFrameEvent(PastryCaptureManager.getElapsedTime(), camera,
-                    client.world.getRegularEntityCount()));
+            capture.add(new PastryCaptureFrameEvent(
+                    PastryCaptureManager.getElapsedTime(), camera, client.world.getRegularEntityCount()));
             capture.add(new PastryCaptureOptionsEvent(client));
         });
     }

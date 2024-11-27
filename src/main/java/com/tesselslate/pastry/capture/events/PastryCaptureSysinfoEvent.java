@@ -1,5 +1,10 @@
 package com.tesselslate.pastry.capture.events;
 
+import com.tesselslate.pastry.capture.PastryCaptureEvent;
+import com.tesselslate.pastry.capture.PastryCaptureEventType;
+import com.tesselslate.pastry.capture.PastryCaptureInputStream;
+import com.tesselslate.pastry.capture.PastryCaptureOutputStream;
+
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.Objects;
@@ -7,10 +12,6 @@ import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 
 import com.mojang.blaze3d.platform.GlDebugInfo;
-import com.tesselslate.pastry.capture.PastryCaptureEvent;
-import com.tesselslate.pastry.capture.PastryCaptureEventType;
-import com.tesselslate.pastry.capture.PastryCaptureInputStream;
-import com.tesselslate.pastry.capture.PastryCaptureOutputStream;
 
 /**
  * Contains information about the user's hardware and JVM configuration.
@@ -110,10 +111,14 @@ public class PastryCaptureSysinfoEvent implements PastryCaptureEvent {
         } else {
             PastryCaptureSysinfoEvent other = (PastryCaptureSysinfoEvent) obj;
 
-            return (this.glVendor.equals(other.glVendor)) && (this.glRenderer.equals(other.glRenderer))
-                    && (this.glVersion.equals(other.glVersion)) && (this.cpu.equals(other.cpu))
-                    && (this.jvmVersion.equals(other.jvmVersion)) && (this.jvmArgs.equals(other.jvmArgs))
-                    && (this.maxMemory == other.maxMemory) && (this.availableProcessors == other.availableProcessors);
+            return (this.glVendor.equals(other.glVendor))
+                    && (this.glRenderer.equals(other.glRenderer))
+                    && (this.glVersion.equals(other.glVersion))
+                    && (this.cpu.equals(other.cpu))
+                    && (this.jvmVersion.equals(other.jvmVersion))
+                    && (this.jvmArgs.equals(other.jvmArgs))
+                    && (this.maxMemory == other.maxMemory)
+                    && (this.availableProcessors == other.availableProcessors);
         }
     }
 }

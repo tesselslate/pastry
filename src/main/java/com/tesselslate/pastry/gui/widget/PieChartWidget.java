@@ -1,14 +1,5 @@
 package com.tesselslate.pastry.gui.widget;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import org.lwjgl.opengl.GL11;
-
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.tesselslate.pastry.capture.events.PastryCaptureProfilerEvent;
 
 import net.minecraft.client.MinecraftClient;
@@ -20,6 +11,16 @@ import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.profiler.ProfilerTiming;
+
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import org.lwjgl.opengl.GL11;
+
+import com.mojang.blaze3d.systems.RenderSystem;
 
 /**
  * Draws the debug profiler pie chart as it appears ingame, including the lack
@@ -107,8 +108,13 @@ public class PieChartWidget implements Drawable, Element {
     private void disableScaleFactor() {
         RenderSystem.matrixMode(GL11.GL_PROJECTION);
         RenderSystem.loadIdentity();
-        RenderSystem.ortho(0.0, this.client.getWindow().getFramebufferWidth(),
-                this.client.getWindow().getFramebufferHeight(), 0.0, 1000.0, 3000.0);
+        RenderSystem.ortho(
+                0.0,
+                this.client.getWindow().getFramebufferWidth(),
+                this.client.getWindow().getFramebufferHeight(),
+                0.0,
+                1000.0,
+                3000.0);
 
         RenderSystem.matrixMode(GL11.GL_MODELVIEW);
         RenderSystem.loadIdentity();
@@ -121,8 +127,13 @@ public class PieChartWidget implements Drawable, Element {
 
         RenderSystem.matrixMode(GL11.GL_PROJECTION);
         RenderSystem.loadIdentity();
-        RenderSystem.ortho(0.0, (double) this.client.getWindow().getFramebufferWidth() / scaleFactor,
-                (double) this.client.getWindow().getFramebufferHeight() / scaleFactor, 0.0, 1000.0, 3000.0);
+        RenderSystem.ortho(
+                0.0,
+                (double) this.client.getWindow().getFramebufferWidth() / scaleFactor,
+                (double) this.client.getWindow().getFramebufferHeight() / scaleFactor,
+                0.0,
+                1000.0,
+                3000.0);
 
         RenderSystem.matrixMode(GL11.GL_MODELVIEW);
         RenderSystem.loadIdentity();
@@ -145,13 +156,16 @@ public class PieChartWidget implements Drawable, Element {
             bufferBuilder.begin(GL11.GL_TRIANGLE_FAN, VertexFormats.POSITION_COLOR);
             bufferBuilder.vertex(centerX, centerY, 0.0).color(r, g, b, 0xFF).next();
             for (int i = iterations; i >= 0; i--) {
-                float iterationAngle = (float) ((percent + entry.parentPercentage * (double) i / (double) iterations)
-                        * Math.TAU / 100.0);
+                float iterationAngle = (float)
+                        ((percent + entry.parentPercentage * (double) i / (double) iterations) * Math.TAU / 100.0);
 
                 float x = MathHelper.sin(iterationAngle) * 160.0f;
                 float y = MathHelper.cos(iterationAngle) * 160.0f * 0.5f;
 
-                bufferBuilder.vertex(centerX + x, centerY - y, 0.0).color(r, g, b, 0xFF).next();
+                bufferBuilder
+                        .vertex(centerX + x, centerY - y, 0.0)
+                        .color(r, g, b, 0xFF)
+                        .next();
             }
             Tessellator.getInstance().draw();
 
@@ -174,8 +188,8 @@ public class PieChartWidget implements Drawable, Element {
 
             bufferBuilder.begin(GL11.GL_TRIANGLE_STRIP, VertexFormats.POSITION_COLOR);
             for (int i = iterations; i >= 0; i--) {
-                float iterationAngle = (float) ((percent + entry.parentPercentage * (double) i / (double) iterations)
-                        * Math.TAU / 100.0);
+                float iterationAngle = (float)
+                        ((percent + entry.parentPercentage * (double) i / (double) iterations) * Math.TAU / 100.0);
 
                 float x = MathHelper.sin(iterationAngle) * 160.0f;
                 float y = MathHelper.cos(iterationAngle) * 160.0f * 0.5f;
@@ -184,8 +198,14 @@ public class PieChartWidget implements Drawable, Element {
                     continue;
                 }
 
-                bufferBuilder.vertex(centerX + x, centerY - y, 0.0).color(r >> 1, g >> 1, b >> 1, 0xFF).next();
-                bufferBuilder.vertex(centerX + x, centerY - y + 10.0f, 0.0).color(r >> 1, g >> 1, b >> 1, 0xFF).next();
+                bufferBuilder
+                        .vertex(centerX + x, centerY - y, 0.0)
+                        .color(r >> 1, g >> 1, b >> 1, 0xFF)
+                        .next();
+                bufferBuilder
+                        .vertex(centerX + x, centerY - y + 10.0f, 0.0)
+                        .color(r >> 1, g >> 1, b >> 1, 0xFF)
+                        .next();
             }
             Tessellator.getInstance().draw();
 
@@ -214,23 +234,23 @@ public class PieChartWidget implements Drawable, Element {
             int rowY = y + HEIGHT + 20 + i * 8;
 
             this.client.textRenderer.drawWithShadow(matrices, name, x, rowY, entry.getColor());
-            this.client.textRenderer.drawWithShadow(matrices, parent, centerX + 110 - parentWidth, rowY,
-                    entry.getColor());
-            this.client.textRenderer.drawWithShadow(matrices, total, centerX + 160 - totalWidth, rowY,
-                    entry.getColor());
+            this.client.textRenderer.drawWithShadow(
+                    matrices, parent, centerX + 110 - parentWidth, rowY, entry.getColor());
+            this.client.textRenderer.drawWithShadow(
+                    matrices, total, centerX + 160 - totalWidth, rowY, entry.getColor());
         }
     }
 
     private static List<PieChartWidget.Entry> createEntryList(PastryCaptureProfilerEvent event) {
         ArrayList<PieChartWidget.Entry> entries = new ArrayList<>();
 
-        entries.add(new PieChartWidget.Entry("blockentities", event.blockEntityParentPercentage,
-                event.blockEntityTotalPercentage));
+        entries.add(new PieChartWidget.Entry(
+                "blockentities", event.blockEntityParentPercentage, event.blockEntityTotalPercentage));
         entries.add(new PieChartWidget.Entry("entities", event.entityParentPercentage, event.entityTotalPercentage));
-        entries.add(new PieChartWidget.Entry("unspecified", event.unspecifiedParentPercentage,
-                event.unspecifiedTotalPercentage));
-        entries.add(new PieChartWidget.Entry("destroyProgress", event.destroyProgressParentPercentage,
-                event.destroyProgressTotalPercentage));
+        entries.add(new PieChartWidget.Entry(
+                "unspecified", event.unspecifiedParentPercentage, event.unspecifiedTotalPercentage));
+        entries.add(new PieChartWidget.Entry(
+                "destroyProgress", event.destroyProgressParentPercentage, event.destroyProgressTotalPercentage));
         entries.add(new PieChartWidget.Entry("prepare", event.prepareParentPercentage, event.prepareTotalPercentage));
 
         return entries;

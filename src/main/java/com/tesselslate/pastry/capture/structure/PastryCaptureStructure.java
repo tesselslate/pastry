@@ -1,15 +1,15 @@
 package com.tesselslate.pastry.capture.structure;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.tesselslate.pastry.capture.PastryCaptureInputStream;
 import com.tesselslate.pastry.capture.PastryCaptureOutputStream;
 
 import net.minecraft.structure.StructurePiece;
 import net.minecraft.structure.StructureStart;
 import net.minecraft.util.math.BlockBox;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Contains information about a single {@link StructureStart} from in the world.

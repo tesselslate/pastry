@@ -1,11 +1,5 @@
 package com.tesselslate.pastry.capture.events;
 
-import java.io.IOException;
-import java.util.Objects;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.tesselslate.pastry.capture.PastryCaptureEvent;
 import com.tesselslate.pastry.capture.PastryCaptureEventType;
 import com.tesselslate.pastry.capture.PastryCaptureInputStream;
@@ -17,6 +11,12 @@ import net.minecraft.block.entity.MobSpawnerBlockEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
+
+import java.io.IOException;
+import java.util.Objects;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Contains information about a single visible block entity.
@@ -51,7 +51,9 @@ public class PastryCaptureBlockEntityEvent implements PastryCaptureEvent {
 
         if (blockEntity instanceof MobSpawnerBlockEntity mobSpawner) {
             this.name = "mob_spawner".intern();
-            this.data = EntityType.getId(mobSpawner.getLogic().getRenderedEntity().getType()).getPath();
+            this.data = EntityType.getId(
+                            mobSpawner.getLogic().getRenderedEntity().getType())
+                    .getPath();
         } else {
             this.name = BlockEntityType.getId(blockEntity.getType()).getPath();
             Objects.requireNonNull(this.name);
@@ -106,7 +108,8 @@ public class PastryCaptureBlockEntityEvent implements PastryCaptureEvent {
         } else {
             PastryCaptureBlockEntityEvent other = (PastryCaptureBlockEntityEvent) obj;
 
-            return (this.pos.equals(other.pos)) && (this.name.equals(other.name))
+            return (this.pos.equals(other.pos))
+                    && (this.name.equals(other.name))
                     && (Objects.equals(this.data, other.data));
         }
     }

@@ -1,16 +1,10 @@
 package com.tesselslate.pastry.gui.widget;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.tesselslate.pastry.analysis.preemptive.PreemptiveReading;
 import com.tesselslate.pastry.capture.events.PastryCaptureBlockEntityEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureEntityEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureFrameEvent;
 
-import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.AbstractParentElement;
@@ -21,6 +15,13 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.StringRenderable;
 import net.minecraft.text.Style;
 import net.minecraft.util.Formatting;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 
 public class CaptureAnalysisPageWidget extends AbstractParentElement implements Drawable {
     private final Screen screen;
@@ -124,8 +125,7 @@ public class CaptureAnalysisPageWidget extends AbstractParentElement implements 
         int totalBlockEntities = blockEntityCounts.values().stream().collect(Collectors.summingInt(Integer::intValue));
         String text = String.format("Block Entities: %d", totalBlockEntities);
 
-        this.blockEntitiesText = new TextWidget(textRenderer, text, null,
-                this::onBlockEntityTooltip);
+        this.blockEntitiesText = new TextWidget(textRenderer, text, null, this::onBlockEntityTooltip);
         this.blockEntitiesText.x = startX + 40 - textRenderer.getWidth(text);
         this.blockEntitiesText.y = startY + textRenderer.fontHeight + 2;
 
@@ -140,8 +140,8 @@ public class CaptureAnalysisPageWidget extends AbstractParentElement implements 
         boolean blockOutline = this.reading.frames()[0].blockOutline() != null;
 
         Style style = Style.EMPTY.withFormatting(blockOutline ? Formatting.GREEN : Formatting.RED);
-        StringRenderable text = StringRenderable.concat(StringRenderable.plain("Block Outline: "),
-                StringRenderable.styled(blockOutline ? "Yes" : "No", style));
+        StringRenderable text = StringRenderable.concat(
+                StringRenderable.plain("Block Outline: "), StringRenderable.styled(blockOutline ? "Yes" : "No", style));
 
         this.blockOutlineText = new TextWidget(textRenderer, text, null, null);
         this.blockOutlineText.x = startX + 40 - textRenderer.getWidth(text);

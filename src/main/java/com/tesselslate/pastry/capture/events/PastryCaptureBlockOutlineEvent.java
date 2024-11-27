@@ -1,16 +1,16 @@
 package com.tesselslate.pastry.capture.events;
 
-import java.io.IOException;
-import java.util.Objects;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.tesselslate.pastry.capture.PastryCaptureEvent;
 import com.tesselslate.pastry.capture.PastryCaptureEventType;
 import com.tesselslate.pastry.capture.PastryCaptureInputStream;
 import com.tesselslate.pastry.capture.PastryCaptureOutputStream;
 
 import net.minecraft.util.math.BlockPos;
+
+import java.io.IOException;
+import java.util.Objects;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Indicates that a targeted block outline was drawn on this frame.
@@ -35,8 +35,8 @@ public class PastryCaptureBlockOutlineEvent implements PastryCaptureEvent {
     public PastryCaptureBlockOutlineEvent(PastryCaptureInputStream input) throws IOException {
         long packedPos = input.readLong();
 
-        this.blockPos = new BlockPos(BlockPos.unpackLongX(packedPos), BlockPos.unpackLongY(packedPos),
-                BlockPos.unpackLongZ(packedPos));
+        this.blockPos = new BlockPos(
+                BlockPos.unpackLongX(packedPos), BlockPos.unpackLongY(packedPos), BlockPos.unpackLongZ(packedPos));
     }
 
     @Override

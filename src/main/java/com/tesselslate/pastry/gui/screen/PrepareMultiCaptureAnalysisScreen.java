@@ -1,7 +1,5 @@
 package com.tesselslate.pastry.gui.screen;
 
-import java.util.List;
-
 import com.tesselslate.pastry.Pastry;
 import com.tesselslate.pastry.gui.toast.ErrorToast;
 import com.tesselslate.pastry.task.AnalyzeCapturesTask;
@@ -10,6 +8,8 @@ import com.tesselslate.pastry.task.ListCapturesTask;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+
+import java.util.List;
 
 public class PrepareMultiCaptureAnalysisScreen extends TaskProgressScreen {
     private final AnalyzeCapturesTask task;

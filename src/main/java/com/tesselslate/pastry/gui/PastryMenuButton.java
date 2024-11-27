@@ -30,7 +30,10 @@ public class PastryMenuButton extends ItemButton {
         MinecraftClient client = MinecraftClient.getInstance();
         TextRenderer textRenderer = client.textRenderer;
 
-        instance.screen.renderTooltip(matrices, StringRenderable.plain(TOOLTIP),
-                instance.x - 20 - textRenderer.getWidth(TOOLTIP), instance.y + 22 - (textRenderer.fontHeight / 2));
+        instance.screen.renderTooltip(
+                matrices,
+                StringRenderable.plain(TOOLTIP),
+                instance.x - 20 - textRenderer.getWidth(TOOLTIP),
+                instance.y + 22 - (textRenderer.fontHeight / 2));
     }
 }

@@ -1,7 +1,5 @@
 package com.tesselslate.pastry.capture.events;
 
-import java.io.IOException;
-
 import com.tesselslate.pastry.Pastry;
 import com.tesselslate.pastry.capture.PastryCaptureEvent;
 import com.tesselslate.pastry.capture.PastryCaptureEventType;
@@ -10,6 +8,8 @@ import com.tesselslate.pastry.capture.PastryCaptureOutputStream;
 import com.tesselslate.pastry.mixin.accessor.DebugRendererAccessor;
 
 import net.minecraft.client.MinecraftClient;
+
+import java.io.IOException;
 
 /**
  * Contains information about various graphical settings, such as render and
@@ -43,8 +43,8 @@ public class PastryCaptureOptionsEvent implements PastryCaptureEvent {
         this.gameHeight = client.getWindow().getFramebufferHeight();
 
         this.hitboxes = client.getEntityRenderManager().shouldRenderHitboxes();
-        this.chunkBorders = ((DebugRendererAccessor) client.debugRenderer).getShowChunkBorder()
-                && !client.hasReducedDebugInfo();
+        this.chunkBorders =
+                ((DebugRendererAccessor) client.debugRenderer).getShowChunkBorder() && !client.hasReducedDebugInfo();
         this.cullState = Pastry.DISPLAY_CULLING_STATE && Pastry.CAPTURED_CULLING_STATE != null;
     }
 
@@ -109,10 +109,14 @@ public class PastryCaptureOptionsEvent implements PastryCaptureEvent {
         } else {
             PastryCaptureOptionsEvent other = (PastryCaptureOptionsEvent) obj;
 
-            return (this.renderDistance == other.renderDistance) && (this.entityDistance == other.entityDistance)
-                    && (this.fov == other.fov) && (this.gameWidth == other.gameWidth)
-                    && (this.gameHeight == other.gameHeight) && (this.hitboxes == other.hitboxes)
-                    && (this.chunkBorders == other.chunkBorders) && (this.cullState == other.cullState);
+            return (this.renderDistance == other.renderDistance)
+                    && (this.entityDistance == other.entityDistance)
+                    && (this.fov == other.fov)
+                    && (this.gameWidth == other.gameWidth)
+                    && (this.gameHeight == other.gameHeight)
+                    && (this.hitboxes == other.hitboxes)
+                    && (this.chunkBorders == other.chunkBorders)
+                    && (this.cullState == other.cullState);
         }
     }
 }

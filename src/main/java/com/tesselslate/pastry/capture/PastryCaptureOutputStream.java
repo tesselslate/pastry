@@ -1,5 +1,9 @@
 package com.tesselslate.pastry.capture;
 
+import com.tesselslate.pastry.capture.structure.PastryCaptureStructure;
+
+import net.minecraft.util.math.BlockBox;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -9,10 +13,6 @@ import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
 import org.jetbrains.annotations.Nullable;
-
-import com.tesselslate.pastry.capture.structure.PastryCaptureStructure;
-
-import net.minecraft.util.math.BlockBox;
 
 /**
  * Provides an abstraction over the string lookup table and allows for writing
@@ -31,8 +31,8 @@ public class PastryCaptureOutputStream extends DataOutputStream {
         this(new ByteArrayOutputStream(), output, events);
     }
 
-    private PastryCaptureOutputStream(ByteArrayOutputStream buffer, OutputStream output,
-            List<PastryCaptureEvent> events) throws IOException {
+    private PastryCaptureOutputStream(
+            ByteArrayOutputStream buffer, OutputStream output, List<PastryCaptureEvent> events) throws IOException {
         super(buffer);
 
         this.header = new PastryCaptureHeader(events);

@@ -1,7 +1,5 @@
 package com.tesselslate.pastry.capture.structure;
 
-import java.io.IOException;
-
 import com.tesselslate.pastry.capture.PastryCaptureInputStream;
 import com.tesselslate.pastry.capture.PastryCaptureOutputStream;
 
@@ -11,6 +9,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
+
+import java.io.IOException;
 
 /**
  * Contains information about a single {@link StructurePiece} from an in-world

@@ -1,9 +1,5 @@
 package com.tesselslate.pastry.mixin.gui;
 
-import org.spongepowered.asm.mixin.Mixin;
-
-import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.tesselslate.pastry.gui.PastryMenuButton;
 import com.tesselslate.pastry.gui.PastryPauseButton;
 import com.tesselslate.pastry.gui.PastryStartButton;
@@ -11,6 +7,11 @@ import com.tesselslate.pastry.gui.PastryStartButton;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.LiteralText;
+
+import org.spongepowered.asm.mixin.Mixin;
+
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 
 @Mixin(value = GameMenuScreen.class)
 public abstract class GameMenuScreenMixin extends Screen {

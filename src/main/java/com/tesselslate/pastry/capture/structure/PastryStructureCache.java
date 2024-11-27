@@ -1,7 +1,5 @@
 package com.tesselslate.pastry.capture.structure;
 
-import java.util.HashMap;
-
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.StructureStart;
@@ -10,6 +8,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.feature.StructureFeature;
+
+import java.util.HashMap;
 
 /**
  * Finds structures within a given radius of the player.

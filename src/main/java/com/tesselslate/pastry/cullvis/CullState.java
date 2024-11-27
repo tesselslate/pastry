@@ -1,5 +1,7 @@
 package com.tesselslate.pastry.cullvis;
 
+import net.minecraft.util.math.Vec3i;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -8,7 +10,6 @@ import java.util.Set;
 import me.jellysquid.mods.sodium.client.render.chunk.cull.graph.ChunkGraphCuller;
 import me.jellysquid.mods.sodium.client.render.chunk.cull.graph.ChunkGraphNode;
 import me.jellysquid.mods.sodium.common.util.DirectionUtil;
-import net.minecraft.util.math.Vec3i;
 
 /**
  * Contains information about a full run of the chunk culling algorithm.

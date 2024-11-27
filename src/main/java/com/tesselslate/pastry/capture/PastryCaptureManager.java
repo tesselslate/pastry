@@ -1,5 +1,11 @@
 package com.tesselslate.pastry.capture;
 
+import com.tesselslate.pastry.Pastry;
+import com.tesselslate.pastry.gui.toast.CaptureSizeToast;
+import com.tesselslate.pastry.gui.toast.ErrorToast;
+
+import net.minecraft.client.MinecraftClient;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -11,12 +17,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.jetbrains.annotations.Nullable;
-
-import com.tesselslate.pastry.Pastry;
-import com.tesselslate.pastry.gui.toast.CaptureSizeToast;
-import com.tesselslate.pastry.gui.toast.ErrorToast;
-
-import net.minecraft.client.MinecraftClient;
 
 /**
  * Maintains and synchronizes access to a {@link PastryCapture} for an active

@@ -1,9 +1,5 @@
 package com.tesselslate.pastry.cullvis;
 
-import org.lwjgl.opengl.GL11;
-
-import com.mojang.blaze3d.systems.RenderSystem;
-
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -14,6 +10,10 @@ import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
+
+import org.lwjgl.opengl.GL11;
+
+import com.mojang.blaze3d.systems.RenderSystem;
 
 public class CullStateDebugRenderer implements DebugRenderer.Renderer {
     private static final int FLOW_LINE_LENGTH = 4;
@@ -27,7 +27,11 @@ public class CullStateDebugRenderer implements DebugRenderer.Renderer {
     private Vec3d cameraPos;
 
     @Override
-    public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, double cameraX, double cameraY,
+    public void render(
+            MatrixStack matrices,
+            VertexConsumerProvider vertexConsumers,
+            double cameraX,
+            double cameraY,
             double cameraZ) {
         assert this.state != null;
 
@@ -45,19 +49,27 @@ public class CullStateDebugRenderer implements DebugRenderer.Renderer {
     private void buildLine(double ax, double ay, double az, double bx, double by, double bz, Vector3f color) {
         Vec3d c = this.cameraPos;
 
-        this.bufferBuilder.vertex(ax - c.x, ay - c.y, az - c.z).color(color.getX(), color.getY(), color.getZ(), 1.0f)
+        this.bufferBuilder
+                .vertex(ax - c.x, ay - c.y, az - c.z)
+                .color(color.getX(), color.getY(), color.getZ(), 1.0f)
                 .next();
-        this.bufferBuilder.vertex(bx - c.x, by - c.y, bz - c.z).color(color.getX(), color.getY(), color.getZ(), 1.0f)
+        this.bufferBuilder
+                .vertex(bx - c.x, by - c.y, bz - c.z)
+                .color(color.getX(), color.getY(), color.getZ(), 1.0f)
                 .next();
     }
 
     private void buildLine(Vector3f a, Vector3f b, Vector3f aColor, Vector3f bColor) {
         Vec3d c = this.cameraPos;
 
-        this.bufferBuilder.vertex(a.getX() - c.x, a.getY() - c.y, a.getZ() - c.z)
-                .color(aColor.getX(), aColor.getY(), aColor.getZ(), 1.0f).next();
-        this.bufferBuilder.vertex(b.getX() - c.x, b.getY() - c.y, b.getZ() - c.z)
-                .color(bColor.getX(), bColor.getY(), bColor.getZ(), 1.0f).next();
+        this.bufferBuilder
+                .vertex(a.getX() - c.x, a.getY() - c.y, a.getZ() - c.z)
+                .color(aColor.getX(), aColor.getY(), aColor.getZ(), 1.0f)
+                .next();
+        this.bufferBuilder
+                .vertex(b.getX() - c.x, b.getY() - c.y, b.getZ() - c.z)
+                .color(bColor.getX(), bColor.getY(), bColor.getZ(), 1.0f)
+                .next();
     }
 
     private void buildVisibleSubchunkFlow() {

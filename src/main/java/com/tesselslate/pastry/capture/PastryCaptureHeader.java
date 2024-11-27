@@ -59,8 +59,9 @@ public class PastryCaptureHeader {
             throw new PastryCaptureVersionException(version, "Cannot process captures below version 13");
         }
         if (version > CURRENT_VERSION) {
-            throw new PastryCaptureVersionException(version,
-                    "Cannot process captures newer than version " + CURRENT_VERSION);
+            throw new PastryCaptureVersionException(
+                    version, "Cannot process captures newer than version " + CURRENT_VERSION);
         }
     }
-};
+}
+;

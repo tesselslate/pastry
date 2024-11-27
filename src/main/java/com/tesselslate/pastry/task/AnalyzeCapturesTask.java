@@ -1,5 +1,10 @@
 package com.tesselslate.pastry.task;
 
+import com.tesselslate.pastry.Pastry;
+import com.tesselslate.pastry.analysis.preemptive.PreemptiveAnalysis;
+import com.tesselslate.pastry.analysis.preemptive.PreemptiveStronghold;
+import com.tesselslate.pastry.capture.PastryCapture;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.HashMap;
@@ -9,11 +14,6 @@ import java.util.Map;
 import java.util.concurrent.RecursiveTask;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.GZIPInputStream;
-
-import com.tesselslate.pastry.Pastry;
-import com.tesselslate.pastry.analysis.preemptive.PreemptiveAnalysis;
-import com.tesselslate.pastry.analysis.preemptive.PreemptiveStronghold;
-import com.tesselslate.pastry.capture.PastryCapture;
 
 public class AnalyzeCapturesTask extends PastryTask<AnalyzeCapturesTask.Result> {
     private final List<ListCapturesTask.Entry> captures;

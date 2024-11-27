@@ -1,15 +1,5 @@
 package com.tesselslate.pastry.capture;
 
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.jetbrains.annotations.Nullable;
-
 import com.tesselslate.pastry.capture.events.PastryCaptureBlockEntityEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureBlockOutlineEvent;
 import com.tesselslate.pastry.capture.events.PastryCaptureDimensionEvent;
@@ -23,6 +13,16 @@ import com.tesselslate.pastry.capture.events.PastryCaptureWorldLoadEvent;
 import com.tesselslate.pastry.capture.structure.PastryCaptureStructure;
 
 import net.minecraft.util.math.BlockBox;
+
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Provides an abstraction over the string lookup table and allows for reading

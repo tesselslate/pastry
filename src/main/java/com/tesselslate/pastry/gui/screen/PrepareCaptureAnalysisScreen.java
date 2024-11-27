@@ -1,8 +1,5 @@
 package com.tesselslate.pastry.gui.screen;
 
-import java.io.File;
-import java.util.concurrent.ForkJoinTask;
-
 import com.tesselslate.pastry.Pastry;
 import com.tesselslate.pastry.analysis.preemptive.PreemptiveAnalysis;
 import com.tesselslate.pastry.capture.PastryCapture;
@@ -12,6 +9,9 @@ import com.tesselslate.pastry.task.Exceptional;
 import com.tesselslate.pastry.task.ReadCaptureTask;
 
 import net.minecraft.client.gui.screen.Screen;
+
+import java.io.File;
+import java.util.concurrent.ForkJoinTask;
 
 public class PrepareCaptureAnalysisScreen extends TaskProgressScreen {
     private final PastryCaptureHeader header;

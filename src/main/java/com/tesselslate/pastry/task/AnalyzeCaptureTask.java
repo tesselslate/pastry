@@ -1,10 +1,10 @@
 package com.tesselslate.pastry.task;
 
-import java.util.List;
-
 import com.tesselslate.pastry.analysis.preemptive.PreemptiveAnalysis;
 import com.tesselslate.pastry.analysis.preemptive.PreemptiveStronghold;
 import com.tesselslate.pastry.capture.PastryCapture;
+
+import java.util.List;
 
 /**
  * Reads and analyzes a single {@link PastryCapture}.

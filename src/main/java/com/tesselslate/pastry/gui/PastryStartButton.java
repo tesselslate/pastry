@@ -44,7 +44,10 @@ public class PastryStartButton extends IconButton {
         TextRenderer textRenderer = client.textRenderer;
 
         String tooltip = PastryCaptureManager.isCapturing() ? "Stop Capture" : "Restart Capture";
-        instance.screen.renderTooltip(matrices, StringRenderable.plain(tooltip),
-                instance.x - 20 - textRenderer.getWidth(tooltip), instance.y + 22 - (textRenderer.fontHeight / 2));
+        instance.screen.renderTooltip(
+                matrices,
+                StringRenderable.plain(tooltip),
+                instance.x - 20 - textRenderer.getWidth(tooltip),
+                instance.y + 22 - (textRenderer.fontHeight / 2));
     }
 }

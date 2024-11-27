@@ -1,10 +1,5 @@
 package com.tesselslate.pastry.capture.events;
 
-import java.io.IOException;
-import java.util.Objects;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.tesselslate.pastry.capture.PastryCaptureEvent;
 import com.tesselslate.pastry.capture.PastryCaptureEventType;
 import com.tesselslate.pastry.capture.PastryCaptureInputStream;
@@ -12,6 +7,11 @@ import com.tesselslate.pastry.capture.PastryCaptureOutputStream;
 
 import net.minecraft.client.render.Camera;
 import net.minecraft.util.math.Vec3d;
+
+import java.io.IOException;
+import java.util.Objects;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Contains information about a single rendered frame during which the game was
@@ -99,7 +99,9 @@ public class PastryCaptureFrameEvent implements PastryCaptureEvent {
         } else {
             PastryCaptureFrameEvent other = (PastryCaptureFrameEvent) obj;
 
-            return (this.time == other.time) && (this.cameraPos.equals(other.cameraPos)) && (this.pitch == other.pitch)
+            return (this.time == other.time)
+                    && (this.cameraPos.equals(other.cameraPos))
+                    && (this.pitch == other.pitch)
                     && (this.yaw == other.yaw);
         }
     }

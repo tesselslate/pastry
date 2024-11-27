@@ -1,5 +1,9 @@
 package com.tesselslate.pastry.task;
 
+import com.tesselslate.pastry.capture.PastryCaptureHeader;
+import com.tesselslate.pastry.capture.PastryCaptureManager;
+import com.tesselslate.pastry.capture.PastryCaptureVersionException;
+
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,10 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
-
-import com.tesselslate.pastry.capture.PastryCaptureHeader;
-import com.tesselslate.pastry.capture.PastryCaptureManager;
-import com.tesselslate.pastry.capture.PastryCaptureVersionException;
 
 /**
  * Finds all available capture files from the instance's pastry-recordings

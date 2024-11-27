@@ -26,7 +26,8 @@ public class PreemptiveAnalysis {
     public void process(PreemptiveStronghold stronghold) {
         stronghold.readings.stream().filter(PreemptiveReading::isConsistent).forEach(reading -> {
             boolean isSpike = reading.all(frame -> Arrays.stream(frame.blockEntities())
-                    .filter(event -> event.name.equals("mob_spawner") && event.data.equals("silverfish")).findAny()
+                    .filter(event -> event.name.equals("mob_spawner") && event.data.equals("silverfish"))
+                    .findAny()
                     .isPresent());
 
             if (isSpike) {

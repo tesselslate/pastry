@@ -2,7 +2,7 @@ package com.tesselslate.pastry.gui.screen;
 
 import com.tesselslate.pastry.analysis.preemptive.PreemptiveAnalysis;
 import com.tesselslate.pastry.analysis.preemptive.PreemptiveAnalysisResult;
-import com.tesselslate.pastry.analysis.preemptive.PreemptiveReading;
+import com.tesselslate.pastry.analysis.preemptive.PreemptiveSpikes;
 import com.tesselslate.pastry.capture.PastryCaptureHeader;
 import com.tesselslate.pastry.gui.ScreenExtended;
 import com.tesselslate.pastry.gui.widget.CaptureAnalysisPageWidget;
@@ -18,7 +18,6 @@ import net.minecraft.util.Formatting;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.List;
 
 public class CaptureAnalysisScreen extends ScreenExtended {
     private static final String LEFT_ARROW = "\u25c0";
@@ -35,6 +34,10 @@ public class CaptureAnalysisScreen extends ScreenExtended {
     private ButtonWidget prevPageButton;
     private FrameSliderWidget frameSlider;
 
+    private ButtonWidget toggleFilterModeButton;
+    private FilterMode activeFilterMode;
+
+    private PreemptiveSpikes spikes;
     private int pageNumber;
 
     public CaptureAnalysisScreen(Screen parent, PastryCaptureHeader header, PreemptiveAnalysis analysis) {
@@ -45,6 +48,9 @@ public class CaptureAnalysisScreen extends ScreenExtended {
         int valid = this.analysisResult.valid.getReadings().size();
         int invalid = this.analysisResult.invalid.getReadings().size();
         this.subtitle = new LiteralText(String.format("%d/%d valid readings", valid, valid + invalid));
+
+        this.activeFilterMode = FilterMode.VALID;
+        this.spikes = this.analysisResult.valid;
     }
 
     public CaptureAnalysisScreen(Screen parent, PreemptiveAnalysis analysis) {
@@ -55,18 +61,24 @@ public class CaptureAnalysisScreen extends ScreenExtended {
         int valid = this.analysisResult.valid.getReadings().size();
         int invalid = this.analysisResult.invalid.getReadings().size();
         this.subtitle = new LiteralText(String.format("%d/%d valid readings", valid, valid + invalid));
+
+        this.activeFilterMode = FilterMode.VALID;
+        this.spikes = this.analysisResult.valid;
     }
 
     @Override
     protected void init() {
-        List<PreemptiveReading> validSpikes = this.analysisResult.valid.getReadings();
-        if (validSpikes.size() > 0) {
+        if (this.spikes.size() > 0) {
             this.initPageWidgets(this.page == null);
         }
 
         this.addButton(this.createNextPageButton(this.width / 2 + 104, this.height - 27, 20, 20));
         this.addButton(this.createPrevPageButton(this.width / 2 - 124, this.height - 27, 20, 20));
         this.addButton(this.createDoneButton(this.width / 2 - 100, this.height - 27, 200, 20));
+
+        int pieChartRightX = this.width / 2
+                + PieChartWidget.calculateWidth(this.client.getWindow().getScaleFactor()) / 2;
+        this.addButton(this.createToggleButton(pieChartRightX + 20, this.height / 2 + 2, 150, 20));
     }
 
     @Override
@@ -94,8 +106,6 @@ public class CaptureAnalysisScreen extends ScreenExtended {
     }
 
     private ButtonWidget createNextPageButton(int x, int y, int w, int h) {
-        List<PreemptiveReading> validSpikes = this.analysisResult.valid.getReadings();
-
         this.nextPageButton = new ButtonWidget(
                 x,
                 y,
@@ -103,7 +113,7 @@ public class CaptureAnalysisScreen extends ScreenExtended {
                 h,
                 new LiteralText(RIGHT_ARROW),
                 button -> {
-                    if (this.pageNumber < validSpikes.size() - 1) {
+                    if (this.pageNumber < this.spikes.size() - 1) {
                         this.setPage(this.pageNumber + 1);
                     }
                 },
@@ -112,20 +122,18 @@ public class CaptureAnalysisScreen extends ScreenExtended {
                         this.parent.renderTooltip(
                                 matrices,
                                 StringRenderable.plain(
-                                        String.format("Page %d/%d", this.pageNumber + 2, validSpikes.size())),
+                                        String.format("Page %d/%d", this.pageNumber + 2, this.spikes.size())),
                                 mouseX,
                                 mouseY);
                     }
                 });
 
-        this.nextPageButton.active = this.pageNumber < validSpikes.size() - 1;
+        this.nextPageButton.active = this.pageNumber < this.spikes.size() - 1;
 
         return this.nextPageButton;
     }
 
     private ButtonWidget createPrevPageButton(int x, int y, int w, int h) {
-        List<PreemptiveReading> validSpikes = this.analysisResult.valid.getReadings();
-
         this.prevPageButton = new ButtonWidget(
                 x,
                 y,
@@ -142,7 +150,7 @@ public class CaptureAnalysisScreen extends ScreenExtended {
                         this.parent.renderTooltip(
                                 matrices,
                                 StringRenderable.plain(
-                                        String.format("Page %d/%d", this.pageNumber, validSpikes.size())),
+                                        String.format("Page %d/%d", this.pageNumber, this.spikes.size())),
                                 mouseX,
                                 mouseY);
                     }
@@ -153,13 +161,23 @@ public class CaptureAnalysisScreen extends ScreenExtended {
         return this.prevPageButton;
     }
 
+    private ButtonWidget createToggleButton(int x, int y, int w, int h) {
+        this.toggleFilterModeButton = new ButtonWidget(
+                x,
+                y,
+                w,
+                h,
+                new LiteralText(this.activeFilterMode.next().toString()),
+                button -> this.setFilterMode(this.activeFilterMode.next()));
+
+        return this.toggleFilterModeButton;
+    }
+
     private void initPageWidgets(boolean newPage) {
         if (this.frameSlider != null) {
             this.buttons.remove(this.frameSlider);
             this.children.remove(this.frameSlider);
         }
-
-        List<PreemptiveReading> spikes = this.analysisResult.valid.getReadings();
 
         int pieChartRightX = this.width / 2
                 + PieChartWidget.calculateWidth(this.client.getWindow().getScaleFactor()) / 2;
@@ -169,26 +187,74 @@ public class CaptureAnalysisScreen extends ScreenExtended {
         this.page.setActiveFrame(frame);
         this.frameSlider = new FrameSliderWidget(
                 pieChartRightX + 20,
-                this.height / 2 - 10,
+                this.height / 2 - 22,
                 150,
                 20,
                 value -> this.page.setActiveFrame(value),
-                spikes.get(this.pageNumber),
+                this.spikes.get(this.pageNumber),
                 frame);
         this.addButton(this.frameSlider);
+    }
+
+    private void setFilterMode(FilterMode mode) {
+        this.activeFilterMode = mode;
+
+        if (this.toggleFilterModeButton != null) {
+            this.toggleFilterModeButton.setMessage(new LiteralText(this.activeFilterMode.toString()));
+        }
+
+        switch (this.activeFilterMode) {
+            case FilterMode.VALID:
+                this.spikes = this.analysisResult.valid;
+                break;
+            case FilterMode.INVALID:
+                this.spikes = this.analysisResult.invalid;
+                break;
+        }
+
+        this.setPage(0);
     }
 
     private void setPage(int page) {
         this.pageNumber = page;
 
         if (this.nextPageButton != null) {
-            this.nextPageButton.active =
-                    this.pageNumber < this.analysisResult.valid.getReadings().size() - 1;
+            this.nextPageButton.active = this.pageNumber < this.spikes.size() - 1;
         }
         if (this.prevPageButton != null) {
             this.prevPageButton.active = this.pageNumber > 0;
         }
 
-        initPageWidgets(true);
+        if (!this.spikes.empty()) {
+            initPageWidgets(true);
+        }
+    }
+
+    private enum FilterMode {
+        VALID,
+        INVALID;
+
+        private FilterMode next() {
+            switch (this) {
+                case VALID:
+                    return INVALID;
+                case INVALID:
+                    return VALID;
+            }
+
+            throw new RuntimeException("Unreachable");
+        }
+
+        @Override
+        public String toString() {
+            switch (this) {
+                case VALID:
+                    return "Valid";
+                case INVALID:
+                    return "Invalid";
+            }
+
+            throw new RuntimeException("Unreachable");
+        }
     }
 }

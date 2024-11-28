@@ -26,7 +26,19 @@ public class PreemptiveSpikes {
         return new PreemptiveReadingAverage(this);
     }
 
+    public boolean empty() {
+        return this.readings.size() == 0;
+    }
+
+    public PreemptiveReading get(int index) {
+        return this.readings.get(index);
+    }
+
     public List<PreemptiveReading> getReadings() {
         return this.readings;
+    }
+
+    public int size() {
+        return this.readings.size();
     }
 }

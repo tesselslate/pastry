@@ -179,11 +179,16 @@ public class CaptureAnalysisScreen extends ScreenExtended {
             this.children.remove(this.frameSlider);
         }
 
+        if (this.spikes.empty()) {
+            this.page = null;
+            return;
+        }
+
         int pieChartRightX = this.width / 2
                 + PieChartWidget.calculateWidth(this.client.getWindow().getScaleFactor()) / 2;
 
         int frame = newPage ? -1 : this.page.getActiveFrame();
-        this.page = new CaptureAnalysisPageWidget(this, spikes.get(this.pageNumber));
+        this.page = new CaptureAnalysisPageWidget(this, this.spikes.get(this.pageNumber));
         this.page.setActiveFrame(frame);
         this.frameSlider = new FrameSliderWidget(
                 pieChartRightX + 20,
@@ -220,14 +225,14 @@ public class CaptureAnalysisScreen extends ScreenExtended {
 
         if (this.nextPageButton != null) {
             this.nextPageButton.active = this.pageNumber < this.spikes.size() - 1;
+            this.nextPageButton.active &= !this.spikes.empty();
         }
         if (this.prevPageButton != null) {
             this.prevPageButton.active = this.pageNumber > 0;
+            this.nextPageButton.active &= !this.spikes.empty();
         }
 
-        if (!this.spikes.empty()) {
-            initPageWidgets(true);
-        }
+        initPageWidgets(true);
     }
 
     private enum FilterMode {

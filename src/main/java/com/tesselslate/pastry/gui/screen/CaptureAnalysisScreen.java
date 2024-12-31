@@ -205,7 +205,8 @@ public class CaptureAnalysisScreen extends ScreenExtended {
         this.activeFilterMode = mode;
 
         if (this.toggleFilterModeButton != null) {
-            this.toggleFilterModeButton.setMessage(new LiteralText(this.activeFilterMode.toString()));
+            this.toggleFilterModeButton.setMessage(
+                    new LiteralText(this.activeFilterMode.next().toString()));
         }
 
         switch (this.activeFilterMode) {
